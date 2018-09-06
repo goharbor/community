@@ -5,4 +5,6 @@ This community call was a great one. We had demos from a community user Sun Fei 
 Thanks Sun Fei and Qian for the great work!
 Thanks all the attendees for joining this community call. See you next time!
  
+For more details, please check [slides](community_call_2018-08-22.pptx).
+
 The meeting is recorded and the recording is updated to the GitHub wiki page. Meanwhile, the meeting schedule has been updated on the wiki page too.  Please check [here](https://github.com/goharbor/harbor/wiki/Community-Conference-Calls).
