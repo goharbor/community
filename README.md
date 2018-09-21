@@ -2,6 +2,16 @@
 
 A store for Harbor community related materia.
 
+## Forthcoming Meeting
+
+**Meeting link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
+
+|      Scheduled Time    |   Speakers   |    Main Topic         |
+|------------------------|--------------|-----------------------|
+| **2018/09/26 06:00-07:00 AM(PDT)/21:00-22:00 (Beijing Time)** | [@steven-zou](https://github.com/steven-zou) |KubeCon event related and goverance model workflow introduction|
+
+More details of the conference call, please see [meeting schedule](MEETING_SCHEDULE.md)
+
 ## Structure
 
 * **presentations**: keeps the related slides talking about Harbor
