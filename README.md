@@ -2,6 +2,10 @@
 
 A store for Harbor community related materia.
 
+## Community Meetings
+
+The Harbor Project holds bi-weekly community calls, to join them and watch previous meeting notes and recordings, please see [meeting schedule](MEETING_SCHEDULE.md).
+
 ## Structure
 
 * **presentations**: keeps the related slides talking about Harbor
