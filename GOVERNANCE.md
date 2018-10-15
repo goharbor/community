@@ -59,7 +59,7 @@ Proposals should cover the high-level objectives, use cases, and technical recom
 
 The proposal should be documented as a separated markdown file pushed to the `proposals` folder in the [community](https://github.com/goHarbor/community) repository via PR. The name of the file should follow the name pattern `<short meaningful words joined by '-'>_proposal.md`, e.g: `clear-old-tags-with-policies_proposal.md`.
 
-Use the [Proposal Template](https://github.com/goharbor/community/pull/11) as a starting point.
+Use the [Proposal Template](proposals/TEMPLATE.md) as a starting point.
 
 ### Proposal Lifecycle
 
