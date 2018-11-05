@@ -69,10 +69,19 @@ Data Spec -- build info(json), it could be rendered by harbor portal and aligned
    "comment": "Debug a bug fix.",
    "status": "fail",
    "url":"https://jenkins/job/test/1"
+
    //customized ...
    "key": "value"
 }
 
+Data Spec -- test results info(json), it could be rendered by harbor portal
+{
+    "status": "pass",
+    "total": "55",
+    "pass": "54",
+    "fail": "1",
+    "url": "https://jenkins/testresults/1.log"
+}
 
 3, how to use metadata in Harbor — Harbor provides mechanism to let user to set rules base on metadata
 Currently, Harbor provides inteceptors to filter docker request, and provide capablity to config docker pull rules like content trust and vul scan.
