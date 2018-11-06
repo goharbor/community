@@ -58,4 +58,4 @@ and https://github.com/goharbor/harbor/issues/327
 
 ## Recording link
 
-For meeting recording link, please check [here]https://zoom.us/recording/share/GbVH9evjq4GDXGN9mGC0ZFYxPeINEzQkLw26E0of6R6wIumekTziMw?startTime=1539176657000.
+For meeting recording link, please check [here](https://zoom.us/recording/share/GbVH9evjq4GDXGN9mGC0ZFYxPeINEzQkLw26E0of6R6wIumekTziMw?startTime=1539176657000).
