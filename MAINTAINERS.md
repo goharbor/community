@@ -23,3 +23,4 @@ describes governance guidelines and maintainer responsibilities.
 | ---------- | --------- | ----------- |
 | Nathan Lowe | [nlowe](https://github.com/nlowe) | [Hyland Software](https://github.com/HylandSoftware) |
 | De Chen | [cd1989](https://github.com/cd1989) | [Caicloud](https://github.com/caicloud) |
+| Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
