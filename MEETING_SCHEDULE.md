@@ -6,9 +6,10 @@ We usually set up conference calls bi-weekly to listen to the voices from the Ha
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
-| 2019/01/23 | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
-| 2019/01/09 | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
-| **2018/12/26 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)**| [@steven-zou](https://github.com/steven-zou) & [@reasonerjt](https://github.com/reasonerjt) |||Release V1.8 introduction and discussion||
+| 2019/02/20 | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
+| 2019/01/23 | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
+|**2019/01/09 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)**|Host: [@wenkai yin](https://github.com/ywk253100) Speaker: [@steven-zou](https://github.com/steven-zou)|||1.harbor+dragonfly introduction and demo 2. release progress updates||
+| 2018/12/26 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)| [@steven-zou](https://github.com/steven-zou) & [@reasonerjt](https://github.com/reasonerjt) |12|[Recording](https://zoom.us/recording/share/t_F2PdraDA7h8Lbmr-7TIV1gXMWQFYsShGnYfNY7VFqwIumekTziMw?startTime=1545829608000)|[[Meeting Minutes]](https://github.com/goharbor/community/blob/master/conf-calls/2018-12-26/minutes.md)Release V1.8 introduction and discussion||
 |2018/11/28 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)| [@wang yan](https://github.com/steven-zou) |19|[Recording](https://zoom.us/recording/share/VobuBSKfKeeHMyzMOQVuPX6ifFiTso3CNfuJTLgcxQWwIumekTziMw?startTime=1543410923000)|Introduction & Demo: Tencent Cloud Native Platform (TCNPlatform) ||
 |2018/11/07 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)|[@wang yan](https://github.com/wy65701436) & [@wenkai yin](https://github.com/ywk253100)|25|[Recording](https://zoom.us/recording/share/nL5GinGFYADmE7BpK0WcGt3vk5IizKPvHwJPuYuP7OqwIumekTziMw?startTime=1541595468000)|Harbor HA and retag/build history features demo|
 | 2018/10/24 06:00-07:00 AM(PST)/21:00-22:00 (Beijing time) | [@wang yan](https://github.com/wy65701436) | 25 | [Recording](https://zoom.us/recording/share/T4uMWlhuQp4Hzlp-gX6ILpBlD7XexDkOZ40UWD6urd2wIumekTziMw?startTime=1540386198000)|[[Meeting Minutes]](https://github.com/goharbor/community/blob/master/conf-calls/2018-10-24/minutes.md) Online GC demo||
