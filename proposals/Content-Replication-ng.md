@@ -28,7 +28,7 @@ However, the current solution provides very limited capabilities. Many replicati
 
 ## Proposal
 
-### Use Cases
+### Use Cases
 
 The replication NG should cover the following use cases:
 
@@ -49,7 +49,7 @@ To support the [use cases](#use-cases) described in the above section, first thi
 
 Considering kinds of factors and requirements and try best to use a unified flow to drive the different scenarios, we propose the following process flow.
 
-![replication flow](images/replica_flow.png)
+![replication flow](images/content-replication-ng/replica_flow.png)
 
 The whole flow will be covered by two processes: the core service and job service. The control plane laid in core service mainly take charge of accessing, scheduling and controlling. The content data transferring will be occurred in job service side. 
 
@@ -86,7 +86,7 @@ The resource mentioned in this proposal refer to container image and Helm Chart.
 
 Here is the over all architecture for the replication NG service.
 
-![replication NG architecture](images/replica_ng_arch.png)
+![replication NG architecture](images/content-replication-ng/replica_ng_arch.png)
 
 #### Restful API
 
@@ -168,11 +168,12 @@ The replication restful APIs are supported by three parts:
   * 2. Each replication running based on the policy will be recorded as an `Execution`.
   * 3. Move the DELETE replication execution out.
   */
-  POST "/api/replication/executions"                 // Start/trigger a replication execution
-  GET  "/api/replication/executions"                 // List all the summaries of replication executions
-  GET  "/api/replication/executions/:id([0-9]+)"     // Get the specified execution detail
-  GET  "/api/replication/executions/:id([0-9]+)/log" // Get the log data of the specified replication execution
-  PUT  "/api/replication/executions/:id([0-9]+)"     // Operate (stop) the replication execution
+  POST "/api/replication/executions"                  // Start/trigger a replication execution
+  GET  "/api/replication/executions"                  // List all the summaries of replication executions
+  GET  "/api/replication/executions/:id([0-9]+)"      // Get the specified execution detail
+  GET  "/api/replication/executions/:id([0-9]+)/logs" // Get all the task logs of the specified execution
+  GET  "/api/replication/executions/:id([0-9]+)/logs/:id([0-9]+)"  // Get the log text data of the specified replication execution log
+  PUT  "/api/replication/executions/:id([0-9]+)"      // Operate (stop) the replication execution
   ```
 
 * API for registry adapter management
@@ -219,6 +220,8 @@ type Resource struct{
     Metadata     *Metadata              `json:"metadata"`
     Registry     *Registry              `json:"registry"`
     ExtendedInfo map[string]interface{} `json:"extended_info"`
+    // Indicate if the resource is a deleted resource
+    Deleted      bool                   `json:"deleted"`
 }
 
 // Metadata of resource
@@ -301,17 +304,23 @@ type Policy struct {
     CreationTime   time.Time  `json:"creation_time"`
     UpdateTime     time.Time  `json:"update_time"`
     // source
-    SrcRegistry    int64      `json:"src_registry"`
+    SrcRegistryID  int64      `json:"src_registry_id"`
     SrcNamespaces  []string   `json:"src_namespaces"`
     // destination
-    DestRegistry   int64      `json:"dest_registry"`
-    DestNamespaces []string   `json:"dest_namespaces"`
+    DestRegistryID int64      `json:"dest_registry_id"`
+    // Only support two dest namespace modes:
+    // Put all the src resources to the one single dest namespace
+    // or keep namespaces same with the source ones (under this case,
+    // the DestNamespace should be set to empty)
+    DestNamespace string   `json:"dest_namespace"`
     // Filters
     Filters        []*Filter  `json:"filters"`
     // Triggers
     Triggers       []*Trigger `json:"triggers"`
     // Settings
     Deletion       bool       `json:"deletion"`
+    // If override the image tag
+    Override       bool       `json:"override"`
     // Operations
     Enabled        bool       `json:"enabled"`
 }
@@ -396,7 +405,7 @@ type RegistryType string
 // DAO layer is not considered here
 type Registry struct {
     // UUID of the registry endpoint
-    ID string              `json:"id"`
+    ID int64               `json:"id"`
     // Name of the registry endpoint
     Name string            `json:"name"`
     // One sentence to describe the registry
@@ -408,7 +417,7 @@ type Registry struct {
     // The healthy status of the registry
     Status string          `json:"status"`
     // If it is a insecure registry
-    Insecure bool          `json:"insecure"`
+    SkipVerifyCert bool    `json:"insecure"`
     // Credential to access the registry
     Credential *Credential `json:"credential"`
 }
@@ -447,7 +456,7 @@ The `Scheduler` schedule jobs to do the real data transferring of the resource c
 // Schedule tasks to transfer resource data
 type Scheduler interface {
     // Schedule tasks
-    Schedule(resources []*Resource) error
+    Schedule(srcResources []*Resource, destResources []*Resource) error
 }
 
 ```
@@ -474,7 +483,7 @@ The main work of `Replication Manager` is maintaining and managing the replicati
 ```go
 // Result summary of the once replication execution.
 type Execution struct{
-    ID         string      `json:"id"`
+    ID         int64       `json:"id"`
     PolicyID   int64       `json:"policy_id"`
     Total      int         `json:"total"`
     Failed     int         `json:"failed"`
@@ -482,16 +491,15 @@ type Execution struct{
     InProgress int         `json:"in_progress"`
     StartTime  time.Time   `json:"start_time"`
     EndTime    time.Time   `json:"end_time"`
-    // For additional info
-    Duration   int         `json:"duration"`
     Logs       []*TaskLog  `json:"logs"`
 }
 
 // The task log
 type TaskLog struct {
     // The task ID
-    ID           string    `json:"id"`
-    ResourceName string    `json:"resource_name"`
+    ID           int64     `json:"id"`
+    SrcResource  string    `json:"src_resource"`
+    DestResource string    `json:"dest_resource"`
     StartTime    time.Time `json:"start_time"`
     EndTime      time.Time `json:"end_time"`
     Status       string    `json:"status"`
@@ -545,8 +553,10 @@ type Adapter interface {
     Info()*AdapterInfo
     // Get all the available namespaces under the specified registry with the
     // provided credential/token.
+    // Query parameters can be supported by this method.
     GetNamespaces()([]Namespace, error)
     // Create a new namespace
+    // This method should guarantee it's idempotent
     CreateNamespace(ns Namespace) error
     // Fetch the content resource under the namespace by filters
     // SUGGESTION: Adapter provider can do their own filter based on the filter pattern
@@ -582,14 +592,51 @@ var ResourceHandlerRegistry = map[ResourceType]ResourceHandlerFactory{}
 
 This transfer job is simple, get the corresponding transfer handler to complete the data transfer process based on the input resource.
 
+### Policy Scope
+
+The replication policy may be created in different scopes:
+
+* **system**: The policy is created by a user with `system admin` role and managed at the system level.
+* **namespace**: The policy is created by the user with `namepsace admin` (`project admin`) or `system admin`role and managed under the specified namespace (project).
+
+The system scope policies will shown in the referred projects with read-only mode. And the project scope policy can not conflict/overhead with the system policy. e.g:
+
+> system policy 1: replicate images from ns1 and ns2 to the destination registry ns3
+> namespace policy 2 under ns2: replicate images from ns2 to the destination registry ns4
+> The creation of `policy 2` will be rejected.
+
+### UI Design
+
+Provide some draft UI mockup design of the replication NG as references to the UX designer. Please pay attention that all the mockup described here are not the finalized version. The final UI design should be confirmed after the review of the UI designer/expert of community.
+
+#### Registry Management
+
+First, the creation/updating wizard of registry management should be enhanced. See the following mockup.
+
+![registry wizard](images/content-replication-ng/registry_wizard.png)
+
+Second, the registry list should also be enhanced to provide more necessary info. See mockup below.
+
+![registry list](images/content-replication-ng/registry_list.png)
+
+#### Replication Policy and Execution
+
+The policy wizard need to be enhanced to support the new complicated replication policy. The picture attached below show the mockup of policy wizard.
+
+![policy wizard](images/content-replication-ng/replication_policy.png)
+
+As we define `execution` to aggregate all the executing results of once replication, the job list need to change to be execution list view. See the picture below.
+
+![execution list](images/content-replication-ng/execution_list.png)
+
+Clicking the id link can open the detail page to display more rich info.
+
+![execution](images/content-replication-ng/replication_execution.png)
+
 ## Non-Goals
 
 * This proposal only covers the replication base framework design, not include the designs of each concrete adapters for kinds of registries.
 * This proposal only provides the main content of the replication NG, not contain all the details of the service/components. The missing detail can be provided in the concrete implementation code.
-
-## Rationale
-
-[None]
 
 ## Compatibility
 
