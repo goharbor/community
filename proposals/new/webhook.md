@@ -21,7 +21,7 @@ This feature should support:
 1. user could define his own trigger policy, and this policy should  support regular expression of repo name or tag, or the list of tag.
 2. and the event define should be extensible. pushing image event is in  need for CICD. but other event should be implemented easily including  finishing scanning image, finishing replicate, delete image and so on.
 3. the logs of event triggered should be searched easily, these logs  should incluing the http request and http response from remote endpoint.
-4. the hook request should be resend after failed.
+4. the hook request should be resend after failed. Now the retry time is 3 only when error is a kind of network error.
 
 ## Rationale
 
@@ -52,30 +52,30 @@ Hook message will be:
 ```go
 // Image event 
 {
-    "eventType": "PUSH"
+    "event_type": "pushImage"
     "events": [
         {
             "project": "prj",
-            "repoName": "repo1",
+            "repo_name": "repo1",
             "tag": "latest",
-            "fullName": "prj/repo1",
-            "triggerTime": 158322233213,
-            "imageId": "9e2c9d5f44efbb6ee83aecd17a120c513047d289d142ec5738c9f02f9b24ad07",
-            "projectType": "PRIVATE"
+            "full_name": "prj/repo1",
+            "trigger_time": 158322233213,
+            "image_id": "9e2c9d5f44efbb6ee83aecd17a120c513047d289d142ec5738c9f02f9b24ad07",
+            "project_type": "Private"
         }
     ]
 }
 
 // Helm chart event
 {
-    "eventType": "UPLOAD"
+    "event_type": "uploadChart"
     "events": [
         {
             "project": "prj",
-            "chartName": "chart1",
+            "chart_name": "chart1",
             "version": "v14.0.0",
-            "triggerTime": 158322233213,
-            "projectType": "PRIVATE"
+            "trigger_time": 158322233213,
+            "project_type": "Private"
         }
     ]
 }
@@ -86,42 +86,61 @@ Hook message will be:
 Webhook target is a callback URL which may contain an Authorization token as a parameter.
 
 ```go
-// HookTarget is a web address which will receive a POST request when hook is triggered
-// It should be acknowledged with a status code 200 
-// or hook will be resent until reaching the max times
-type HookTarget string
-
-// HookType is the type of the webhook
-type HookType string
-
-// WebHookPolicy defines the structure of a webhook policy.
-type WebHookPolicy struct {
+// WebhookPolicy defines the structure of a webhook policy. This struct is used internally.
+// Could transfer from dao model or transfer to api model.
+type WebhookPolicy struct {
 	ID                int64 // UUID of the policy
 	Name              string
 	Description       string
-	Filters           []Filter
-	HookTypes         []HookType // The subscribed event types
-	ProjectIDs        []int64  // Projects attached to this policy
-	HookTarget        HookTarget // target that the webhook event will send to
+	Filters           []models.Filter
+	ProjectID         int64  // Project attached to this policy
+	Target            string
+	HookTypes         []string
 	CreationTime      time.Time
 	UpdateTime        time.Time
+	Enabled           bool
 }
 ```
 
+#### job design
 
-
-#### job priority
-Comparing to other kinds of job  webhook job requires real-time. Jobs should be executed as soon as events triggered.  So job priority is required. An attribute named 'prior' will be added to JobMetadata  struct. 
+Jobs will be triggered when an related event happens. And job will be stored in DB and sent to JobService to  execute.
 
 ```go
-// JobMetadata stores the metadata of job.
-type JobMetadata struct {
-   JobKind       string `json:"kind"`
-   Prior         int    `json:"prior"`
-   ScheduleDelay uint64 `json:"schedule_delay,omitempty"`
-   Cron          string `json:"cron_spec,omitempty"`
-   IsUnique      bool   `json:"unique"`
+// WebhookJob is the model for a webhook job, which is the execution unit on job service,
+// currently it is used to trigger a hook to a remote endpoint by a http request
+type WebhookJob struct {
+   ID           int64     `orm:"pk;auto;column(id)" json:"id"`
+   Status       string    `orm:"column(status)" json:"status"`
+   PolicyID     int64     `orm:"column(policy_id)" json:"policy_id"`
+   HookType     string    `orm:"column(hook_type)" json:"hook_type"`
+   JobDetail    string    `orm:"column(job_detail)" json:"job_detail"`
+   UUID         string    `orm:"column(job_uuid)" json:"-"`
+   CreationTime time.Time `orm:"column(creation_time);auto_now_add" json:"creation_time"`
+   UpdateTime   time.Time `orm:"column(update_time);auto_now" json:"update_time"`
 }
+```
+
+#### job priority
+Comparing to other kinds of job  webhook job requires real-time. Jobs should be executed as soon as events triggered.  So job priority is required. An function named 'Priority' will be added to Job.Interface.  Job queue's priority will be set when registering the job handler. Now webhook jobs's priority will be set to JobPriorityHigh while others are JobPriorityNormal.
+
+```go
+// Interface defines the related injection and run entry methods.
+type Interface interface {
+    ...
+    // Declare the priority of job queue.(1-100000)
+	// See https://github.com/gocraft/work#scheduling-algorithm
+	//
+	// Return:
+	// uint: the priority
+	Priority() uint
+    ...
+}
+
+// Job Priority define (1-100000).see https://github.com/gocraft/work#scheduling-algorithm
+	JobPriorityHigh = 50000
+	JobPriorityNormal = 500
+	JobPriorityLow = 5
 ```
 
 
