@@ -33,6 +33,7 @@ This feature will make harbor support CICD flow， and one could build a "clo
 
 I will work on this feature and raise a PR.
 
+
 The schedule is about coding finished in this month and PR will be raised before the middle of February.
 
 the work flow should:
@@ -48,8 +49,10 @@ the work flow should:
 
 Hook message will be: 
 
-```
- {
+```go
+// Image event 
+{
+    "eventType": "PUSH"
     "events": [
         {
             "project": "prj",
@@ -58,8 +61,21 @@ Hook message will be:
             "fullName": "prj/repo1",
             "triggerTime": 158322233213,
             "imageId": "9e2c9d5f44efbb6ee83aecd17a120c513047d289d142ec5738c9f02f9b24ad07",
-            "projectType": "PRIVATE",
-            "eventType": "PUSH"
+            "projectType": "PRIVATE"
+        }
+    ]
+}
+
+// Helm chart event
+{
+    "eventType": "UPLOAD"
+    "events": [
+        {
+            "project": "prj",
+            "chartName": "chart1",
+            "version": "v14.0.0",
+            "triggerTime": 158322233213,
+            "projectType": "PRIVATE"
         }
     ]
 }
