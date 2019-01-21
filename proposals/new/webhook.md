@@ -85,7 +85,7 @@ Hook message will be:
 
 Webhook target is a callback URL which may contain an Authorization token as a parameter.
 
-```go
+​```go
 // HookTarget is a web address which will receive a POST request when hook is triggered
 // It should be acknowledged with a status code 200 
 // or hook will be resent until reaching the max times
