@@ -14,3 +14,5 @@ The Harbor Project holds bi-weekly community calls. To join or watch previous me
   * new: normal proposal pool, contains the proposals which are neither `completed` nor `failed`. Use the [Proposal Template](./proposals/TEMPLATE.md) as a starting point.
   * completed: put the proposals whose implementations are already delivered in a release into this pool.
   * failed: archive the proposals which are never successfully implemented after a while into this pool.
+* **workgroups**: keeps the related materials for the workgroups which always are organized by the interested parties who have the similar focus on some topics.
+  * **wg-replication**: the workgroup committed to improve and build the replication feature to support more valuable scenarios.
