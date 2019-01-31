@@ -1,7 +1,7 @@
 # Replication WG meeting minutes
 
 Date: 2019/01/22
-Attendees: Wenkai yin@VMware, Fanjian kong@Qihoo360, Lei Yuan@Huawei, Steven Z@VMware
+Attendees: Wenkai yin@VMware, Fanjian kong@Qihoo360, Lei Yuan@Huawei, Steven Z@VMware, Mingming Pei@Netease
 
 ## Updates
 

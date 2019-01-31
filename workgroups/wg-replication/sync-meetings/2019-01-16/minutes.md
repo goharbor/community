@@ -1,7 +1,7 @@
 # Replication WG meeting minutes
 
 Date: 2019/01/16
-Attendees: Wenkai yin@VMware, Lei Yuan@Huawei, Steven Z@VMware, De Chen@Caicloud
+Attendees: Wenkai yin@VMware, Lei Yuan@Huawei, Steven Z@VMware, De Chen@Caicloud, Mingming Pei@Netease
 
 ## Updates
 
