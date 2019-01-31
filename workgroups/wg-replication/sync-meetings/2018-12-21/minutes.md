@@ -1,7 +1,7 @@
 # Replication WG meeting minutes
 
 Date: 2018/12/21
-Attendees: Wenkai yin@VMware, Fanjian kong@Qihoo360, Lei Yuan@Huawei, Steven Z@VMware, De Chen@Caicloud
+Attendees: Wenkai yin@VMware, Fanjian kong@Qihoo360, Lei Yuan@Huawei, Steven Z@VMware, De Chen@Caicloud, Mingming Pei@Netease
 
 ## Updates
 

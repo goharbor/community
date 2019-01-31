@@ -6,6 +6,14 @@ A place for Harbor community related material.
 
 The Harbor Project holds bi-weekly community calls. To join or watch previous meeting notes and recordings, please see [meeting schedule](MEETING_SCHEDULE.md).
 
+## Workgroups
+
+Workgroup is a virtual team of aggregating the efforts of all the interested parties who have same focus on the specific topic and are willing to do significant contributions to that topic.
+
+|  Group  |  Missions  | Coordinator |  Members |
+|---------|------------|-------------|----------|
+| [Replication](./workgroups/wg-replication/README.md) |Deliver a new replication service (next generation replication) to support the kinds of content replication requirements from the Harbor community|Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))|Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) / Wenkai Yin@VMware ([ywk253100](https://github.com/ywk253100)) / De Chen@CaiCloud ([cd1989](https://github.com/cd1989)) / Fanjian Kong@Qihoo360 ([kofj](https://github.com/kofj)) / Mingming Pei@Netease ([mmpei](https://github.com/mmpei) / Lei Yuan@HuaWei ([yuanshuhan](https://github.com/yuanshuhan))|
+
 ## Structure
 
 * **presentations**: keeps the related slides about Harbor
