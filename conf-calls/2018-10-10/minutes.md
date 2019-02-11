@@ -17,8 +17,8 @@ More details, please check the [slides](./community_call_2018-10-10.pptx).
     * `HA by Harbor Helm Chart` is also almost ready, will be published after verification testing done.
     * `Helm Chart repository enhancements` left UI work development
     * Rel **V1.6.1** is on the way, which includes a critical fix to the Clair issue (Bump Clair to V2.0.6).
-* Then, **_Henry Zhang_** introduced the Harbor sessions, activities during the KubeCon Shanghai conference.
-* Last, **_James_** gave the community an introduction of the Harbor governance model. Talked about the key points of the governance model. Learn more details, please refer [james's slides](harbor-community-call-10oct2018.pptx).
+* Then, **_Henry Zhang_** introduced the Harbor sessions and activities during the KubeCon Shanghai conference.
+* Last, **_James Zabala_** gave the community an introduction of the Harbor governance model. Talked about the key points of the governance model. To learn more details, please refer to [james's slides](harbor-community-call-10oct2018.pptx).
 
 ## Chat messages
 
@@ -58,4 +58,4 @@ and https://github.com/goharbor/harbor/issues/327
 
 ## Recording link
 
-For meeting recording link, please check [here]https://zoom.us/recording/share/GbVH9evjq4GDXGN9mGC0ZFYxPeINEzQkLw26E0of6R6wIumekTziMw?startTime=1539176657000.
+For meeting recording link, please check [here](https://zoom.us/recording/share/GbVH9evjq4GDXGN9mGC0ZFYxPeINEzQkLw26E0of6R6wIumekTziMw?startTime=1539176657000).
