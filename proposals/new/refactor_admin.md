@@ -8,7 +8,7 @@ Discussion:
 
 ## Abstract
 
-Admin server is component used to manage the configuration for harbor. this proposal is going to provide a simple and mantainable configuration management.
+Admin server is component used to manage the configuration for harbor. this proposal is going to provide a simple and maintainable configuration management.
 
 ## Background
 
@@ -26,9 +26,9 @@ Because refactor adminserver involve lots of code change, in order to We are goi
 
 1. Remove adminserver container, all configuration related API is handled by core api. also include migrate some other admin server related API to core api.
 
-2. Seperate user settings from harbor.cfg, and keep system settings in harbor.cfg, and system setting is set to env and can not change. user setting are read/write by core api, system settings is read only.
+2. Separate user settings from harbor.cfg, and keep system settings in harbor.cfg, and system setting is set to env and can not change. user setting are read/write by core api, system settings is read only.
 
-We are going to seperate the configuration in this way.
+We are going to separate the configuration in this way.
 
 Items will kept in harbor.cfg | Configure item | System Setting | User Setting 
 ------------|------------|------------|------------
@@ -134,7 +134,7 @@ type Item struct {
 	Type string
 	//The validation function for this field.
 	Validator ValidateFunc
-	//Is this settign can be modified after configure
+	//Is this setting can be modified after configure
 	Editable bool
 	//Reloadable - reload config from env after restart
 	Reloadable bool
@@ -244,7 +244,7 @@ Steps to onboard a configuration item.
 
 1. Remove adminserver container.
 
-2. Seperate user settings from harbor.cfg
+2. Separate user settings from harbor.cfg
 
 3. Remove adminserver related build script, docker file and code.
 

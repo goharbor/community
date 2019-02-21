@@ -1,11 +1,11 @@
 ## Description: 
-currently, harbor provide limitted schedule jobs for features: Garbage collection, vulnerbility Scan job and 
+currently, harbor provide limited schedule jobs for features: Garbage collection, vulnerability Scan job and 
 replication schedully. For these 3 types of schedule jobs. Harbor provide limited type of selections. Such like: Weekly  and daily. 
-However, some users propose harbor to provide more flexsible options. The most efficient way is allow users to customize the schedule
+However, some users propose harbor to provide more flexible options. The most efficient way is allow users to customize the schedule
 tasks. 
 This proposal provide users to customize the schedule use CRON format. 
 
-From technical perspect of view. The backend schedule api need to change to use CRON as the parameter. 
+From technical perspective of view. The backend schedule api need to change to use CRON as the parameter. 
 APIs may be impacted are as follow:
 
 * /api/system/gc/schedule

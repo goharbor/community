@@ -8,7 +8,7 @@ Robot account is a machine user that have the permission to access harbor resour
 
 ## Motivation
 
-There are a lot of requirements from community would like to have the ability to work harbor with robot account. But, Harbor only has the capability of using the registered user to access resources, and do not support user to pull image with robot acccout.
+There are a lot of requirements from community would like to have the ability to work harbor with robot account. But, Harbor only has the capability of using the registered user to access resources, and do not support user to pull image with robot account.
 
 ## User Stories
 
@@ -243,7 +243,7 @@ type ResourceActions struct {
 
 ```
 
-##### Scpoe -- Implement a new security context for robot account
+##### Scope -- Implement a new security context for robot account
 
 In the implementation of robot context, the func of Can could validate the token scope, and block all the request to harbor with forbidden. 
 

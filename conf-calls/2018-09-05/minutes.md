@@ -28,13 +28,13 @@ More details, please check the [slides](./community_call_2018-09-05.pptx).
   - We’ll show up at CEUC@HangZhou at 09/16/2018
 
 * Discuss some technical proposals
-  - Proposal of removing the top repositories list from the login page is discused, voted and approved.
+  - Proposal of removing the top repositories list from the login page is discussed, voted and approved.
   - No obvious upset on the action of migrating multiple different databases to the unified PostgreSQL in V1.6.0.
     * In future, maybe we can define a storage specification and interfaces to let the community to implement drivers to support other databases if they like to.
   - De Chen from CaiCloud leading the discussion of the API of tagging a new image.
     * Vote to select the 2nd API pattern as the formal one.
 
-* Stone zhang from VMware Harbor team gave us a great demo about the LDAP group new feature whcih will be released in the V1.6.0.
+* Stone zhang from VMware Harbor team gave us a great demo about the LDAP group new feature which will be released in the V1.6.0.
 
 More details, please check the [slides](./community_call_2018-09-05.pptx).
 

@@ -343,14 +343,14 @@ func (ra *RepositoryAPI) Delete() {
 
 ### UI
 
-Core will provide a `GET` API `/api/users/current/permissions` to return all permissions for current authenticated user. These permissios will be used to check whether enable operations on portal.
+Core will provide a `GET` API `/api/users/current/permissions` to return all permissions for current authenticated user. These permissions will be used to check whether enable operations on portal.
 
 
 
 | Param    | Type    | Required | Description                                                  |
 | -------- | ------- | -------- | ------------------------------------------------------------ |
 | scope    | String  | Yes      | Get the permissions under the scope, eg,  for scope`/project/1` will get all permissions of the project 1 for current authenticated user |
-| relative | Boolean | No       | Returens whether resource in response is relative to the scope, eg for resource `/project/1/image` if `relative` is `true` then respone for it will be `image` |
+| relative | Boolean | No       | Returns whether resource in response is relative to the scope, eg for resource `/project/1/image` if `relative` is `true` then response for it will be `image` |
 
 Table 5. `/api/users/current/permissions` params
 
