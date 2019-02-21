@@ -110,7 +110,7 @@ status of the proposal:
 ## Lazy Consensus
 
 To maintain velocity in a project as busy as Harbor, the concept of [Lazy
-Consensus](http://en.osswiki.info/concepts/lazy_consensus) is practiced. Ideas
+Consensus](https://en.osswiki.info/concepts/lazy_consensus) is practiced. Ideas
 and / or proposals should be shared by maintainers (core or non-core) via
 GitHub with the appropriate maintainer groups (e.g.,
 `@goharbor/all-maintainers`) tagged. Out of respect for other contributors,
