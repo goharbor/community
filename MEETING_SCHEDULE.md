@@ -1,6 +1,6 @@
 # Community Meeting Schedule
 
-We usually set up conference calls bi-weekly to listen to the voices from the Harbor community and also collect related requirements/use cases from the community. Sometimes there might be adhoc weekly meetings by demand.
+We will have two standing bi-weekly Harbor community conference calls. One meeting will cater to the Asia members (9pm UTC+8 Timezone), and a second meeting will cater to Europe and Americas members (8am Pacific Timezone). We will use these meetings to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meetings to your calendar.
 
 **Meeting link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
