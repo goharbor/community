@@ -1,6 +1,6 @@
 # Community Meeting Schedule
 
-We usually set up conference calls bi-weekly to listen to the voices from the Harbor community and also collect related requirements/use cases from the community. Sometimes there might be adhoc weekly meetings by demand.
+We will have two standing bi-weekly Harbor community conference calls. One meeting will cater to the Asia members (9pm UTC+8 Timezone), and a second meeting will cater to Europe and Americas members (8am Pacific Timezone). We will use these meetings to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meetings to your calendar.
 
 **Meeting link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
@@ -11,7 +11,7 @@ We usually set up conference calls bi-weekly to listen to the voices from the Ha
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
 | -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
 | -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
-| **US TimeZone: 2019/02/27 08:00-08:30 AM(PST)** | Host: [@michmike](https://github.com/michmike) |||1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8| |
+| **US TimeZone: 2019/02/27 08:00-08:30 AM(PST)** | Host: [@michmike](https://github.com/michmike) ||[Recording](https://zoom.us/recording/share/kv1pGufDoe0k3Am2Wad5CQZJUWRJs84bXbkb8SpVXruwIumekTziMw)|1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8| |
 | **CHINA TimeZone: 2019/02/27 21:00-21:30(UTC+8)** | Host: [@wang yan](https://github.com/wy65701436) |22|[Recording](https://zoom.us/recording/share/r9yAq3gKQ4z6zhHtORTCCHu3tiwGAFACd060ijRQIm-wIumekTziMw)|1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8 3. Events update||
 | 2019/01/23 06:00-06:30 AM(PST)/21:00-21:30 (UTC+8)| Host: [@steven-zou]([@steven-zou](https://github.com/steven-zou)) |18|[Recording](https://zoom.us/recording/share/DAo6M0Gv9h7KRlRCmAEH7lj_tqQQNHB_ZAq2KQALIDqwIumekTziMw?startTime=1548250019000)|Share some DEV progress/updates/demos of the features included in the release V1.8 by the feature owners||
 |2019/01/09 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)|Host: [@wenkai yin](https://github.com/ywk253100) Speaker: [@steven-zou](https://github.com/steven-zou)|30|[Recording](https://zoom.us/recording/share/agWHQkgV7G4H1G722sQdvbN6WrcQTaoc9FsYiUIzNH6wIumekTziMw?startTime=1547038592000)|[[Meeting Minutes]](conf-calls/2019-01-09/minutes.md)1.harbor+dragonfly introduction and demo 2. release progress updates||
