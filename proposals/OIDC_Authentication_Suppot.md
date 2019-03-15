@@ -28,8 +28,10 @@ user registration will be disabled.
 
 The attributes of OIDC provider:
 
-* **Name**: This is the name of the OIDC provider.  It has to be https protocol and is a required attribute.
-* **Endpoint URL**: The Endpoint URL of the OIDC provider.  It is a required attribute.
+* **Name**: This is the name of the OIDC provider.   
+* **Endpoint URL**: The Endpoint URL of the OIDC provider.  It has to be https protocol and is a required attribute. 
+* **Scope**: By default, the value will be `openid, email, profile`.  This attribute may be hidden from the UI to avoid 
+user error.
 * **Client ID**: The registered Client ID for accessing the OIDC provider.  It is a required attribute.
 * **Client Secret**: The secret of the registered client for accessing the OIDC provider, it is an optional attribute.
 * **Verify Certificate**: This is a switch so user can turn it off to false to skip the certificate verification, in case the 
@@ -43,7 +45,6 @@ client ID and Secret.
 work.
 * Only one OIDC endpoint will be supported:  There is some limitation in Harbor's configuration management that there is
 no good way to support list as a configuration group.
-* Hard coded scope: We will not allow admin to customize the scope, it will be hard-coded to `openid` 
 
 * #### User login to UI portal via SSO with OIDC provider
 
@@ -65,7 +66,7 @@ is onboarded.
 
 * #### User onboarded via the OIDC authentication flow accessing the API.
 
-After a user is noboarded via OIDC authentication flow and assigned proper permissions, he should be able to trigger API 
+After a user is onboarded via OIDC authentication flow and assigned proper permissions, he should be able to trigger API 
 of Harbor using his identity.
 When a request is sent to trigger Harbor's API, the code in Harbor should be able to validate a OIDC token based on the 
 setting of OIDC provider, and map to a user in DB, such that the permission can be checked according to the user.  This 
@@ -91,7 +92,7 @@ that user will have to login to Harbor again to get a new token.
 
 ## Non-Goals
 
-* Integration with none-OIDC identity managers such as Keystone
+* Integration with non-OIDC identity managers such as Keystone
 * Support multiple identity managers, such as OIDC/LDAP, OIDC/DB at the same time.
 
 ## Compatibility
