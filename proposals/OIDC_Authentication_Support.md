@@ -37,9 +37,6 @@ user error.
 * **Verify Certificate**: This is a switch so user can turn it off to false to skip the certificate verification, in case the 
 OIDC provider service is running with self-signed certificate.
 
-After setting the values the Administrator should be able to test the connection to the OIDC provider and verify the 
-client ID and Secret.
-
 **There will be some limitations:**
 * Minimized attributes: Some OIDC providers may require additional attributes in configuration, for them the flow may not 
 work.
@@ -81,14 +78,26 @@ After a user is onboarded and assigned proper permissions, he should be able to 
 from/to Harbor.
 There's a gap in this scenario given the fact that the CLI tools does not support redirection, that user cannot authenticate 
 against the external OIDC provider.  To avoid adding extra dependencies to user, we don't want to create another CLI tool.
-There are some possible solutions as follow:
 
-1. Provide a _CLI password_ mechanism.  After a user is onboarded via OIDC, he has to create a CLI password and use this 
-password and his username to authenticate while using the docker/helm CLI.  Some more details in the proposal:
-https://github.com/goharbor/community/pull/63
-2. Use OIDC token as password, or expose some random string as "secret" to map to the OIDC token, so the OIDC token is verified
-in the authentication process when using CLI.  The problem with this approach is that OIDC token normally expires in hours, after 
-that user will have to login to Harbor again to get a new token.  
+To solve this problem, we propose to introduce `cli secret` to OIDC users, when user is onboarded via OIDC, the secret will 
+be generated, mapped to the user and associated to the `id_token` and `refresh_token` returned by the OIDC provider.  This 
+secret will be obtainable from UI, and user can use it as password in CLI commands such as `docker login` and `helm fetch`,
+the backend will match the username and secret, and verify the `id_token`, if the `id_token` expired, it will use `refresh_token`
+to refresh tokens against OIDC provider.  Such that in the CLI authentication flow the credentials are verified against the OIDC 
+provider.  When user logs out from Harbor the secret will not be destroyed, so the verification flow will still work.
+
+**NOTE:**
+In the initial implementation in v1.8.0, some details regarding the `cli secret`:
+1. There will be one secret mapped to one user, it's generated automaticly once user is onboarded, providing API to manage
+secret is not considered P0 in the timeframe.
+2. We don't wanna persist user's token.  The secret will be stored in memory, so when Harbor is restarted the secret is gone,
+user will need to re-login to get this secret.
+3. With certain OIDC providers and settings combination, it's not possible to get a `refresh_token`, for example 
+https://github.com/dexidp/dex/blob/master/Documentation/connectors/saml.md#caveats
+In this scenario, user will have to frequently login to UI to force the secret to refresh.
+4. Due to limitation in `docker` CLI, it does not have capability to render customized error message, so if errors happen
+while refreshing the token, there may not be a good way to inform the user about the detail of the error, user will have to 
+check the log for details.
 
 ## Non-Goals
 
@@ -98,14 +107,17 @@ that user will have to login to Harbor again to get a new token.
 ## Compatibility
 
 For verification, we'll need to ensure it works with the following OIDC providers:
-* Google, [dex](https://github.com/dexidp/dex) -- P0
-* [Keycloak](https://github.com/keycloak/keycloak) -- P1
+* [dex](https://github.com/dexidp/dex) -- P0
+* [Keycloak](https://github.com/keycloak/keycloak), Google -- P1
 
 ## Implementation
 1. Create configuration items for OIDC provider configuration, and update UI to enable the configuration via Portal.
 2. Update `systeminfo` API so UI can render a SSO login link in the login page.
-3. Create `controller` to handle the redirect from OIDC provider, and finish the oAuth flow.
+3. Create `controller` to handle the redirect from OIDC provider, and finish the oAuth flow.  This `controller` should 
+support the `state` query string to prevent CSRF.
 4. Create table for `sub` and `username` mapping, and support the onboard flow (including UI)
 5. Add filter to handle OIDC token so the request carrying an OIDC token can be verified and mapped to local user record,
 such that `local security context` can be used for permission checking.
+6. Create the structure to map `cli secret` to `id_token` and `refresh_token`, and create filter to handle the verification of 
+cli secret based on the setting of OIDC.
 
