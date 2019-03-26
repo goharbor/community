@@ -1,14 +1,14 @@
 # Release plan
 
-Project: **Harbor**
-Feature plan for version: **1.9.0**
-Draft target release date: _September_, 2019
-Plan opening cycle: _27/03/2019 - 26/05/2019_
+* Project: **Harbor**
+* Feature plan for version: **1.9.0**
+* Draft target release date: _September_, 2019
+* Plan opening cycle: _27/03/2019 - 26/05/2019_
 
 ## Proposals
 
 | Serial ID |     Feature    | Issue link | Proposal | Dev Contributors |
-|-----------|----------------|------------|----------|------------------|--------|
+|-----------|----------------|------------|----------|------------------|
 |    0      | Sample Feature | [sample](https://) | N/A | [Steven Z](https://github.com/steven-zou) |
 
 **NOTES:**
