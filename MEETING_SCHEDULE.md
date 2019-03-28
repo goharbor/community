@@ -12,7 +12,7 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 | -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
 | -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
 | 2019/03/27 | Host: @michmike |||v1.9 proposal collection & introduction of proposal submission process ||
-| 2019/03/27 | Host: @renmaosheng | 13 ||v1.9 proposal collection & introduction of proposal submission process ||
+| 2019/03/27 | Host: @renmaosheng | 13 |[Recording](https://zoom.us/recording/share/q3XXCv2VuPhmiyH8-sX2KVHWT4TmuaG3uhqE9cFCZAuwIumekTziMw)|v1.9 proposal collection & introduction of proposal submission process ||
 | 2019/03/13 | Host: @michmike ||[Recording](https://zoom.us/recording/share/7aELbP8mDdRxOMnsH8BEKuauQx8XE_5iiUyiZOjD8KmwIumekTziMw)|Prepare script updates, Survey, 2 new maintainers, Replication Updates||
 | 2019/03/13 | Host: Mia |22||Prepare script updates, Survey, 2 new maintainers, Replication Updates||
 | US TimeZone: 2019/02/27 08:00-08:30 AM(PST) | Host: [@michmike](https://github.com/michmike) ||[Recording](https://zoom.us/recording/share/kv1pGufDoe0k3Am2Wad5CQZJUWRJs84bXbkb8SpVXruwIumekTziMw)|1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8| |
