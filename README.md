@@ -14,6 +14,10 @@ Workgroup is a virtual team of aggregating the efforts of all the interested par
 |---------|------------|-------------|----------|
 | [Replication](./workgroups/wg-replication/README.md) |Deliver a new replication service (next generation replication) to support the kinds of content replication requirements from the Harbor community|Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))|Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) / Wenkai Yin@VMware ([ywk253100](https://github.com/ywk253100)) / De Chen@CaiCloud ([cd1989](https://github.com/cd1989)) / Fanjian Kong@Qihoo360 ([kofj](https://github.com/kofj)) / Mingming Pei@Netease ([mmpei](https://github.com/mmpei) / Lei Yuan@HuaWei ([yuanshuhan](https://github.com/yuanshuhan))|
 
+## Release Plans
+
+* [Release 1.9.0](./release-plans/1.9.0/release-plan-V1.9.0.md)
+
 ## Structure
 
 * **presentations**: keeps the related slides about Harbor
@@ -24,3 +28,4 @@ Workgroup is a virtual team of aggregating the efforts of all the interested par
   * failed: archive the proposals which are never successfully implemented after a while into this pool.
 * **workgroups**: keeps the related materials for the workgroups which always are organized by the interested parties who have the similar focus on some topics.
   * **wg-replication**: the workgroup committed to improve and build the replication feature to support more valuable scenarios.
+* **release-plans**: keeps the release plans of Harbor project
