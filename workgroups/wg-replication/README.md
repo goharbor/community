@@ -28,6 +28,11 @@ The workgroup will sync DEV status and discuss issues every week. You can check 
 
 | Meeting Date |    Attendees    |    Minutes                                       |
 |--------------|-----------------|--------------------------------------------------|
+| 09/04/2019   | All             | [minutes](sync-meetings/2019-04-09/minutes.md)   |
+| 03/04/2019   | All             | [minutes](sync-meetings/2019-04-03/minutes.md)   |
+| 28/03/2019   | All             | [minutes](sync-meetings/2019-03-28/minutes.md)   |
+| 06/03/2019   | All             | [minutes](sync-meetings/2019-03-06/minutes.md)   |
+| 26/02/2019   | All             | [minutes](sync-meetings/2019-02-26/minutes.md)   |
 | 20/02/2019   | All             | [minutes](sync-meetings/2019-02-20/minutes.md)   |
 | 30/01/2019   | All             | [minutes](sync-meetings/2019-01-30/minutes.md)   |
 | 22/01/2019   | De Chen: Absent | [minutes](sync-meetings/2019-01-22/minutes.md)   |
