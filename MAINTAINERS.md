@@ -11,6 +11,7 @@ describes governance guidelines and maintainer responsibilities.
 | Steven Ren | [renmaosheng](https://github.com/renmaosheng) | [VMware](https://www.github.com/vmware/) |
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Henry Zhang| [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) |
+| Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
 
 ## Maintainers
 
