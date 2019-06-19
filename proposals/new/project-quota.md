@@ -57,7 +57,6 @@ We propose the following solutions:
 ​
 ​
 ### APIs for quota
-
  1. List quotas of the projects
     ```
     GET /api/project-quotas/
@@ -98,6 +97,7 @@ We propose the following solutions:
         "number_hard": 150
     }
     ```
+    
 ### DB scheme
 
 ```
@@ -109,7 +109,6 @@ CREATE TABLE quota (
  hard BIGINT,
  UNIQUE(content_type, object_id, resource)
 )
-
 CREATE TABLE quota_usage (
  id SERIAL PRIMARY KEY NOT NULL,
  reference VARCHAR(255),
@@ -120,6 +119,7 @@ CREATE TABLE quota_usage (
  UNIQUE(content_type, object_id, resource)
 )
 ```
+
 
 ### Quota Manager
 
@@ -172,7 +172,7 @@ CREATE TABLE Blob (
     digest of config, layer, manifest
  */ 
  digest varchar(255) NOT NULL,
- type varchar(255) NOT NULL,
+ content_type varchar(255) NOT NULL,
  size int NOT NULL,
  UNIQUE (digest)
 );
@@ -190,15 +190,15 @@ CREATE TABLE Artifact (
     digest of mainfest
  */
  digest varchar(255) NOT NULL,
- type varchar(255) NOT NULL,
- CONSTRAINT unique_artifact UNIQUE (repo, tag)
+ kind varchar(255) NOT NULL,
+ CONSTRAINT unique_artifact UNIQUE (project_id, repo, tag)
 );
 ```
 
 Table -- ArtifactAndBlob
 
 ```
-CREATE TABLE Manifest (
+CREATE TABLE ArtifactAndBlob (
  id SERIAL PRIMARY KEY NOT NULL,
  digest_af varchar(255) NOT NULL,
  digest_blob varchar(255) NOT NULL
