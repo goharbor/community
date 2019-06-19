@@ -124,12 +124,10 @@ CREATE TABLE quota_usage (
 ### Quota Manager
 
 ```go
-
 type QuotaManager struct {
   reference string
   referenceId string
 }
-
 func (m *QuotaManager) RequestResource(resource string, value int64) error {
   // 1. SELECT * FROM quota 
   //            WHERE content_type = ? AND object_id = ? AND resource = ? FOR UPDATE
@@ -155,7 +153,6 @@ func (m *QuotaManager) UpdateResourceUsed(resource string, used int64) error {
 func NewQuotaManager(reference string, referenceId string) *QuotaManager {
   // ...
 }
-
 ```
 
 ​​
