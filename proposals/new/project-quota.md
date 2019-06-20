@@ -52,33 +52,42 @@ We propose the following solutions:
 ​
 ​
 ### APIs for quota
+
  1. List quotas
 
     ```
-    GET /api/quotas/?reference=project
+    GET /api/quotas/?reference=project&sort=-hard.storage
     [
     	{
     		"id": 1,
     		"reference": "project",
-    		"reference_id": 1,
+    		"reference_id": "1",
     		"hard": {
     			"storage": 1048576,
     			"number": 100
+    		},
+    		"used": {
+    			"storage": 48576,
+    			"number": 10		
     		}
     	},
     	{
     		"id": 2,
     		"reference": "project",
-    		"reference_id": 2,
+    		"reference_id": "2",
     		"hard": {
     			"storage": 1048576,
     			"number": 100
+    		},
+    		"used": {
+    			"storage": 48576,
+    			"number": 10		
     		}
     	}
     ]
     ```
     
- 3. Update quota
+ 2. Update quota
 
     ```
     PUT /api/quotas/:id
@@ -89,65 +98,23 @@ We propose the following solutions:
     	}
     }
     ```
-    
- 3. List quota usages
 
-    ```
-    GET /api/quota-usages
-    [
-    	{
-    		"id": 1,
-    		"reference": "project",
-    		"reference_id": 1,
-    		"used": {
-    			"storage": 48576,
-    			"number": 10
-    		}
-    	},
-    	{
-    		"id": 2,
-    		"reference": "project",
-    		"reference_id": 2,
-    		"used": {
-    			"storage": 1048576,
-    			"number": 100
-    		}
-    	}
-    ]
-    ```
-
-
-4. Get project quota
+3. Get project quota
 
    ```
    GET /api/projects/:pid/quota
    {
-     "id": 1,
-     "reference": "project",
-     "reference_id": 1,
      "hard": {
        "storage": 48576,
        "number": 10
-     }
-   }
-   ```
-
-5. Get project quota usage
-
-   ```
-   GET /api/projects/:pid/quota-usage
-   {
-     "id": 1,
-     "reference": "project",
-     "reference_id": 1,
+     },
      "used": {
        "storage": 48576,
        "number": 10
      }
    }
    ```
-   
-6. Update default quota
+4. Update default quota
 
    ```
    PUT /api/configurations
