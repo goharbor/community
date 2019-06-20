@@ -8,6 +8,13 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 **Meeting Slides**: [Conf Call Slides](/conf-calls)
 
+**Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
+
+**Harbor YouTube Channel**: [Project Harbor on YouTube](https://www.youtube.com/channel/UCSxaozHKrX3F0UnZeYe5Itg)
+
+**************************************************************************************************************************************
+## OLD CONTENT NO LONGER UPDATED BUT KEPT FOR HISTORICAL REFERENCE
+
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
 | 2019/04/24 |  @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/cOzI-WGqIO7bJb3upT1cwxAnko59icH-PVEXFBbV97GwIumekTziMw)  | upcoming community events, 1.9 planning, replication to non-harbor registry demo  ||
