@@ -1,14 +1,3 @@
-hweiwei
-
-
-
-
-
-
-Message List
-
-Weiwei He [1:12 PM]
-Project-Quota.md 
 # Project Quota
 ​
 Author: He Weiwei/Yan Wang
@@ -34,13 +23,19 @@ As a project administrator, I can only view basic quota information in project q
 As a project administrator, I can exceed my project limit by sending the request to system admin and wait for response.
 ​
 ### Story 4
-As a system administrator, I can set the project quota, either on storage usage or artifact count.
-​
-### Story 5
-As a system administrator, I can view all project quota metrics via a dashboard.
+As a system administrator, I can view all project quota metrics in the quota management page.
 
 ### Story 5
+As a system administrator, I can set the project quota in the quota management page, either on storage usage or artifact count.
+
+### Story 6
 As a system administrator, If I update the default quota, the existing project won't be impacted.
+
+### Story 7
+As a system administrator, I can choose the whether to use the default or customized quota on creating a project.
+
+### Story 8
+As a user, I cannot see the default quota on creating a project, but I can get it in the quota tab.
 ​
 ​
 ## Proposal
@@ -57,47 +52,112 @@ We propose the following solutions:
 ​
 ​
 ### APIs for quota
- 1. List quotas of the projects
+ 1. List quotas
+
     ```
-    GET /api/project-quotas/
+    GET /api/quotas/?reference=project
     [
-        {
-            "id": "1", // the id of project
-            "storage_hard": 1048576,
-            "storage_used": 524288,
-            "number_hard": 100,
-            "number_used": 50
-        },
-        {
-            "id": "2",
-            "storage_hard": 1048576,
-            "storage_used": 524288,
-            "number_hard": 100,
-            "number_used": 50
-        }
+    	{
+    		"id": 1,
+    		"reference": "project",
+    		"reference_id": 1,
+    		"hard": {
+    			"storage": 1048576,
+    			"number": 100
+    		}
+    	},
+    	{
+    		"id": 2,
+    		"reference": "project",
+    		"reference_id": 2,
+    		"hard": {
+    			"storage": 1048576,
+    			"number": 100
+    		}
+    	}
     ]
     ```
     
- 3. Read quota for the project
+ 3. Update quota
+
     ```
-    GET /api/project-quotas/:id
+    PUT /api/quotas/:id
     {
-      "id": "1",  // the id of project
-      "storage_hard": 1048576,
-      "storage_used": 524288,
-      "number_hard": 100,
-      "number_used": 50
-    }
-    ```
- 2. Update quota for the project
-    ```
-    PUT /api/project-quotas/:id
-    {
-        "storage_hard": 2097152,
-        "number_hard": 150
+    	"hard": {
+    		"storage": 1048576,
+    		"number": 100
+    	}
     }
     ```
     
+ 3. List quota usages
+
+    ```
+    GET /api/quota-usages
+    [
+    	{
+    		"id": 1,
+    		"reference": "project",
+    		"reference_id": 1,
+    		"used": {
+    			"storage": 48576,
+    			"number": 10
+    		}
+    	},
+    	{
+    		"id": 2,
+    		"reference": "project",
+    		"reference_id": 2,
+    		"used": {
+    			"storage": 1048576,
+    			"number": 100
+    		}
+    	}
+    ]
+    ```
+
+
+4. Get project quota
+
+   ```
+   GET /api/projects/:pid/quota
+   {
+     "id": 1,
+     "reference": "project",
+     "reference_id": 1,
+     "hard": {
+       "storage": 48576,
+       "number": 10
+     }
+   }
+   ```
+
+5. Get project quota usage
+
+   ```
+   GET /api/projects/:pid/quota-usage
+   {
+     "id": 1,
+     "reference": "project",
+     "reference_id": 1,
+     "used": {
+       "storage": 48576,
+       "number": 10
+     }
+   }
+   ```
+   
+6. Update default quota
+
+   ```
+   PUT /api/configurations
+   {
+   	"storage_per_project": 48576,
+   	"artifact_num_per_project": 100
+   }
+   ```
+
+
 ### DB scheme
 
 ```
@@ -105,54 +165,21 @@ CREATE TABLE quota (
  id SERIAL PRIMARY KEY NOT NULL,
  reference VARCHAR(255),
  reference_id VARCHAR(255),
- resource VARCHAR(255),
- hard BIGINT,
- UNIQUE(content_type, object_id, resource)
+ hard JSONB NOT NUL,
+ creation_time timestamp default CURRENT_TIMESTAMP,
+ update_time timestamp default CURRENT_TIMESTAMP,
+ UNIQUE(reference, reference_id)
 )
+
 CREATE TABLE quota_usage (
  id SERIAL PRIMARY KEY NOT NULL,
  reference VARCHAR(255),
  reference_id VARCHAR(255),
- resource VARCHAR(255),
- used BIGINT,
- metadata VARCHAR(1024),
- UNIQUE(content_type, object_id, resource)
+ used JSONB NOT NUL,
+ creation_time timestamp default CURRENT_TIMESTAMP,
+ update_time timestamp default CURRENT_TIMESTAMP,
+ UNIQUE(reference, reference_id)
 )
-```
-
-
-### Quota Manager
-
-```go
-type QuotaManager struct {
-  reference string
-  referenceId string
-}
-func (m *QuotaManager) RequestResource(resource string, value int64) error {
-  // 1. SELECT * FROM quota 
-  //            WHERE content_type = ? AND object_id = ? AND resource = ? FOR UPDATE
-  // 2. Check and ensure used + value < hard
-  // 3. UPDATE quota SET used = used + value WHERE id = ?
-}
-func (m *QuotaManager) ReleaseResource(resource string, value int64) error {
-  // 1. SELECT * FROM quota 
-  //            WHERE content_type = ? AND object_id = ? AND resource = ? FOR UPDATE
-  // 2. Check and ensure used + -value < hard
-  // 3. UPDATE quota SET used = used + -value WHERE id = ?
-}
-func (m *QuotaManager) UpdateResourceHard(resource string, hard int64) error {
-  // 1. SELECT * FROM quota 
-  //            WHERE content_type = ? AND object_id = ? AND resource = ? FOR UPDATE
-  // 2. UPDATE quota SET hard = hard WHERE id = ?
-}
-func (m *QuotaManager) UpdateResourceUsed(resource string, used int64) error {
-  // 1. SELECT * FROM quota 
-  //            WHERE content_type = ? AND object_id = ? AND resource = ? FOR UPDATE
-  // 2. UPDATE quota SET used = used WHERE id = ?
-}
-func NewQuotaManager(reference string, referenceId string) *QuotaManager {
-  // ...
-}
 ```
 
 ​​
@@ -204,28 +231,44 @@ CREATE TABLE ArtifactAndBlob (
 ​
 ## Data Flow in Docker registry
 ​
-The date flow to push a image into Harbor:
+#The date flow to push a image into Harbor:
 ​
   ![Docker Push flow](../images/project-quota/data_flow_registry.png)
   
 
-The execution flow to put a manifest:
+#The execution flow of putting a manifest:
 
-  ![Manifest Push flow](../images/project-quota/flow_manifest.png)
+  ![Manifest Push flow](../images/project-quota/flow_put_manifest.png)
   
-### Failure cases
-1, Storage overuse. If we let the all of blobs pass the flow, the real storage usage could larger than quota usage.
+#The execution flow of putting a chart:
 
+  ![Manifest Push flow](../images/project-quota/flow_put_chart.png)
+    
   
-The execution flow to put a blob:
+#The execution flow to putting a blob:
 
-  ![Blob Push flow](../images/project-quota/flow_blob.png)
+  ![Blob Push flow](../images/project-quota/flow_put_blob.png)
   
+
+#The execution flow of deleting a tag:
+
+  ![Blob Push flow](../images/project-quota/flow_delete_tag.png)
+
+
+#The execution flow of deleting a chart:
+
+  ![Blob Push flow](../images/project-quota/flow_delete_chart.png)
+  
+
 ### Failure cases 
-1, Quota overuse. If 1 repo number quota left, Harbor could let only one image pass in multiple push scenario, but other blobs already count into the usage.
+1, If 1 repo number left and enough storage, Harbor could let only one image pass in multiple push scenario, 
+but the failure push has already put blobs into the Harbor and consume the storage.
 
 2, If 100 MB storage quota left, there are 3 push in parallel, 70M, 90M, 20M. In fact, Harbor should let at least one of them pass. 
-But, if we count size for blob, all of them may fail.        
+But, if we count size for blob, all of them may fail.    
+
+3, If hello-world has already in Harbor with 100MB, but the user rebuilds it to a 10MB image and push it again into Harbor.
+This will cost 110MB(100MB + 10MB) in Harbor unless to execute garbage collection to delete untagged.   
 ​
 ## API
  1. Registry Dump (Sysadmin only)
@@ -234,6 +277,10 @@ But, if we count size for blob, all of them may fail.
   POST /api/internal/dumpregistry
   ```
 ​
+The API is for system admin to fix gap between registry and Harbor DB, and the benchmark is the data in docker registry.
+We could add the dump API call in the GC job, so that each time run GC, Harbor could have a chance to align data.
+
+
 ## Consideration of performance
 1, Docker push.
 > Redirect the HEAD request to DB before pushing a blob.
@@ -249,4 +296,3 @@ It causes the total usage of a Harbor instance is not reflect true value.
 ​
 ## Compatibility
 It has to consider how to handle the migration from older version, like v1.7.0.
-Collapse
