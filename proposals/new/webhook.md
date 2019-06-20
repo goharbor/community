@@ -1,12 +1,21 @@
 # Proposal:  Support webhook in harbor
 
-Author: peimingming@corp.netease.com
+Author: **Webhook Workgroup** Group members:
 
-Discussion: [webhook](https://github.com/goharbor/harbor/issues/6676)
+- Yan Wang@VMware ([wy65701436](https://github.com/wy65701436))
+- Alex Xu@VMware ([alexvmw](https://github.com/alexvmw))
+- Mingming Pei@NetEase ([mmpei](https://github.com/mmpei))
+- Xiatao Guan@NetEase ([tedgxt](https://github.com/tedgxt))
+- Tian Wang@NetEase ([lightof410](https://github.com/lightof410))
+- Bin Fang@NetEase ([BeHappyF](https://github.com/BeHappyF))
+- Qingzhao Zheng@NetEase ([qingzhao](https://github.com/qingzhao))
+- Yu Zhang@NetEase ([sanqianaa](https://github.com/sanqianaa))
+
+Discussion: None
 
 ## Abstract
 
-Webhook is an important feature for image repository especially for CICD flow. Harbor should support the webhook mechanism to cover the related main  events: image pushing/pulling, image scanning and image deleting and so on. 
+Webhook is an important feature for container repository especially for CICD flow. The following events could be considered in the first phase, image pushing/pulling, image scanning, image deleting and chart uploading. 
 
 ## Background
 
@@ -18,72 +27,76 @@ In harbor webhook used for notifying the third party web application is not supp
 
 This feature should support:
 
-1. user could define his own trigger policy, and this policy should  support regular expression of repo name or tag, or the list of tag.
-2. and the event define should be extensible. pushing image event is in  need for CICD. but other event should be implemented easily including  finishing scanning image, finishing replicate, delete image and so on.
-3. the logs of event triggered should be searched easily, these logs  should incluing the http request and http response from remote endpoint.
-4. the hook request should be resend after failed. Now the retry time is 3 only when error is a kind of network error.
+1. User could define his own policy which includes multiple events and multiple event handlers such as http handler and email handler(P1).
+2. And the event define should be extensible. pushing image event is in need for CICD. but other events should be implemented easily including finishing scanning image, finishing replicate, delete image and so on.
+3. The logs of the jobs of event triggered should be recorded, these logs  should contain the http request and http response, and could be shown on UI.
+4. The hook request should be retried after failed. Now the retry time is 3 only when error is a kind of network error.
+5. Webhook will be implemented in JobService framework if needed.
 
 ## Rationale
 
-This feature will depend on harbor Job flow. and use the existing framework of JobService.
+This feature will depend on harbor Job flow. and use the existing framework of JobService if needed.
 
-This feature will make harbor support CICD flow， and one could build a "closed loop" dev-ops system easily when using harbor as a image repository.
+This feature will make harbor support CICD flow, and one could build a "closed loop" dev-ops system easily when using harbor as a image repository.
 
 ## Implementation
 
-I will work on this feature and raise a PR.
 
+![image](https://gitlab.com/pmm123/pics/raw/master/learn/harbor-webhook-ng.png)
 
-The schedule is about coding finished in this month and PR will be raised before the middle of February.
+1. Events will be triggered when related actions are executed.
+2. Core will receive these events and process them in Subscribe/Notification loop.
+3. Events from external or internal are fair. They will be processed by related handler.
+4. These handlers are fair too. They just take their own duty.
+5. We will define some handlers which mapping to webhook actions to make architecture loose enough.
+6. Some events are translated to related jobs and post to JobService, some are processed in Core. e.g. event of sending a http request will be executed in JS while printing a message to stdout will be in Core.
+7. Jobs will be added to related queues.
+8. Workers for the special queue will fetch these jobs and process them.
+9. A result will be returned from remote and all of these will be recorded in log.
+10. webhook finished.
 
-the work flow should:
- [![default](https://user-images.githubusercontent.com/30788120/50583337-8aa46b00-0ea3-11e9-85dc-48660d3573b2.png)](https://user-images.githubusercontent.com/30788120/50583337-8aa46b00-0ea3-11e9-85dc-48660d3573b2.png)
-
-1. registry triggers a notification event to harbor(actually Core) when finish pushing a manifest.
-2. Core revices this event and process it in eventHandler.
-3. eventHandler will invoke notificationHandler, some default  notificationHandler including webhook handler will be registered when  initialization.
-4. in notificationHandler, harbor will find the related policy, do  filter and generate cresponding correlative jobs, there could be several  jobs if user defined multiple policies.
-5. send Jobs to Harbor JobService, and JobService put these jobs into work queue.
-6. Job will be run in JS, and will be retry if failed. log will be generated.
-7. webhook finished.
-
-Hook message will be: 
+Hook payload will be: 
 
 ```go
-// Image event 
+// Image event
 {
-    "event_type": "pushImage"
-    "events": [
-        {
-            "project": "prj",
-            "repo_name": "repo1",
-            "tag": "latest",
-            "full_name": "prj/repo1",
-            "trigger_time": 158322233213,
-            "image_id": "9e2c9d5f44efbb6ee83aecd17a120c513047d289d142ec5738c9f02f9b24ad07",
-            "project_type": "Private"
-        }
-    ]
+    "type": "pushImage",
+    "occur_at": 1560862556,
+    "event_data": [{
+        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
+        "tag": "latest"
+    }], 
+    "repository": {
+        "date_created": 1548645673, 
+        "name": "repoTest", 
+        "namespace": "namespace", 
+        "repo_full_name": "namespace/repoTest", 
+        "repo_type": "public"
+    }
 }
 
 // Helm chart event
 {
-    "event_type": "uploadChart"
-    "events": [
-        {
-            "project": "prj",
-            "chart_name": "chart1",
-            "version": "v14.0.0",
-            "trigger_time": 158322233213,
-            "project_type": "Private"
-        }
-    ]
+    "type": "uploadChart",
+    "occur_at": 1560862556,
+    "event_data": [{
+        "version": "0.6.0-rc1"
+    }, {
+        "version": "0.7.23"
+    }], 
+    "chart": {
+        "date_created": 1548645673, 
+        "name": "chartRepo", 
+        "namespace": "namespace", 
+        "chart_full_name": "namespace/chartRepo", 
+        "chart_type": "public"
+    }
 }
 ```
 
-#### policy design
+#### Policy Design
 
-Webhook target is a callback URL which may contain an Authorization token as a parameter.
+Webhook policy is created by user to specify which events to subscribe and where hook sends, webhook targets is a list which contains an email address or a callback URL.
 
 ```go
 // WebhookPolicy defines the structure of a webhook policy. This struct is used internally.
@@ -92,17 +105,24 @@ type WebhookPolicy struct {
 	ID                int64 // UUID of the policy
 	Name              string
 	Description       string
-	Filters           []models.Filter
-	ProjectID         int64  // Project attached to this policy
-	Target            string
+	ProjectID         int64  // Project attached to this policy, 0 for a global webhook
+	Targets           []HookTarget
 	HookTypes         []string
 	CreationTime      time.Time
 	UpdateTime        time.Time
 	Enabled           bool
 }
+
+// HookTarget represents the target where hook will be sent. 
+// It could be a url with headers, an email address and so on.
+type HookTarget struct {
+	Type              string
+	Address           string // Target address. Url,Email etc.
+	Attachment        string // attributes attached to this target
+}
 ```
 
-#### job design
+#### Job Design
 
 Jobs will be triggered when an related event happens. And job will be stored in DB and sent to JobService to  execute.
 
@@ -121,31 +141,37 @@ type WebhookJob struct {
 }
 ```
 
-#### job priority
-Comparing to other kinds of job  webhook job requires real-time. Jobs should be executed as soon as events triggered.  So job priority is required. An function named 'Priority' will be added to Job.Interface.  Job queue's priority will be set when registering the job handler. Now webhook jobs's priority will be set to JobPriorityHigh while others are JobPriorityNormal.
+#### HttpHandler Design
 
-```go
-// Interface defines the related injection and run entry methods.
-type Interface interface {
-    ...
-    // Declare the priority of job queue.(1-100000)
-	// See https://github.com/gocraft/work#scheduling-algorithm
-	//
-	// Return:
-	// uint: the priority
-	Priority() uint
-    ...
-}
+Users can define a secret in http statement in webhook policy. So it will be sent in header in http request. The format will be,
 
-// Job Priority define (1-100000).see https://github.com/gocraft/work#scheduling-algorithm
-	JobPriorityHigh = 50000
-	JobPriorityNormal = 500
-	JobPriorityLow = 5
+```
+Authorization: Secret eyJ0eXAiOiJKV1QiLCJhbGciOi
 ```
 
+and also users can input a URL with https schema. and select insecure protocol if they want.
+
+There should be a test function which will send a templated request to remote endpoint when adding webhook policy to Harbor, this could refer to adding replication target.
+
+#### EmailHandler Design(P1)
+
+Not support.
+
+#### Covered Event
+
+|       Type        | Priority |
+| :---------------: | :------: |
+|     ImagePush     |    P0    |
+|     ImagePull     |    P0    |
+|    ImageDelete    |    P0    |
+|    ChartUpload    |    P0    |
+|    ChartDelete    |    P0    |
+| ScanningCompleted |    P1    |
+|  ScanningFailed   |    P1    |
 
 
-#### authorization design
+
+#### Authorization Design
 
 | Action | Project manager | Project master | Develop | Guest |
 | :----: | :-------------: | :------------: | :-----: | :---: |
