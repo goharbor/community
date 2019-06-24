@@ -16,13 +16,18 @@ the vulnerabilities and explicitly ignore some of them during the policy checkin
 
 ## Proposal
 
-We propose to introduce the "whitelist" of vulnerabilities to project policy to solve this problem.  The system or project admin
-can define a list of CVE, when checking the scan result to compare the the threshold setting in "Deployment Security" policy, the 
-vulnerabilities in the white list will be ignored, such that user can pull an image with certain vulnerabilities higher than the 
-threshold without having to update or disable the policy.
+We propose to introduce the "whitelist" of vulnerabilities (a.k.a CVE whitelist) to project policy to solve this problem.  
+The system or project admin can define a list of CVE, when checking the scan result to compare the the threshold setting in 
+"Deployment Security" policy, the vulnerabilities in the white list will be ignored, such that user can pull an image with 
+certain vulnerabilities higher than the threshold without having to update or disable the policy.
+
+Each whitelist can optionally have a expiration time.  Once it's expired, the CVEs in that list will not be filtered when 
+calculating the overall vulnerability level.
 
 **NOTE:**
-For v1.9.0 there will be a limitation of the number of CVEs in the whitelist, which is 40.
+Each project can only have one CVE whitelist.
+The support for expiration may be a P1 for v1.9 release depending on the date and resource.
+There's not a limit of the number of items the a CVE whitelist but we need to think about it when implementing the UI.
 
 In detail, it will involve the following use cases:
 
@@ -42,11 +47,11 @@ admin can be reflected at the project level.
 * #### Pulling image from project with vulnerability whitelist
 
 Upon receiving a request to pull an image, instead of querying the "scan overview" in Harbor's DB, Harbor will call Clair's 
-API to list all the vulnerability of this image and apply to whitelist to filter out some of them, and consolidate the result
-to get the overall vulnerability level.
+API to list all the vulnerability of this image and apply to whitelist, if it's not expired, to filter out some of them, 
+and consolidate the result to get the overall vulnerability level.
 
 **NOTE:**
-Making the switch from querying local DB to calling Clair's API may have some impact on performance.  Storing the full vulnerability 
+Making the switch from querying local DB to calling Clair's API may have some impact on performance.  Storing the full CVE 
 list of every scanned image is not very effective.  We'll have to measure the performance during the refactor and lower the
 impact.
 
@@ -72,7 +77,7 @@ For managing and viewing the system level whitelist, these APIs should be added:
 All Harbor users should have permission to Call this API to view the list of system level vulnerability whitelist:
 
 ```HTTP
-GET /api/system/vuln_whitelist
+GET /api/system/CVEWhitelist
 Authorization: xxxxxxx
 ```
 
@@ -82,10 +87,16 @@ Authorization: xxxxxxx
 200 OK
 Content-Length: <length>
 Content-Type: application/json
-[
-    "CVE-2019-12310",
-    "CVE-2017-16775"
-]
+{
+	"items": [{
+			"cve_id": "CVE-2019-12310"
+		},
+		{
+			"cve_id": "CVE-2017-16775"
+		}
+	],
+	"expires_at": 1573254000   <------------ seconds since epoch, optional attribute
+}
 ```
 
 ##### On Failure: Authentication Required
@@ -106,11 +117,16 @@ PUT /api/system/vuln_whitelist
 Authorization: xxxxxxx
 Content-Type: application/json
 
-[
-    "CVE-2018-20798",
-    "CVE-2019-0540",
-    "CVE-2019-0590"
-]
+{
+	"items": [{
+			"cve_id": "CVE-2019-12310"
+		},
+		{
+			"cve_id": "CVE-2017-16775"
+		}
+	],
+	"expires_at": 1573254000  <---------  optional
+}
 
 ```
 
@@ -129,8 +145,6 @@ This error happens when the request does not has sufficient permission to do the
 {"code":403,"message":"Forbidden"}
 ```
 
-The value of the system level whitelist will be stored in `properties` table, as there will be only one item.
- 
 ### Add whitelist information to project metadata
 
 Given the way we handle project level configuration currently, we don't plan to introduce new APIs.  Instead, when issuing 
@@ -143,15 +157,24 @@ Content-Type: application/json
 {
 	"metadata": {
 	   .....
-	   "vuln_whitelist": {
-	     "reuse_system_whitelist": false,
-       	 "items": ["CVE-2019-0540", "CVE-2019-0590"]
+	   "reuse_system_cve_whitelist": false,
+	   "cve_whitelist": {
+	   	"items": [{
+       			"cve_id": "CVE-2019-12310"
+       		},
+       		{
+       			"cve_id": "CVE-2017-16775"
+       		}
+       	],
+       	"expires_at": 1573254000    <------------ optional attribute
 	}
 }
 ```
 
-When `reuse_system_whitelist` is set to true, the actual items in the whitelist will be identical to system level whitelist,
-and the `items` in the JSON can be ignored.
+When `reuse_system_whitelist` is set to true, the system level CVE whitelist will be applied to this project, and the `cve_whitelist` 
+in the JSON will be ignored.
+
+A table `cve_whitelists` will be created to store project and system level cve whitelists.
 
 ### Applying the whitelist when handling request to pull the image
 
@@ -165,6 +188,15 @@ The code in the job handler of `scanjob` to store the overview of scan result wi
 API to generate the "scan overview" data object to help UI render the diagram.
 
 The webhook handler to handle the notification from Clair will be removed.
+
+### UI consideration
+We should provide UI components for system admin to view and update the system level CVE whitelist.  Including the list and 
+expiration.  It should be able to explicitly inform the user when the white list is expired.
+
+We should also provide UI components for project admin to reuse the system level whitelist or create/update CVE whitelist for the project.
+ 
+Initially we can assume a regular whitelist does not contain many items (less than 20, usually less then 10), but we need 
+to make sure the user can easily view/update the items in the whitelist when the number grows.
 
 ## Open issues (if applicable)
 
