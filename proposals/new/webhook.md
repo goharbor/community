@@ -27,11 +27,12 @@ In harbor webhook used for notifying the third party web application is not supp
 
 This feature should support:
 
-1. User could define his own policy which includes multiple events and multiple event handlers such as http handler and email handler(P1).
+1. User could define his own policy which includes multiple events and multiple event handlers such as http handler.
 2. And the event define should be extensible. pushing image event is in need for CICD. but other events should be implemented easily including finishing scanning image, finishing replicate, delete image and so on.
-3. The logs of the jobs of event triggered should be recorded, these logs  should contain the http request and http response, and could be shown on UI.
-4. The hook request should be retried after failed. Now the retry time is 3 only when error is a kind of network error.
+3. The logs of the jobs of event triggered should be recorded, these logs  should contain the http request and http response, and could be shown on UI as Job log.
+4. The hook request should be retried after failed. we will use backoff mechanism to control the rate of delay time. and make max retry time configurable.
 5. Webhook will be implemented in JobService framework if needed.
+6. Adding a system configuration to enable or disable the webhook function globally. and this flag will be checked when event triggered.
 
 ## Rationale
 
@@ -62,9 +63,11 @@ Hook payload will be:
 {
     "type": "pushImage",
     "occur_at": 1560862556,
+    "media_type": "containerImage",
     "event_data": [{
         "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
-        "tag": "latest"
+        "tag": "latest",
+        "resource_url": "repo.harbor.com/namespace/repoTest:latest"
     }], 
     "repository": {
         "date_created": 1548645673, 
@@ -72,25 +75,107 @@ Hook payload will be:
         "namespace": "namespace", 
         "repo_full_name": "namespace/repoTest", 
         "repo_type": "public"
-    }
+    },
+    "operator": "admin"
 }
 
 // Helm chart event
 {
     "type": "uploadChart",
     "occur_at": 1560862556,
+    "media_type": "helmChart",
     "event_data": [{
-        "version": "0.6.0-rc1"
+        "tag": "0.6.0-rc1",
+        "resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.6.0-rc1.tgz"
     }, {
-        "version": "0.7.23"
+        "tag": "0.7.23",
+        "resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.7.23.tgz"
     }], 
-    "chart": {
+    "repository": {
         "date_created": 1548645673, 
         "name": "chartRepo", 
         "namespace": "namespace", 
-        "chart_full_name": "namespace/chartRepo", 
-        "chart_type": "public"
-    }
+        "repo_full_name": "namespace/chartRepo", 
+        "repo_type": "public"
+    },
+    "operator": "admin"
+}
+
+// Scanning completed
+{
+    "type": "scanningCompleted",
+    "occur_at": 1560862556,
+    "media_type": "containerImage",
+    "event_data": [{
+        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
+        "tag": "latest",
+        "scan_overview": {
+            "components": {
+                "summary": [
+                    {
+                        "count": 5,
+                        "severity": 5
+                    },
+                    {
+                        "count": 2,
+                        "severity": 4
+                    },
+                    {
+                        "count": 1,
+                        "severity": 2
+                    },
+                    {
+                        "count": 63,
+                        "severity": 1
+                    },
+                    {
+                        "count": 3,
+                        "severity": 3
+                    }
+                ],
+                "total": 74
+            },
+            "creation_time": "2018-09-07T00:01:12.666501Z",
+            "details_key": "aae117139e87e9c5234001d960b5d196ffe6d578331ef6546501646415117403",
+            "job_id": 5695,
+            "scan_status": "finished",
+            "severity": 5,
+            "update_time": "2018-10-29T04:37:29.983743Z"
+        }
+    }], 
+    "repository": {
+        "date_created": 1548645673, 
+        "name": "repoTest", 
+        "namespace": "namespace", 
+        "repo_full_name": "namespace/repoTest", 
+        "repo_type": "public"
+    },
+    "operator": "auto"
+}
+
+// Scanning failed
+{
+    "type": "scanningFailed",
+    "occur_at": 1560862556,
+    "media_type": "containerImage",
+    "event_data": [{
+        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
+        "tag": "latest",
+        "scan_overview": {
+            "creation_time": "2018-09-07T00:01:12.666501Z",
+            "job_id": 5695,
+            "scan_status": "error",
+            "reason": "Network Error"
+        }
+    }], 
+    "repository": {
+        "date_created": 1548645673, 
+        "name": "repoTest", 
+        "namespace": "namespace", 
+        "repo_full_name": "namespace/repoTest", 
+        "repo_type": "public"
+    },
+    "operator": "auto"
 }
 ```
 
@@ -153,9 +238,31 @@ and also users can input a URL with https schema. and select insecure protocol i
 
 There should be a test function which will send a templated request to remote endpoint when adding webhook policy to Harbor, this could refer to adding replication target.
 
-#### EmailHandler Design(P1)
+#### Backoff Mechanism Design
 
-Not support.
+As the opensource package [backoff](github.com/cenkalti/backoff) is designed to generate random interval time sequentially and the Next-Interval dependents on the context. So we will design a backoff mechanism referring to it.
+
+initialWaitTime：default 500ms         
+maxWaitTime：default 30min (it will prevent user defining a big maxRetryCount to make Job in queue too long time)
+exponentFactor:  default 3
+randomizationFactor: default 0.1
+maxRetryCount: default 5
+
+and the backoff algorithm：rand.Float64() * (2 * randomizationFactor * initialWaitTime * exponentFactor ^ (retryCount - 1) + 1) + (1 - randomizationFactor) * initialWaitTime * exponentFactor ^ (retryCount - 1)
+
+so the default interval time will be in the following section:
+
+the first time （450ms, 551ms）
+the second time （1350ms, 1651ms）
+the third time （4050ms，4951ms）	
+the fourth time （12150ms，14850ms）
+the fifth time （36450ms, 44550ms）
+the sixth time （109350ms, 133650ms）
+... ...
+
+it will quit if the interval time is bigger than the maxWaitTime(default 30min).
+
+the configurable parameter is maxRetryCount(default 5). it will be system level configuration.
 
 #### Covered Event
 
@@ -166,8 +273,9 @@ Not support.
 |    ImageDelete    |    P0    |
 |    ChartUpload    |    P0    |
 |    ChartDelete    |    P0    |
-| ScanningCompleted |    P1    |
-|  ScanningFailed   |    P1    |
+|   ChartDownload   |    P0    |
+| ScanningCompleted |    P0    |
+|  ScanningFailed   |    P0    |
 
 
 
@@ -180,4 +288,9 @@ Not support.
 | Delete |        Y        |       N        |    N    |   N   |
 |  List  |        Y        |       Y        |    N    |   N   |
 |  Test  |        Y        |       N        |    N    |   N   |
+
+## Non-Goals
+
+1. Email handler is not included in this proposal, but it will be implemented in future.
+2. Replication event is also not included in this proposal, but it is in our plan.
 
