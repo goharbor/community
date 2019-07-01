@@ -1,0 +1,395 @@
+= Harbor :: Scanner Adapters Architecture
+:icons: font
+:source-highlighter: coderay
+:toc:
+
+== Overview
+
+Currently Harbor is closely coupled with https://github.com/coreos/clair[Clair] to scan images stored in its registry.
+The idea is to allow Harbor to work with any other compatible scanner by simple means of configuration change. By doing
+so Clair could be replaced with any open source or commercial alternative.
+
+The main objective of this proposal was to deliver a minimum valuable product (MVP) of pluggable scanner.
+At the same time the MVP should be extensible to cater for further improvements.
+
+== Harbor and Clair
+
+The current workflow for scanning images is depicted below with the detailed explanation beneath.
+
+.A sequence diagram for the current Harbor integration with Clair.
+[#img-sequence-harbor-clair]
+[plantuml, sequence-harbor-clair, png]
+....
+@startuml
+
+actor "User"
+participant "Portal UI"
+participant "ClairJob"
+participant "Repository API"
+participant "Clair API"
+
+database "Registry"
+database "Harbor DB"
+
+User -> "Portal UI" : (1) Scan
+"Portal UI" -> "ClairJob" : (2) Schedule
+activate "ClairJob"
+"ClairJob" -> "Registry" : (3) GetManifest
+activate "Registry"
+"Registry" --> "ClairJob"
+deactivate "Registry"
+
+"ClairJob" -> "ClairJob" : (4) CreateClairLayers
+
+"ClairJob" -> "Clair API" : (5) ScanClairLayers
+activate "Clair API"
+"Clair API" --> "ClairJob"
+deactivate "Clair API"
+
+"ClairJob" -> "Clair API" : (6) GetScanResult
+activate "Clair API"
+"Clair API" --> "ClairJob"
+deactivate "Clair API"
+
+"ClairJob" -> "ClairJob" : (7) TransformScanResult
+"ClairJob" -> "Harbor DB" : (8) SaveComponentsOverview
+activate "Harbor DB"
+"Harbor DB" --> "ClairJob"
+deactivate "Harbor DB"
+deactivate "ClairJob"
+
+|||
+
+"User" -> "Portal UI" : (9) Refresh
+"Portal UI" -> "Repository API" : (10) VulnerabilityDetails
+activate "Repository API"
+"Repository API" -> "Clair API" : (11) GetScanResult
+activate "Clair API"
+"Clair API" --> "Repository API"
+deactivate "Clair API"
+"Repository API" -> "Repository API" : (12) TransformScanResult
+"Repository API" --> "Portal UI"
+deactivate "Repository API"
+@enduml
+....
+
+1. A _User_ requests a scan of selected image by clicking the Scan button.
+2. The system schedules a _ClairJob_ for execution.
+3. The _ClairJob_ pulls image manifest from _Registry_.
+4. The _ClairJob_ parses the image manifest. For each image layer it creates an instance of `ClairLayer` structure,
+   which is an internal representation of the layer in Clair. Each `ClairLayer` has `Name`, `Path`, and
+   `Authorization` header properties that allow Clair to pull the image.
+5. The _ClairJob_ pushes a slice of `ClairLayer` items to _Clair API_ for the actual scanning.
+6. The _ClairJob_ pulls the scan result from _Clair API_.
+7. The _ClairJob_ transforms scan result to the components overview model represented by the `ComponentsOverview`
+   structure. The `ComponentsOverview` model is understandable by the Harbor's UI and policy checker.
+8. The _ClairJob_ saves the components overview to the _Harbor DB_. (It's used later on to enforce simple policy rules,
+   e.g. preventing users from pulling an image which contains severe vulnerabilities.) The parent ``ClairLayer``s Name is
+   also stored in _Harbor DB_ and used later on to fetch scan results.
+9. The _User_ clicks the Refresh button or the UI timer triggers the scan results refresh.
+10. The _Repository API Handler_ calls the `VulnerabilitiesDetails` method of _Repository API_.
+11. The _Repository API_ downloads scan result for the persisted ``ClairLayer``'s Name.
+12. The ScanResult is transformed to the Harbor's model, i.e. a slice of ``VulnerabilityItem``s so it can be rendered in
+    the UI as a grid of vulnerabilities.
+
+== Scanner Adapter
+
+"...We can solve any problem by introducing an extra level of indirection."
+
+Having said that imagine that instead of calling directly _Clair API_, the _ClairJob_ sends request to _Clair Scanner
+Adapter API_ which in turn calls the _Clair API_. The _Clair Scanner Adapter API_ is given all params to pull the image
+from the Harbor's registry.
+
+This indirection introduced by the _Scanner Adapter API_ abstraction allows one to implement a generic `ScannerJob` and
+`scanner.Client` once and reuse them with every imaginable scanner. In this approach the responsibility of integrating
+the scanner with Harbor is delegated to the corresponding Adapter's implementation. For example, we can
+have a dedicated `harbor-clair-adapter`, or `harbor-microscanner-adapter`. The only requirement is that each adapter
+implements a well defined API and is deployed as a separate microservice.
+
+.A sequence diagram for the proposed Harbor integration with a Scanner Adapter.
+[#img-sequence-harbor-scanner-adapter]
+[plantuml, sequence-harbor-scanner-adapter, png]
+....
+@startuml
+
+actor "User"
+participant "Portal UI"
+participant "ScannerJob"
+participant "Repository API"
+participant "Scanner Adapter API"
+
+database "Registry"
+database "Harbor DB"
+
+User -> "Portal UI" : (1) Scan
+"Portal UI" -> "ScannerJob" : (2) Schedule
+activate "ScannerJob"
+
+"ScannerJob" -> "ScannerJob" : (3) PrepareScanRequest
+
+"ScannerJob" -> "Scanner Adapter API" : (4) SendScanRequest
+activate "Scanner Adapter API"
+
+"Scanner Adapter API" -> "Registry"
+activate "Registry"
+"Registry" --> "Scanner Adapter API"
+deactivate "Registry"
+"Scanner Adapter API" --> "ScannerJob"
+deactivate "Scanner Adapter API"
+
+"ScannerJob" -> "Scanner Adapter API" : (5) GetScanResult
+activate "Scanner Adapter API"
+"Scanner Adapter API" --> "ScannerJob"
+deactivate "Scanner Adapter API"
+
+"ScannerJob" -> "ScannerJob" : (6) TransformScanResult
+"ScannerJob" -> "Harbor DB" : (7) SaveComponentsOverview
+activate "Harbor DB"
+"Harbor DB" --> "ScannerJob"
+deactivate "Harbor DB"
+deactivate "ScannerJob"
+
+|||
+
+"User" -> "Portal UI" : (8) Refresh
+"Portal UI" -> "Repository API" : (9) VulnerabilityDetails
+activate "Repository API"
+"Repository API" -> "Scanner Adapter API" : (10) GetScanResult
+activate "Scanner Adapter API"
+"Scanner Adapter API" --> "Repository API"
+deactivate "Scanner Adapter API"
+"Repository API" -> "Repository API" : (11) TransformScanResult
+"Repository API" --> "Portal UI"
+deactivate "Repository API"
+@enduml
+....
+
+1. A _User_ requests a scan of selected image by clicking the Scan button.
+2. The system schedules a _ScannerJob_ for execution. The _ScannerJob_ instantiates the generic `scanner.Client`.
+   The only configuration passed to the client is the endpoint URL of the configured _Scanner Adapter API_.
+3. The _ScannerJob_ prepares a scan request.
+4. The _ScannerJob_ submits the scan request to _Scanner Adapter API_.
+5. The _ScannerJob_ pulls the scan result from _Scanner Adapter API_.
+6. The _ScannerJob_ transform scan result to the components overview model.
+7. The _ScannerJob_ saves the components overview to the _Harbor DB_.
+8. The _User_ clicks the Refresh button or the UI timer triggers the scan results refresh.
+9. The _Repository API Handler_ calls the `VulnerabilitiesDetails` method of _Repository API_.
+10. The _Repository API_ pulls scan result for the image digest.
+11. The scan result is transformed to the Harbor's model, i.e. the slice of ``VulnerabilityItem``s.
+
+=== Scanner Adapter API
+
+The API is inspired by Clair. It provides the bunch of operations described in the subsequent sections.
+
+==== API Version Check
+
+A minimal endpoint, mounted at `/v1` will provide version support information based on its response statuses. The
+request format is as follows:
+
+----
+GET /v1
+----
+
+If `200 OK` response is returned, the Scanner Adapter implements the V1 API and the client may proceed safely with
+other operations.
+
+==== Submit Scan Request
+
+Image scanning is triggered by POST request in the following format:
+
+----
+POST /v1/scan
+Content-Type: application/json
+
+{
+  "registry_url":   "https://harbor-harbor-registry:5000/",
+  "registry_token": "JWTTOKENGOESHERE",
+  "repository":     "library/oracle/nosql",
+  "tag":            "latest"
+
+  "digest: "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54",
+}
+----
+
+If `201 Accepted` response is returned, the scan request was submitted successfully and the client may proceed with
+getting the corresponding scan result.
+
+The JSON request payload contains all data that allows Scanner Adapter to pull image from the Harbor's Registry.
+For example, it should be able to send the following requests:
+
+----
+GET https://harbor-harbor-registry:5000/v2/library/oracle/nosql/manifests/sha256:b1165286043f2745f45ea637873d61939bff6d9a59f76539d6228abf79f87774
+Authorization: Bearer JWTTOKENGOESHERE
+----
+
+----
+GET https://harbor-harbor-registry:5000/v2/library/oracle/nosql/blobs/sha256:b113c8b260349e1adcfea8f2909d26e4a0a5c3bb6ef6e93e47fc22cf8d3fc7d5
+Authorization: Bearer JWTTOKENGOESHERE
+----
+
+==== Get Scan Result
+
+To get the scan result for the given image digest the following request has to be sent:
+
+----
+GET /v1/scan/<digest>
+
+{
+  "digest": "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54",
+  "overview": {
+    "total": 2,
+    "summary": [
+      {"severity": 1, "count": 0},
+      {"severity": 2, "count": 0},
+      {"severity": 3, "count": 1},
+      {"severity": 4, "count": 0},
+      {"severity": 5, "count": 1}
+    ]
+  },
+  "vulnerabilities": [
+    {
+      "id": "CVE-2017-18018",
+      "severity": 5,
+      "package": "coreutils",
+      "version": "8.23-4",
+      "description": "In GNU Coreutils through 8.29, chown-core.c in ..." chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition.",
+      "link": "https://security-tracker.debian.org/tracker/CVE-2017-18018"
+    },
+    {
+      "id": "CVE-2017-8283",
+      "severity": 3,
+      "package": "dpkg",
+      "version": "1.17.27",
+      "description": "dpkg-source in dpkg 1.3.0 through 1.18.23 is able to use a non-GNU patch program and does not offer a protection mechanism for blank-indented diff hunks, which allows remote attackers to conduct directory traversal attacks via a crafted Debian source package, as demonstrated by use of dpkg-source on NetBSD.",
+      "link": "https://security-tracker.debian.org/tracker/CVE-2017-8283"
+    }
+  ]
+}
+----
+
+NOTE: The returned JSON which represents scan results reuses the current Harbor's model for components overview
+(`ComponentsOverview`) and vulnerability representation (`VulnerabilityItem`). This is done deliberately in V1 of the API
+to minimize the impact of changes in the code (JavaScript / DB migrations) but still deliver a MVP.
+
+=== Harbor Configuration
+
+The Harbor's config would have a very generic structure as the only required config param is the URL of the
+_Scanner Adapter API_. In other words, Harbor is not aware of any vendor specific configuration options such as access
+tokens, upstream vulnerability databases and so on. Vendor specific scanner configuration should be handled by
+the scanner's adapter and the scanner itself.
+
+.A snippet of Harbor config pertinent to the image scanning.
+[source,yaml]
+----
+# You can switch an image scanner by changing its endpoint URL.
+imageScanner:
+  # Use CoreOS Clair for image scanning
+  name: "Clair"
+  vendor: "CoreOS"
+  endpointURL: "http://harbor-clair-adapter.harbor:6000/"
+
+  # Alternatively use Aqua Security Microscanner
+  # name: "Microscanner"
+  # vendor: "Aqua Security"
+  # endpointURL: "http://harbor-microscanner-adapter.harbor:8080/"
+
+# See https://martinfowler.com/articles/feature-toggles.html
+featureToggles:
+  # If it's turned on a new scanner adapter is enabled, if it's off we
+  # fall back to the existing scanning with Clair.
+  SCANNER_ADAPTER: "on" <1>
+----
+<1> A very simplistic approach to implement a feature flag mechanism.
+
+=== Implementation and Deployment
+
+The implementation of such architecture can be executed as follows:
+
+1. Introduce a https://martinfowler.com/articles/feature-toggles.html[feature toggle], e.g. `SCANNER_ADAPTER=[on|off]`,
+   to enabled/disable scanner adapters functionality. This will allow us to experiment and deliver the code incrementally.
+2. Implement a generic `scanner.Client` to communicate with the _Scanner Adapter API_:
++
+[source,go]
+----
+package scanner
+
+// ScanRequest represents a structure that is sent to Scanner Adapter API
+// with all the details required to fetch image meta-data and layers.
+type ScanRequest struct {
+	RegistryURL   string `json:"registry_url"`
+	RegistryToken string `json:"registry_token"`
+	Repository    string `json:"repository"`
+	Tag           string `json:"tag"`
+	Digest        string `json:"digest"`
+}
+
+// ScanResponse represents the outcome of the image scan.
+type ScanResponse struct {
+	Digest string `json:"digest"`
+	Overview ComponentsOverview `json:"overview"`
+	Vulnerabilities []VulnerabilityItem `json:"vulnerabilities"`
+}
+
+type ComponentsOverview struct {
+	Total   int `json:"total"`
+	Summary []ComponentsOverviewEntry `json:"summary"`
+}
+
+type ComponentsOverviewEntry struct {
+	Sev int `json:"severity"`
+	Count int `json:"count"`
+}
+
+type VulnerabilityItem struct {
+	ID          string   `json:"id"`
+	Severity    string   `json:"severity"`
+	Pkg         string   `json:"package"`
+	Version     string   `json:"version"`
+	Description string   `json:"description"`
+	Link        string   `json:"link"`
+	Fixed       string   `json:"fixedVersion,omitempty"`
+}
+
+type Scanner struct {
+}
+
+func (s *Scanner) Scan(req ScanRequest) error {
+    // ...
+}
+
+func (s *Scanner) GetResult(digest string) (ScanResponse, error) {
+    // ...
+}
+----
+3. Implement `ScannerJob` by porting the logic from `ClairJob` and using a fresh `scanner.Client` instead of existing
+   `clair.Client`.
+4. Modify the code that actually schedules `ClairJob`. The code should read the `SCANNER_ADAPTER` feature flag.
+   If it's `off` it should fallback to submitting a `ClairJob`. If it's `on` it should run the `ScannerJob`.
+5. Similarly modify the _Repository API_ HTTP handler for fetching scan details, i.e. if the `SCANNER_ADAPTER` feature flag is `on`, use
+   `scanner.Client` instead of `clair.Client`.
+6. Implement `clair-harbor-adapter` as a reference implementation. Host it in a dedicated repository,
+   e.g. https://github.com/goharbor/harbor-clair-adapter.
+
+=== Summary
+
+==== Advantages
+
+1. Quite simple to implement incrementally and deploy behind a feature toggle.
+2. Preserve existing data model. No changes to the database models.
+3. Scalable in terms of Harbor's code base and community contributions. Not a monolith.
+   (Harbor does have to know about Scanner X or Scanner Y. Instead Scanner X and Scanner Y knows about Harbor.)
+4. DRY Write `scanner.Client` once and reuse it everywhere.
+
+==== Disadvantages
+
+1. Additional abstraction layer and additional hop in troubleshooting problems or debugging code.
+2. Maintain the scanner adapter's API.
+3. Evaluate upfront whether the API is flexible enough to cater for all use cases.
+
+== POC
+
+TODO Add link to GitHub branch
+
+=== Microscanner Scanner Adapter
+
+TODO Add link to GitHub repo
