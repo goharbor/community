@@ -29,8 +29,8 @@ This feature should support:
 
 1. User could define his own policy which includes multiple events and multiple event handlers such as http handler.
 2. And the event define should be extensible. pushing image event is in need for CICD. but other events should be implemented easily including finishing scanning image, finishing replicate, delete image and so on.
-3. The logs of the jobs of event triggered should be recorded, these logs  should contain the http request and http response, and could be shown on UI as Job log.
-4. The hook request should be retried after failed. we will use backoff mechanism to control the rate of delay time. and make max retry time configurable.
+3. The logs of the jobs of event triggered should be recorded, these logs  should contain the http request and http response.
+4. The hook request should be retried after failed. we will use backoff(the gocraft buildin backoff) mechanism to control the rate of delay time. and make max retry count configurable. and max retry count could be set to -1, so job will be retried infinitely until success.
 5. Webhook will be implemented in JobService framework if needed.
 6. Adding a system configuration to enable or disable the webhook function globally. and this flag will be checked when event triggered.
 
@@ -238,31 +238,25 @@ and also users can input a URL with https schema. and select insecure protocol i
 
 There should be a test function which will send a templated request to remote endpoint when adding webhook policy to Harbor, this could refer to adding replication target.
 
-#### Backoff Mechanism Design
+#### Backoff Mechanism
 
-As the opensource package [backoff](github.com/cenkalti/backoff) is designed to generate random interval time sequentially and the Next-Interval dependents on the context. So we will design a backoff mechanism referring to it.
+To make sure webhook jobs will be executed successfully, we will use backoff mechanism. We investigate gocraft framework and found that the gocraft buildin backoff is enough.
 
-initialWaitTime：default 500ms         
-maxWaitTime：default 30min (it will prevent user defining a big maxRetryCount to make Job in queue too long time)
-exponentFactor:  default 3
-randomizationFactor: default 0.1
-maxRetryCount: default 5
+Jobs will be retried and the interval is,
 
-and the backoff algorithm：rand.Float64() * (2 * randomizationFactor * initialWaitTime * exponentFactor ^ (retryCount - 1) + 1) + (1 - randomizationFactor) * initialWaitTime * exponentFactor ^ (retryCount - 1)
+```
+1st: 16-74s
+2nd: 31-118s
+3rd: 96-212s
+4th: 271-416s
+5th: 640-814s
+6th: 1311-1514s
+7th: 2416-2648s
+8th: 4111-4372s
+9th: 6576-6866s
+```
 
-so the default interval time will be in the following section:
-
-the first time （450ms, 551ms）
-the second time （1350ms, 1651ms）
-the third time （4050ms，4951ms）	
-the fourth time （12150ms，14850ms）
-the fifth time （36450ms, 44550ms）
-the sixth time （109350ms, 133650ms）
-... ...
-
-it will quit if the interval time is bigger than the maxWaitTime(default 30min).
-
-the configurable parameter is maxRetryCount(default 5). it will be system level configuration.
+the configurable parameter is maxRetryCount(default 5). it will be system level configuration. and user can modify it from UI. besides maxRetryCount could be set to ‘-1’, so jobs will be retried infinitely until success.
 
 #### Covered Event
 
@@ -289,8 +283,32 @@ the configurable parameter is maxRetryCount(default 5). it will be system level 
 |  List  |        Y        |       Y        |    N    |   N   |
 |  Test  |        Y        |       N        |    N    |   N   |
 
+## UI Design
+
+Here you can create a webhook policy. The 'timeout' attribute will be removed, and Username/Password will be replaced by a Secret header. It will send a test request to remote by clicking 'Test Endpoint' button.
+
+![](https://gitlab.com/pmm123/pics/raw/master/harbor/webhook/webhook_get_started_1.jpg)
+
+
+
+Display page. 'Timeout' column will be removed too. You can disable webhook function by clicking 'DISABLE' button.
+
+![](https://gitlab.com/pmm123/pics/raw/master/harbor/webhook/webhook_enable.jpg)
+
+
+
+This will disable/enable webhook function globally.
+
+![](https://gitlab.com/pmm123/pics/raw/master/harbor/webhook/webhook_configuration_enabled.jpg)
+
+
+
 ## Non-Goals
 
 1. Email handler is not included in this proposal, but it will be implemented in future.
 2. Replication event is also not included in this proposal, but it is in our plan.
+3. Only one hook policy per project is supported now, multiple hook policies per project is in our plan.
+4. Global webhook is not supported in this release too. 
+5. Now hook events is fixed. you can only subscribe all of the events above or none.but optional events are in our plan.
+6. Hook history can't be searched from UI. but it exists in DB now, so you can check it from DB or log.
 
