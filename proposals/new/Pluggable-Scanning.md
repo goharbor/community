@@ -6,15 +6,15 @@ Discussion: [Issue 6234](https://github.com/goharbor/harbor/issues/6234)
 
 ## Abstract
 
-Add a vendor agnostic image scanner interface between Harbor and external image scanning systems to facilitate integration of 
-other scanners with Harbor and add scanner-specific image checks to optionally gate access to container images.
+Add a generic image scanner abstraction layer between Harbor and external image scanners. Scanner integrations are achieved
+by implementing an adapter which implements the scanner adapter interface and which is loaded, configured, and invoked by the
+a generic scanner job.
 
-The plugin interface will support the following high-level capabilities:
+The adapter interface will support the following high-level capabilities:
 
-1. Scanning images and returning a vulnerability listing mapping vulnerabilities to artifacts in the image
+1. Scanning images achieved by the scanner fetching image data and returning a vulnerability listing mapping vulnerabilities to artifacts in the image
 2. Providing a image check pass/fail recommendation based on the specific capabilities/polices of the scanner (new)
 3. Cleanup of data in the scanner when an image is deleted from Harbor (for image lifecycle completeness) (new)
-
 
 ## Background
 
@@ -36,7 +36,7 @@ Scans are initiated by the job service due to:
 * New image pushed
 * Scheduled scan interval
 * User API call
-* Notification (POST) from Clair to _/service/notifications/clair_ indicating an update available 
+* Notification (POST) from Clair to _/service/notifications/clair_ indicating an update available
 
 The scan job (ClairJob) interacts with the scanner (Clair) and process the result for hand-off to the DAO layer to be persisted.
 The persisted result (ImgScanOverview) is made available via the Harbor API as well as consumed by the policyChecker interceptor if configured.
@@ -48,23 +48,35 @@ The Harbor UI also consumes the scan results and visualizes them to the user as 
 
 ## Proposal
 
-Introduce a plugin interface for any scanner to be integrated with Harbor. The drivers may be delivered in-tree or out-of-tree
-using go modules, subject to design discussion with Harbor maintainers on larger plugin architecture requirements. Based on the
-current system implementation and design, it is assumed that an in-tree implementation will be preferred by maintainers, but this is
-subject to further discussion and follow-up.
+Introduce a layer of abstraction between the scan invocation logic and the scanner-specific logic: an adapter interface for any scanner to be integrated with Harbor. 
+The existing Clair implementation (ClairJob, etc) will be moved into a Clair adapter invoked by the common scan. 
 
+A ScanJob layer will added that will load, configure, and invoke the appropriate adapter defined in the Harbor configuration.
 
-The plugin interface will provide:
+The new ImageScannerAdapter interface provides:
 
-1. Image lifecycle operations:
-    1. Image added to Harbor: execute a scan on the digest
-    2. Image deleted from Harbor: delete the image in the scanner, configurable to be executed or not, depending on user requirements
-    3. Background scan update: execute a scan on an image previously scanned
-        1. For some scanners this will be the same as 2.1, but for others it may differ in what/if data is retrieved.
-2. Credentialed access to the image content
-3. Credentialed access to the scanner itself
+1. Execute a scan on the image data, retrievable by the digest of the image manifest document (aka the "image digest") (same as current impl)
+1. Notify the scanner that the image is removed from Harbor. Depending on scanner and configuration this may be a no-op. (new)
+1. Execute a rescan of an image previously scanned (Note: For some scanners this will be the same as #1, but for others it may differ in what/if data is retrieved.) (new, but largely identical to current impl)
+1. Execute a "check" operation for an image against the scanner, if implemented, to provide an evaluation and pass/fail (new)
 
-#### Plugin Interface Operations
+### Accessing Image Data
+
+The adapter interface passes a reference to the image data to the adapters: the image digest (digest of the image manifest object) and the registry url 
+necessary to retrieve the data via registry API mechanisms. An example reference would be: internalharborregistry:5000/project/image@sha256:abc123.
+From such an reference the scanners may use HTTP GET to download the image manifest that describes the additional data layers needed for analysis. Optimization of
+the data retrieval and analysis is left to the individual adapters and scanner implementations as an implementation detail.
+
+The current implementation of the scanner integration assumes that the scanner has access to the internal registry API without first passing thru the proxy component
+that implements access control for external Harbor users. This allows the scanners to fetch image data even when external users cannot retrieve image data due to 
+access restriction caused by the scan status and/or vulnerability status of the image as configured by the API policyChecker component. As such, either a given
+scanner to be integrated with Harbor must have access to internal network interfaces not exposed to external users, or else must implement a proxy that can run
+within that network that is exposed externally (presumably with authc/authn) to ensure access to the data regardless of the access status for Harbor users.
+
+As an example, the current implementation runs Clair in the same docker-compose network so it can access ports that are not exposed to the host itself. Such a model
+will work for some scanners, but will require additional implementation work for adapters for scanners that are external to the registry deployment (e.g. Saas or externally hosted to the registry).
+
+#### Adapter Interface Operations
 
 * ScanImage
   * Description: The base scan operation to process an image's content and return a list of found vulnerabilities, some scan metadata, and a check result (scanner specific)
@@ -75,8 +87,8 @@ The plugin interface will provide:
     scan_metadata: json object, scanner specific
     image_check: boolean (true if image is 'ok' according to scanner implementation and/or policy)
     
-* ImageDeleted
-  * Description: Explicit call to support scanner GC of any scan related data that should be flushed.
+* NotifyImageDeleted
+  * Description: Explicit call to notify scanner that a specific image manifest has been deleted from Harbor and the scanner may flush any state if necessary.
   * Params: image digest, tags, registry URL
   * Output: status code (ok or error)
   
@@ -90,7 +102,7 @@ The plugin interface will provide:
       image_check: boolean (true if image is 'ok' according to scanner implementation and/or policy)
 
 * HandleScannerNotification
-  * Description: Handler for webhooks invoked by the scanner itself. The driver, with knowlege of the payload, can decide if a new scan task is needed and indicate it in the return value 
+  * Description: Handler for webhooks invoked by the scanner itself. The adapter, with knowledge of the payload, can decide if a new scan task is needed and indicate it in the return value 
   * Params: notification content
   * Output: array of digests to re-scan
   
@@ -101,50 +113,59 @@ The plugin interface will provide:
 
 #### Configuration
 
-* Driver selection - configured in the Harbor configuration itself
-* Driver configuration, as a json document, specific to the driver impl. Config key is the driver id/name.  
-  * Scanner credentials - included in the driver-specific configuration if necessary. Should be kept in a secret store in encrypted form.
+* adapter selection - configured in the Harbor configuration itself
+* adapter configuration, as a json document, specific to the adapter impl. Config key is the adapter id/name.  
+  * Scanner credentials - included in the adapter-specific configuration if necessary. Should be kept in a secret store in encrypted form.
   * Details tbd with feedback from harbor maintainers on overall configuration handling
 
 #### Error Handling
 
-Driver implementations of these operations should return errors in standard go mechanisms (not outlined here since the are common to all function calls). However, the objects returned
-as errors, should be well defined by the driver and implement a common interface:
+Adapter implementations of these operations should return errors in standard go mechanisms (not outlined here since the are common to all function calls). However, the objects returned
+as errors, should be well defined by the adapter and implement a common interface:
 
-DriverError:
+AdapterError an error normalization abstraction between the adapter framework and adapter implementations:
 * Message - string - description of the error, intended to be short for single line presentation
 * Detail - string - Additional detail for human consumption that may be longer than a single line and may include remediation information.
 * ErrorCode - int - code to uniquely identify the class of error
 * CanRetry - bool - an indicator to the caller that the error may be resolved with a retry
-
-
+a
 #### DAO Updates needed:
-* Extend the existing result store to include a json field for:
-  * Augmentation of existing vulnerability listing to be more generic
-  * Scan metadata from scanner (opaque json object)
-  * Image check result  
 
+Overall, the objective is to require as little DAO change as possible to minimize upgrade and db maintenance impact.
 
+* Extend the existing result store to include json fields for:
+  * Augmentation of existing vulnerability listing to be more generic (primarily column/table naming, not schema).
+  * Scan result metadata from scanner (opaque json object)
+  * Image check result - a boolean and a json object returned by the scanner
 
 ## Non-Goals
 
 * Changes to the UI presentation of image vulnerability data (such changes may be a goal of a later work or independent work parallel to this)
 * More than one scanner configured for use concurrently in Harbor
 
-
 ## Rationale
 
 The proposed approach is intended to provide a generic-enough interface that scanners with different data management and lifecycle designs can still be integrated into the
-Harbor and implement only the aspects necessary for that system in the driver. The basic vulnerability listing format is kept normalized so that clients of the Harbor API have
+Harbor and implement only the aspects necessary for that system in the adapter. The basic vulnerability listing format is kept normalized so that clients of the Harbor API have
 a well-defined format for consuming scan results, but support for additional scanner-specific metadata will allow scanner-aware clients to gain additional insight into the
 scan results/details as available for a specific scanner.
 
-The addition of an image check function allows scanners with more functionality than just returning simple vulnerability lists to make recommendations
-to Harbor on suitability of an image. For end-users, the raw vulnerability list is rarely sufficient for determining if an image is acceptable or not, but
-the mechanisms and inputs to the check decision will be scanner specific and must be handled by the driver implementations themselves.  Additional future work in the
-policyChecker or new interceptors can leverage the check recommendations from the scanners or utilize the new CheckImage operation to have control over the staleness of
-the check result. The interceptor implementation(s) can decide to use either the last known recommendation or request a new evaluation during request processing.
 
+This proposal includes 2 new capabilities not found in the current Clair-specific implementation:
+1. Full data lifecycle management
+    1. The current implementation assumes that the admin is manually managing the data lifecycle for scan state in the scanners. That is certainly always an option but
+  quickly imposes some operational issues with resource provisioning of the scanner (db storage sizes, etc).
+  1. By including a notification mechanism that an image is logically deleted, the scanner may, based on its configuration and how the user wants it deployed, be able
+  to clean up its own scan state and maintain some parity with the image state of the Harbor deployment. This is purely a notification mechanism, not an actuation, and the scanner adapters
+  are free to implement as makes sense, including a no-op.
+
+1. Scanner-implemented image evaluation with a policy recommendation
+    1. The addition of an image check function allows scanners with more functionality than just returning simple vulnerability lists to make recommendations
+to Harbor on suitability of an image. For end-users, the raw vulnerability list is rarely sufficient for determining if an image is acceptable or not, but
+the mechanisms and inputs to the check decision will be scanner specific and must be handled by the adapter implementations themselves.  Additional future work in the
+policyChecker or new interceptors can leverage the check recommendations from the scanners or utilize the new CheckImage operation to have control over the staleness of
+the check result. This check is not intended to replace other policy evaluations but to augment them.
+    1. This functionality could be abstracted into a separate Policy adapter layer in the future if Harbor intends to build a generic policy layer. However, this proposal attempts to avoid significant changes outside of the image scan flow.  
 
 ## Compatibility
 
@@ -152,9 +173,68 @@ TBD
 
 ## Implementation
 
-TBD
+Overall approach is to add an abstraction layer, then extend it
+
+### Phase 1: Abstract existing Clair implementation into the adapter model
+
+Add abstraction layer between existing ScanJob logic and the existing ClairJob interface.
+
+Example interfaces:
+
+``` 
+
+// The interface that each scanner implementation would implement
+// The ScannerAdapter objects should have default constructors to facilitate lazy initialization
+
+type ScannerAdapter interface {
+  func configure(conf map[string]interface{}) err
+  func scanImage(imgReference ImageReference, credentials AccessCredentials) *VulnerabilityReport, *ImageCheckReport, err
+  func rescanImage(imgReference ImageReference, credentials AccessCredentials) *VulnerabilityReport, *ImageCheckReport, err
+  func notifyImageDeletion(imgReference ImageReference) err
+  func checkImage(imgReference ImageReference) PolicyResult, err  
+}
+
+type ScanResult struct {
+  vulnResult VulnerabilityReport
+  checkResult ImageCheckReport
+}
+
+type ImageReference struct {
+  registryUrl string
+  digest string
+  tag string
+}
+
+// Access credentials for the image content
+type AccessCredentials struct {
+  token string
+  tokenUrl string
+}
+
+// For now, use the existing vuln format for ease of conversion into the db model 
+type VulnerabilityReport ClairVulnerabilityEnvelope
+
+// Optionally implemented, 
+type ImageCheckReport struct {
+  imageDigest string
+  imagePasses boolean //Pass/Fail flag
+  checkTimestamp time.Time
+  details map[string]interface{} // Opaque json object for scanner-specific results if implemented by the scanner  
+}
+
+```
+
+### Phase 2: Add one or more non-Clair adapters
+Likely the Anchore adapter and Aqua Microscanner adapters.
+
+
+### Phase 3: Add new image data lifecycle capabilities
+
+Specifically, the delete lifecycle call, invoked in the proxy handler on a successful response from the backing registry implementation.
+
+
 
 ## Open issues (if applicable)
 
-General approach to plugins in Harbor. Expectation is that they will all be in-tree and compiled into the build, but selected at runtime based on configuration, but this is open for discussion as it will
-impact the libraries and licenses of software that the drivers themselves as well as software delivery implications.
+General approach to adapters in Harbor. Expectation is that they will all be in-tree and compiled into the build, but selected at runtime based on configuration, but this is open for discussion as it will
+impact the libraries and licenses of software that the adapters themselves as well as software delivery implications.
