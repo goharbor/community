@@ -209,7 +209,13 @@ Content-Type: application/json
 
   "digest: "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54",
 }
+
+{
+  "details_key": "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54" <1>
+}
 ----
+<1> The details key is used to fetch scan result. It can be digest or any other identifier. For example,
+Clair is using layer name as a key to fetch scan result.
 
 If `201 Accepted` response is returned, the scan request was submitted successfully and the client may proceed with
 getting the corresponding scan result.
@@ -232,10 +238,9 @@ Authorization: Bearer JWTTOKENGOESHERE
 To get the scan result for the given image digest the following request has to be sent:
 
 ----
-GET /v1/scan/<digest>
+GET /v1/scan/<detailsKey>
 
 {
-  "digest": "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54",
   "overview": {
     "total": 2,
     "summary": [
@@ -286,12 +291,12 @@ imageScanner:
   # Use CoreOS Clair for image scanning
   name: "Clair"
   vendor: "CoreOS"
-  endpointURL: "http://harbor-clair-adapter.harbor:6000/"
+  endpointURL: "http://harbor-clair-adapter:6000/"
 
   # Alternatively use Aqua Security Microscanner
   # name: "Microscanner"
   # vendor: "Aqua Security"
-  # endpointURL: "http://harbor-microscanner-adapter.harbor:8080/"
+  # endpointURL: "http://harbor-microscanner-adapter:8080/"
 
 # See https://martinfowler.com/articles/feature-toggles.html
 featureToggles:
@@ -323,12 +328,19 @@ type ScanRequest struct {
 	Digest        string `json:"digest"`
 }
 
-// ScanResponse represents the outcome of the image scan.
 type ScanResponse struct {
-	Digest string `json:"digest"`
-	Overview ComponentsOverview `json:"overview"`
-	Vulnerabilities []VulnerabilityItem `json:"vulnerabilities"`
+	DetailsKey string `json:"details_key"`
 }
+
+// ScanResponse represents the outcome of the image scan.
+type ScanResult struct {
+	Severity Severity `json:"severity"`
+	Overview *ComponentsOverview `json:"overview"`
+	Vulnerabilities []*VulnerabilityItem `json:"vulnerabilities"`
+}
+
+// Severity represents the severity of a image/component in terms of vulnerability.
+type Severity int64
 
 type ComponentsOverview struct {
 	Total   int `json:"total"`
@@ -350,15 +362,9 @@ type VulnerabilityItem struct {
 	Fixed       string   `json:"fixedVersion,omitempty"`
 }
 
-type Scanner struct {
-}
-
-func (s *Scanner) Scan(req ScanRequest) error {
-    // ...
-}
-
-func (s *Scanner) GetResult(digest string) (ScanResponse, error) {
-    // ...
+type ImageScanner interface {
+	Scan(req ScanRequest) (*ScanResponse, error)
+	GetResult(detailsKey string) (*ScanResult, error)
 }
 ----
 3. Implement `ScannerJob` by porting the logic from `ClairJob` and using a fresh `scanner.Client` instead of existing
@@ -388,8 +394,12 @@ func (s *Scanner) GetResult(digest string) (ScanResponse, error) {
 
 == POC
 
-TODO Add link to GitHub branch
+https://github.com/danielpacak/harbor/tree/scanner_adapters_poc
 
-=== Microscanner Scanner Adapter
+=== Microscanner Adapter
 
-TODO Add link to GitHub repo
+https://github.com/danielpacak/harbor-microscanner-adapter
+
+=== Clair Adapter
+
+https://github.com/danielpacak/harbor-clair-adapter
