@@ -1,0 +1,30 @@
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+
+  rectangle jobservice {
+    rectangle ScannerJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle MicroscannerAdapterAPI {
+  rectangle microscanner <<exec>> {
+  }
+}
+
+rectangle AWS {
+  rectangle CyberCenter {
+  }
+}
+
+ScannerJob ..> MicroscannerAdapterAPI : R/W
+RepositoryAPI ..> MicroscannerAdapterAPI : R
+MicroscannerAdapterAPI ..> registry : R
+
+MicroscannerAdapterAPI ..> CyberCenter : R/W
+
+@enduml

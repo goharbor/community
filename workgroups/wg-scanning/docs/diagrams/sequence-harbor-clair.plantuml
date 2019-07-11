@@ -1,0 +1,51 @@
+@startuml
+
+actor "User"
+participant "Portal UI"
+participant "ClairJob"
+participant "Repository API"
+participant "Clair API"
+
+database "Registry"
+database "Harbor DB"
+
+User -> "Portal UI" : (1) Scan
+"Portal UI" -> "ClairJob" : (2) Schedule
+activate "ClairJob"
+"ClairJob" -> "Registry" : (3) GetManifest
+activate "Registry"
+"Registry" --> "ClairJob"
+deactivate "Registry"
+
+"ClairJob" -> "ClairJob" : (4) CreateClairLayers
+
+"ClairJob" -> "Clair API" : (5) ScanClairLayers
+activate "Clair API"
+"Clair API" --> "ClairJob"
+deactivate "Clair API"
+
+"ClairJob" -> "Clair API" : (6) GetScanResult
+activate "Clair API"
+"Clair API" --> "ClairJob"
+deactivate "Clair API"
+
+"ClairJob" -> "ClairJob" : (7) TransformScanResult
+"ClairJob" -> "Harbor DB" : (8) SaveComponentsOverview
+activate "Harbor DB"
+"Harbor DB" --> "ClairJob"
+deactivate "Harbor DB"
+deactivate "ClairJob"
+
+|||
+
+"User" -> "Portal UI" : (9) Refresh
+"Portal UI" -> "Repository API" : (10) VulnerabilityDetails
+activate "Repository API"
+"Repository API" -> "Clair API" : (11) GetScanResult
+activate "Clair API"
+"Clair API" --> "Repository API"
+deactivate "Clair API"
+"Repository API" -> "Repository API" : (12) TransformScanResult
+"Repository API" --> "Portal UI"
+deactivate "Repository API"
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+  rectangle notary
+
+  rectangle jobservice {
+    rectangle ClairJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle ClairAPI {
+}
+
+database ClairDB {
+}
+
+ClairJob ..> ClairAPI : R/W
+RepositoryAPI ..> ClairAPI : R
+ClairAPI ..> ClairDB : R/W
+
+ClairAPI ..> registry : R
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+
+actor "User"
+participant "Portal UI"
+participant "ScannerJob"
+participant "Repository API"
+participant "Scanner Adapter API"
+
+database "Registry"
+database "Harbor DB"
+
+User -> "Portal UI" : (1) Scan
+"Portal UI" -> "ScannerJob" : (2) Schedule
+activate "ScannerJob"
+
+"ScannerJob" -> "ScannerJob" : (3) PrepareScanRequest
+
+"ScannerJob" -> "Scanner Adapter API" : (4) SendScanRequest
+activate "Scanner Adapter API"
+
+"Scanner Adapter API" -> "Registry"
+activate "Registry"
+"Registry" --> "Scanner Adapter API"
+deactivate "Registry"
+"Scanner Adapter API" --> "ScannerJob"
+deactivate "Scanner Adapter API"
+
+"ScannerJob" -> "Scanner Adapter API" : (5) GetScanResult
+activate "Scanner Adapter API"
+"Scanner Adapter API" --> "ScannerJob"
+deactivate "Scanner Adapter API"
+
+"ScannerJob" -> "ScannerJob" : (6) TransformScanResult
+"ScannerJob" -> "Harbor DB" : (7) SaveComponentsOverview
+activate "Harbor DB"
+"Harbor DB" --> "ScannerJob"
+deactivate "Harbor DB"
+deactivate "ScannerJob"
+
+|||
+
+"User" -> "Portal UI" : (8) Refresh
+"Portal UI" -> "Repository API" : (9) VulnerabilityDetails
+activate "Repository API"
+"Repository API" -> "Scanner Adapter API" : (10) GetScanResult
+activate "Scanner Adapter API"
+"Scanner Adapter API" --> "Repository API"
+deactivate "Scanner Adapter API"
+"Repository API" -> "Repository API" : (11) TransformScanResult
+"Repository API" --> "Portal UI"
+deactivate "Repository API"
+@enduml

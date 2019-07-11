@@ -17,95 +17,12 @@ scanners. At the same time the MVP should be extensible to cater for further imp
 Currently the code for submitting scan requests and fetching scan results from Clair is part of the Harbor's codebase.
 
 .The deployment diagram for the current Harbor integration with Clair.
-[plantuml, deployment-harbor-clair, png]
-....
-@startuml
-
-rectangle Harbor {
-  rectangle registry
-  rectangle notary
-
-  rectangle jobservice {
-    rectangle ClairJob
-  }
-  rectangle core {
-    rectangle RepositoryAPI
-  }
-}
-
-rectangle ClairAPI {
-}
-
-database ClairDB {
-}
-
-ClairJob ..> ClairAPI : R/W
-RepositoryAPI ..> ClairAPI : R
-ClairAPI ..> ClairDB : R/W
-
-ClairAPI ..> registry : R
-
-@enduml
-....
+plantuml::diagrams/deployment-harbor-clair.plantuml[deployment-harbor-clair, png]
 
 The current workflow for scanning images is depicted below with the detailed explanation beneath.
 
 .The sequence diagram for the current Harbor integration with Clair.
-[#img-sequence-harbor-clair]
-[plantuml, sequence-harbor-clair, png]
-....
-@startuml
-
-actor "User"
-participant "Portal UI"
-participant "ClairJob"
-participant "Repository API"
-participant "Clair API"
-
-database "Registry"
-database "Harbor DB"
-
-User -> "Portal UI" : (1) Scan
-"Portal UI" -> "ClairJob" : (2) Schedule
-activate "ClairJob"
-"ClairJob" -> "Registry" : (3) GetManifest
-activate "Registry"
-"Registry" --> "ClairJob"
-deactivate "Registry"
-
-"ClairJob" -> "ClairJob" : (4) CreateClairLayers
-
-"ClairJob" -> "Clair API" : (5) ScanClairLayers
-activate "Clair API"
-"Clair API" --> "ClairJob"
-deactivate "Clair API"
-
-"ClairJob" -> "Clair API" : (6) GetScanResult
-activate "Clair API"
-"Clair API" --> "ClairJob"
-deactivate "Clair API"
-
-"ClairJob" -> "ClairJob" : (7) TransformScanResult
-"ClairJob" -> "Harbor DB" : (8) SaveComponentsOverview
-activate "Harbor DB"
-"Harbor DB" --> "ClairJob"
-deactivate "Harbor DB"
-deactivate "ClairJob"
-
-|||
-
-"User" -> "Portal UI" : (9) Refresh
-"Portal UI" -> "Repository API" : (10) VulnerabilityDetails
-activate "Repository API"
-"Repository API" -> "Clair API" : (11) GetScanResult
-activate "Clair API"
-"Clair API" --> "Repository API"
-deactivate "Clair API"
-"Repository API" -> "Repository API" : (12) TransformScanResult
-"Repository API" --> "Portal UI"
-deactivate "Repository API"
-@enduml
-....
+plantuml::diagrams/sequence-harbor-clair.plantuml[sequence-harbor-clair, png]
 
 1. A _User_ requests a scan of selected image by clicking the Scan button.
 2. The system schedules a _ClairJob_ for execution.
@@ -134,116 +51,17 @@ Having said that imagine that instead of calling directly _Clair API_, the _Clai
 Adapter API_ which in turn calls the _Clair API_. The _Clair Scanner Adapter API_ is given all params to pull the image
 from the Harbor's registry.
 
-.The deployment diagram for the proposed Harbor integration with a Scanner Adapter.
-[plantuml, deployment-harbor-scanner-adapter, png]
-....
-@startuml
-
-rectangle Harbor {
-  rectangle registry
-
-  rectangle jobservice {
-    rectangle ScannerJob
-  }
-  rectangle core {
-    rectangle RepositoryAPI
-  }
-}
-
-rectangle ScannerAdapterAPI {
-}
-
-rectangle ClairAdapterAPI {
-}
-
-rectangle TrivyAdapterAPI {
-}
-
-rectangle AnchoreAdapterAPI {
-}
-
-rectangle MicroscannerAdapterAPI {
-}
-
-rectangle ClairAPI {
-}
-
-ScannerJob ..> ScannerAdapterAPI : R/W
-RepositoryAPI ..> ScannerAdapterAPI : R
-ScannerAdapterAPI ..> registry : R
-
-ScannerAdapterAPI ^.. ClairAdapterAPI
-ClairAdapterAPI ..> ClairAPI : R/W
-
-ScannerAdapterAPI ^.. TrivyAdapterAPI
-ScannerAdapterAPI ^.. AnchoreAdapterAPI
-ScannerAdapterAPI ^.. MicroscannerAdapterAPI
-@enduml
-....
+.The deployment diagram for the proposed Harbor integration with Scanner Adapter API.
+plantuml::diagrams/deployment-harbor-scanner-adapter.plantuml[deployment-harbor-scanner-adapter, png]
 
 This indirection introduced by the _Scanner Adapter API_ abstraction allows one to implement a generic `ScannerJob` and
 `scanner.Client` once and reuse them with every imaginable scanner. In this approach the responsibility of integrating
-the scanner with Harbor is delegated to the corresponding Adapter's implementation. For example, we can
+the scanner with Harbor is delegated to the corresponding _Scanner Adapter API_ implementation. For example, we can
 have a dedicated `harbor-clair-adapter`, or `harbor-microscanner-adapter`. The only requirement is that each adapter
 implements a well defined API and is deployed as a separate microservice.
 
-.The sequence diagram for the proposed Harbor integration with a Scanner Adapter.
-[#img-sequence-harbor-scanner-adapter]
-[plantuml, sequence-harbor-scanner-adapter, png]
-....
-@startuml
-
-actor "User"
-participant "Portal UI"
-participant "ScannerJob"
-participant "Repository API"
-participant "Scanner Adapter API"
-
-database "Registry"
-database "Harbor DB"
-
-User -> "Portal UI" : (1) Scan
-"Portal UI" -> "ScannerJob" : (2) Schedule
-activate "ScannerJob"
-
-"ScannerJob" -> "ScannerJob" : (3) PrepareScanRequest
-
-"ScannerJob" -> "Scanner Adapter API" : (4) SendScanRequest
-activate "Scanner Adapter API"
-
-"Scanner Adapter API" -> "Registry"
-activate "Registry"
-"Registry" --> "Scanner Adapter API"
-deactivate "Registry"
-"Scanner Adapter API" --> "ScannerJob"
-deactivate "Scanner Adapter API"
-
-"ScannerJob" -> "Scanner Adapter API" : (5) GetScanResult
-activate "Scanner Adapter API"
-"Scanner Adapter API" --> "ScannerJob"
-deactivate "Scanner Adapter API"
-
-"ScannerJob" -> "ScannerJob" : (6) TransformScanResult
-"ScannerJob" -> "Harbor DB" : (7) SaveComponentsOverview
-activate "Harbor DB"
-"Harbor DB" --> "ScannerJob"
-deactivate "Harbor DB"
-deactivate "ScannerJob"
-
-|||
-
-"User" -> "Portal UI" : (8) Refresh
-"Portal UI" -> "Repository API" : (9) VulnerabilityDetails
-activate "Repository API"
-"Repository API" -> "Scanner Adapter API" : (10) GetScanResult
-activate "Scanner Adapter API"
-"Scanner Adapter API" --> "Repository API"
-deactivate "Scanner Adapter API"
-"Repository API" -> "Repository API" : (11) TransformScanResult
-"Repository API" --> "Portal UI"
-deactivate "Repository API"
-@enduml
-....
+.The sequence diagram for the proposed Harbor integration with Scanner Adapter API.
+plantuml::diagrams/sequence-harbor-scanner-adapter.plantuml[sequence-harbor-scanner-adapter, png]
 
 1. A _User_ requests a scan of selected image by clicking the Scan button.
 2. The system schedules a _ScannerJob_ for execution. The _ScannerJob_ instantiates the generic `scanner.Client`.
@@ -371,7 +189,7 @@ to minimize the impact of changes in the code (JavaScript / DB migrations) but s
 
 === Harbor Configuration
 
-The Harbor's config would have a very generic structure as the only required config param is the URL of the
+The Harbor's config would have a very generic structure as the only required configuration parameter is the URL of the
 _Scanner Adapter API_. In other words, Harbor is not aware of any vendor specific configuration options such as access
 tokens, upstream vulnerability databases and so on. Vendor specific scanner configuration should be handled by
 the _Scanner Adapter API_ and the scanner itself.
@@ -494,39 +312,7 @@ https://github.com/danielpacak/harbor/tree/scanner_adapters_poc
 https://github.com/danielpacak/harbor-microscanner-adapter
 
 .The deployment diagram for the proposed Harbor integration with Microscanner.
-[plantuml, deployment-harbor-microscanner, png]
-....
-@startuml
-
-rectangle Harbor {
-  rectangle registry
-
-  rectangle jobservice {
-    rectangle ScannerJob
-  }
-  rectangle core {
-    rectangle RepositoryAPI
-  }
-}
-
-rectangle MicroscannerAdapterAPI {
-  rectangle microscanner <<exec>> {
-  }
-}
-
-rectangle AWS {
-  rectangle CyberCenter {
-  }
-}
-
-ScannerJob ..> MicroscannerAdapterAPI : R/W
-RepositoryAPI ..> MicroscannerAdapterAPI : R
-MicroscannerAdapterAPI ..> registry : R
-
-MicroscannerAdapterAPI ..> CyberCenter : R/W
-
-@enduml
-....
+plantuml::diagrams/deployment-harbor-microscanner.plantuml[deployment-harbor-microscanner, png]
 
 === Clair Adapter
 

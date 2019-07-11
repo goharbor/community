@@ -1,0 +1,42 @@
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+
+  rectangle jobservice {
+    rectangle ScannerJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle ScannerAdapterAPI {
+}
+
+rectangle ClairAdapterAPI {
+}
+
+rectangle TrivyAdapterAPI {
+}
+
+rectangle AnchoreAdapterAPI {
+}
+
+rectangle MicroscannerAdapterAPI {
+}
+
+rectangle ClairAPI {
+}
+
+ScannerJob ..> ScannerAdapterAPI : R/W
+RepositoryAPI ..> ScannerAdapterAPI : R
+ScannerAdapterAPI ..> registry : R
+
+ScannerAdapterAPI ^.. ClairAdapterAPI
+ClairAdapterAPI ..> ClairAPI : R/W
+
+ScannerAdapterAPI ^.. TrivyAdapterAPI
+ScannerAdapterAPI ^.. AnchoreAdapterAPI
+ScannerAdapterAPI ^.. MicroscannerAdapterAPI
+@enduml
