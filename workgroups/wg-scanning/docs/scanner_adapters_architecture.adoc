@@ -5,18 +5,52 @@
 
 == Overview
 
-Currently Harbor is closely coupled with https://github.com/coreos/clair[Clair] to scan images stored in its registry.
-The idea is to allow Harbor to work with any other compatible scanner by simple means of configuration change. By doing
-so Clair could be replaced with any open source or commercial alternative.
+Currently Harbor is closely coupled with https://github.com/coreos/clair[Clair] to scan images stored in its Docker
+_Registry_. The idea is integrate Harbor with any compatible image scanner by simple means of configuration
+changes. By doing so Clair could be replaced with an open source or commercial alternatives.
 
-The main objective of this proposal was to deliver a minimum valuable product (MVP) of pluggable scanner.
-At the same time the MVP should be extensible to cater for further improvements.
+The main objective of this proposal is to deliver the design of a minimum valuable product (MVP) of pluggable image
+scanners. At the same time the MVP should be extensible to cater for further improvements.
 
 == Harbor and Clair
 
+Currently the code for submitting scan requests and fetching scan results from Clair is part of the Harbor's codebase.
+
+.The deployment diagram for the current Harbor integration with Clair.
+[plantuml, deployment-harbor-clair, png]
+....
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+  rectangle notary
+
+  rectangle jobservice {
+    rectangle ClairJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle ClairAPI {
+}
+
+database ClairDB {
+}
+
+ClairJob ..> ClairAPI : R/W
+RepositoryAPI ..> ClairAPI : R
+ClairAPI ..> ClairDB : R/W
+
+ClairAPI ..> registry : R
+
+@enduml
+....
+
 The current workflow for scanning images is depicted below with the detailed explanation beneath.
 
-.A sequence diagram for the current Harbor integration with Clair.
+.The sequence diagram for the current Harbor integration with Clair.
 [#img-sequence-harbor-clair]
 [plantuml, sequence-harbor-clair, png]
 ....
@@ -89,8 +123,8 @@ deactivate "Repository API"
 9. The _User_ clicks the Refresh button or the UI timer triggers the scan results refresh.
 10. The _Repository API Handler_ calls the `VulnerabilitiesDetails` method of _Repository API_.
 11. The _Repository API_ downloads scan result for the persisted ``ClairLayer``'s Name.
-12. The ScanResult is transformed to the Harbor's model, i.e. a slice of ``VulnerabilityItem``s so it can be rendered in
-    the UI as a grid of vulnerabilities.
+12. The `ScanResult` is transformed to the Harbor's model, i.e. a slice of ``VulnerabilityItem``s so it can be rendered
+    in the UI as a grid of vulnerabilities.
 
 == Scanner Adapter
 
@@ -100,13 +134,60 @@ Having said that imagine that instead of calling directly _Clair API_, the _Clai
 Adapter API_ which in turn calls the _Clair API_. The _Clair Scanner Adapter API_ is given all params to pull the image
 from the Harbor's registry.
 
+.The deployment diagram for the proposed Harbor integration with a Scanner Adapter.
+[plantuml, deployment-harbor-scanner-adapter, png]
+....
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+
+  rectangle jobservice {
+    rectangle ScannerJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle ScannerAdapterAPI {
+}
+
+rectangle ClairAdapterAPI {
+}
+
+rectangle TrivyAdapterAPI {
+}
+
+rectangle AnchoreAdapterAPI {
+}
+
+rectangle MicroscannerAdapterAPI {
+}
+
+rectangle ClairAPI {
+}
+
+ScannerJob ..> ScannerAdapterAPI : R/W
+RepositoryAPI ..> ScannerAdapterAPI : R
+ScannerAdapterAPI ..> registry : R
+
+ScannerAdapterAPI ^.. ClairAdapterAPI
+ClairAdapterAPI ..> ClairAPI : R/W
+
+ScannerAdapterAPI ^.. TrivyAdapterAPI
+ScannerAdapterAPI ^.. AnchoreAdapterAPI
+ScannerAdapterAPI ^.. MicroscannerAdapterAPI
+@enduml
+....
+
 This indirection introduced by the _Scanner Adapter API_ abstraction allows one to implement a generic `ScannerJob` and
 `scanner.Client` once and reuse them with every imaginable scanner. In this approach the responsibility of integrating
 the scanner with Harbor is delegated to the corresponding Adapter's implementation. For example, we can
 have a dedicated `harbor-clair-adapter`, or `harbor-microscanner-adapter`. The only requirement is that each adapter
 implements a well defined API and is deployed as a separate microservice.
 
-.A sequence diagram for the proposed Harbor integration with a Scanner Adapter.
+.The sequence diagram for the proposed Harbor integration with a Scanner Adapter.
 [#img-sequence-harbor-scanner-adapter]
 [plantuml, sequence-harbor-scanner-adapter, png]
 ....
@@ -209,6 +290,13 @@ Content-Type: application/json
 
   "digest: "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54",
 }
+----
+
+If `201 Created` response is returned, the scan request was submitted successfully and the client may proceed with
+getting the corresponding scan result.
+
+----
+201 Created
 
 {
   "details_key": "sha256:9cb763a2a55567ebf4c1d6a70d83d5d032892c8d5aee8ea5894ef0a3c3786e54" <1>
@@ -216,9 +304,6 @@ Content-Type: application/json
 ----
 <1> The details key is used to fetch scan result. It can be digest or any other identifier. For example,
 Clair is using layer name as a key to fetch scan result.
-
-If `201 Accepted` response is returned, the scan request was submitted successfully and the client may proceed with
-getting the corresponding scan result.
 
 The JSON request payload contains all data that allows Scanner Adapter to pull image from the Harbor's Registry.
 For example, it should be able to send the following requests:
@@ -239,8 +324,16 @@ To get the scan result for the given image digest the following request has to b
 
 ----
 GET /v1/scan/<detailsKey>
+----
+
+The response will be in the following format:
+
+----
+200 OK
+Content-Type: application/json
 
 {
+  "severity": 5,
   "overview": {
     "total": 2,
     "summary": [
@@ -281,7 +374,7 @@ to minimize the impact of changes in the code (JavaScript / DB migrations) but s
 The Harbor's config would have a very generic structure as the only required config param is the URL of the
 _Scanner Adapter API_. In other words, Harbor is not aware of any vendor specific configuration options such as access
 tokens, upstream vulnerability databases and so on. Vendor specific scanner configuration should be handled by
-the scanner's adapter and the scanner itself.
+the _Scanner Adapter API_ and the scanner itself.
 
 .A snippet of Harbor config pertinent to the image scanning.
 [source,yaml]
@@ -399,6 +492,41 @@ https://github.com/danielpacak/harbor/tree/scanner_adapters_poc
 === Microscanner Adapter
 
 https://github.com/danielpacak/harbor-microscanner-adapter
+
+.The deployment diagram for the proposed Harbor integration with Microscanner.
+[plantuml, deployment-harbor-microscanner, png]
+....
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+
+  rectangle jobservice {
+    rectangle ScannerJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle MicroscannerAdapterAPI {
+  rectangle microscanner <<exec>> {
+  }
+}
+
+rectangle AWS {
+  rectangle CyberCenter {
+  }
+}
+
+ScannerJob ..> MicroscannerAdapterAPI : R/W
+RepositoryAPI ..> MicroscannerAdapterAPI : R
+MicroscannerAdapterAPI ..> registry : R
+
+MicroscannerAdapterAPI ..> CyberCenter : R/W
+
+@enduml
+....
 
 === Clair Adapter
 
