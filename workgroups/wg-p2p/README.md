@@ -16,6 +16,8 @@ The short-term mission is to:
 
 * Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))
 * De Chen@Caicloud ([cd1989](https://github.com/cd1989))
+* Mingming Pei ([mmpei](https://github.com/mmpei))
+* Fanjian Kong ([kofj](https://github.com/kofj))
 
 ## Meetings
 
