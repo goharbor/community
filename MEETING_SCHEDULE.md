@@ -17,10 +17,12 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
+| 2019/07/17 |  @bitsf || [China Recording](https://zoom.us/recording/share/j4tRARdxPnln2MUiTu9dMI2UD3KnPqQ4FIibNBhVBO-wIumekTziMw)  | upcoming community events, 1.9 planning, quota per project, webhook support, azure replication, User case sharing from caicloud  ||
+| 2019/07/03 |  @heww || [China Recording](https://zoom.us/recording/share/RquB6Q5Pl_fSl6TSwPynRlUKRJ4gFysvRiSGJ-FXvNWwIumekTziMw)  | upcoming community events, 1.9 planning, System level CVE whitelist, External syslog driver, User case sharing from qihoo360 ||
 | 2019/04/24 |  @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/cOzI-WGqIO7bJb3upT1cwxAnko59icH-PVEXFBbV97GwIumekTziMw)  | upcoming community events, 1.9 planning, replication to non-harbor registry demo  ||
 | 2019/04/10 | @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/Km_X9jlouC_NzXTy_x2BFNoaPMtlZUVBAX2mGqBaz9qwIumekTziMw), [US Recording](https://zoom.us/recording/share/r0NGQBWAsRlq1dDMuVVu2CIzqDPX5rYKlePjuxpUBTiwIumekTziMw) | 1.8 updates, community survey updates, 1.8 features preview ||
-| -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
-| -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
+| -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis | |
+| -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network ||
 | 2019/03/27 | Host: @michmike || `short meeting with no recording` |v1.9 proposal collection & introduction of proposal submission process ||
 | 2019/03/27 | Host: @renmaosheng | 13 |[Recording](https://zoom.us/recording/share/q3XXCv2VuPhmiyH8-sX2KVHWT4TmuaG3uhqE9cFCZAuwIumekTziMw)|v1.9 proposal collection & introduction of proposal submission process ||
 | 2019/03/13 | Host: @michmike ||[Recording](https://zoom.us/recording/share/7aELbP8mDdRxOMnsH8BEKuauQx8XE_5iiUyiZOjD8KmwIumekTziMw)|Prepare script updates, Survey, 2 new maintainers, Replication Updates||
