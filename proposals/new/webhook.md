@@ -51,8 +51,8 @@ This feature will make harbor support CICD flow, and one could build a "close
 4. These handlers are fair too. They just take their own duty.
 5. We will define some handlers which mapping to webhook actions to make architecture loose enough.
 6. Some events are translated to related jobs and post to JobService, some are processed in Core. e.g. event of sending a http request will be executed in JS while printing a message to stdout will be in Core.
-7. Jobs will be added to related queues.
-8. Workers for the special queue will fetch these jobs and process them.
+7. Jobs will be added to related queues by JobService.
+8. Workers for the special queue will fetch these jobs and process them in JobService.
 9. A result will be returned from remote and all of these will be recorded in log.
 10. webhook finished.
 
@@ -63,119 +63,123 @@ Hook payload will be:
 {
     "type": "pushImage",
     "occur_at": 1560862556,
-    "media_type": "containerImage",
-    "event_data": [{
-        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
-        "tag": "latest",
-        "resource_url": "repo.harbor.com/namespace/repoTest:latest"
-    }], 
-    "repository": {
-        "date_created": 1548645673, 
-        "name": "repoTest", 
-        "namespace": "namespace", 
-        "repo_full_name": "namespace/repoTest", 
-        "repo_type": "public"
-    },
-    "operator": "admin"
+    "operator": "admin",
+    "event_data": {
+        "tags": [{
+            "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917", 
+            "tag": "latest",
+            "resource_url": "repo.harbor.com/namespace/repoTest:latest"
+        }],
+        "repository": {
+            "date_created": 1548645673, 
+            "name": "repoTest", 
+            "namespace": "namespace", 
+            "repo_full_name": "namespace/repoTest", 
+            "repo_type": "public"
+        }
+    }
 }
 
 // Helm chart event
 {
     "type": "uploadChart",
     "occur_at": 1560862556,
-    "media_type": "helmChart",
-    "event_data": [{
-        "tag": "0.6.0-rc1",
-        "resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.6.0-rc1.tgz"
-    }, {
-        "tag": "0.7.23",
-        "resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.7.23.tgz"
-    }], 
-    "repository": {
-        "date_created": 1548645673, 
-        "name": "chartRepo", 
-        "namespace": "namespace", 
-        "repo_full_name": "namespace/chartRepo", 
-        "repo_type": "public"
-    },
-    "operator": "admin"
+    "operator": "admin",
+    "event_data": {
+        "tags": [{
+            "tag": "0.6.0-rc1",
+        	"resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.6.0-rc1.tgz"
+        },{
+            "tag": "0.7.23",
+            "resource_url": "repo.harbor.com/chartrepo/namespace/charts/chartRepo-0.7.23.tgz"
+        }],
+        "repository": {
+            "date_created": 1548645673, 
+            "name": "chartRepo", 
+            "namespace": "namespace", 
+            "repo_full_name": "namespace/chartRepo", 
+            "repo_type": "public"
+        }
+    }
 }
 
 // Scanning completed
 {
     "type": "scanningCompleted",
     "occur_at": 1560862556,
-    "media_type": "containerImage",
-    "event_data": [{
-        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
-        "tag": "latest",
-        "scan_overview": {
-            "components": {
-                "summary": [
-                    {
-                        "count": 5,
-                        "severity": 5
-                    },
-                    {
-                        "count": 2,
-                        "severity": 4
-                    },
-                    {
-                        "count": 1,
-                        "severity": 2
-                    },
-                    {
-                        "count": 63,
-                        "severity": 1
-                    },
-                    {
-                        "count": 3,
-                        "severity": 3
-                    }
-                ],
-                "total": 74
-            },
-            "creation_time": "2018-09-07T00:01:12.666501Z",
-            "details_key": "aae117139e87e9c5234001d960b5d196ffe6d578331ef6546501646415117403",
-            "job_id": 5695,
-            "scan_status": "finished",
-            "severity": 5,
-            "update_time": "2018-10-29T04:37:29.983743Z"
-        }
-    }], 
-    "repository": {
-        "date_created": 1548645673, 
-        "name": "repoTest", 
-        "namespace": "namespace", 
-        "repo_full_name": "namespace/repoTest", 
-        "repo_type": "public"
-    },
-    "operator": "auto"
+    "operator": "auto",
+    "event_data": {
+        "tags": [{
+            "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917", 
+            "tag": "latest",
+            "scan_overview": {
+                "components": {
+                    "summary": [
+                        {
+                            "count": 5,
+                            "severity": 5
+                        },
+                        {
+                            "count": 2,
+                            "severity": 4
+                        },
+                        {
+                            "count": 1,
+                            "severity": 2
+                        },
+                        {
+                            "count": 63,
+                            "severity": 1
+                        },
+                        {
+                            "count": 3,
+                            "severity": 3
+                        }
+                    ],
+                    "total": 74
+                },
+                "creation_time": "2018-09-07T00:01:12.666501Z",
+                "details_key": "aae117139e87e9c5234001d960b5d196ffe6d578331ef6546501646415117403",
+                "job_id": 5695,
+                "scan_status": "finished",
+                "severity": 5,
+                "update_time": "2018-10-29T04:37:29.983743Z"
+            }
+        }], 
+        "repository": {
+            "date_created": 1548645673, 
+            "name": "repoTest", 
+            "namespace": "namespace", 
+            "repo_full_name": "namespace/repoTest", 
+            "repo_type": "public"
+        },
+    }
 }
 
 // Scanning failed
 {
     "type": "scanningFailed",
     "occur_at": 1560862556,
-    "media_type": "containerImage",
-    "event_data": [{
-        "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917",  
-        "tag": "latest",
-        "scan_overview": {
-            "creation_time": "2018-09-07T00:01:12.666501Z",
-            "job_id": 5695,
-            "scan_status": "error",
-            "reason": "Network Error"
+    "operator": "auto",
+    "event_data": {
+        "tags": [{
+            "digest": "sha256:457f4aa83fc9a6663ab9d1b0a6e2dce25a12a943ed5bf2c1747c58d48bbb4917", 
+            "tag": "latest",
+            "scan_overview": {
+                "creation_time": "2018-09-07T00:01:12.666501Z",
+                "job_id": 5695,
+                "scan_status": "error",
+                "reason": "Network Error"
+            }
+        }], 
+        "repository": {
+            "date_created": 1548645673, 
+            "name": "repoTest", 
+            "namespace": "namespace", 
+            "repo_full_name": "namespace/repoTest", 
+            "repo_type": "public"
         }
-    }], 
-    "repository": {
-        "date_created": 1548645673, 
-        "name": "repoTest", 
-        "namespace": "namespace", 
-        "repo_full_name": "namespace/repoTest", 
-        "repo_type": "public"
-    },
-    "operator": "auto"
+    }
 }
 ```
 
@@ -231,12 +235,12 @@ type WebhookJob struct {
 Users can define a secret in http statement in webhook policy. So it will be sent in header in http request. The format will be,
 
 ```
-Authorization: Secret eyJ0eXAiOiJKV1QiLCJhbGciOi
+Authorization: 'Secret eyJ0eXAiOiJKV1QiLCJhbGciOi'
 ```
 
-and also users can input a URL with https schema. and select insecure protocol if they want.
+and the content in single quotes could be configurated by user and also users can input a URL with https schema. and select insecure protocol if they want.
 
-There should be a test function which will send a templated request to remote endpoint when adding webhook policy to Harbor, this could refer to adding replication target.
+There should be a test function which will send an empty request to remote endpoint when adding webhook policy to Harbor, and Harbor will only check the connection availability and ignore the http status code.
 
 #### Backoff Mechanism
 
@@ -256,7 +260,9 @@ Jobs will be retried and the interval is,
 9th: 6576-6866s
 ```
 
-the configurable parameter is maxRetryCount(default 5). it will be system level configuration. and user can modify it from UI. besides maxRetryCount could be set to ‘-1’, so jobs will be retried infinitely until success.
+the configurable parameter is maxRetryCount(default 10). it will be system level configuration. and user can modify it from UI. besides maxRetryCount could be set to ‘-1’, so jobs will be retried infinitely until success.
+
+User can set  this configuration in harbor.yml. also user can reset this value in JobService config file or Env file in running environment and then restart JobService to make configuration available.
 
 #### Covered Event
 
