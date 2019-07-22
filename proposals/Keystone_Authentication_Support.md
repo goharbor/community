@@ -10,6 +10,14 @@ It proposes an approach to enable Harbor to support non-OIDC Keystone authentica
 
 Harbor running in the Kubernetes cluster which using the Keystone as authentication, we hope the Kubernetes and Harbor using the same identity provider, so Harobr needs integration with keystone as identity provider.
 
+Kubernetes using webhook for authenticate Keystone, about Kubernetes integrate with Keystone, reference documents:
+
+[Kubernetes support Webhook Token Authentication](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#webhook-token-authentication)
+
+[Auth data synchronization between Keystone and Kubernetes](https://github.com/kubernetes/cloud-provider-openstack/blob/master/docs/using-auth-data-synchronization.md)
+
+[Kubernetes integrate with the Keystone using k8s-keystone-auth](https://github.com/kubernetes/cloud-provider-openstack/blob/master/docs/using-keystone-webhook-authenticator-and-authorizer.md)
+
 ## Proposal
 
 To support the [user cases](#User cases) in the below section, we add Keystone authentication in Harbor. Admin can configure an Keystone identity provider, after that, user can use this Keystone identity provider as authentication way to login the Harbor's UI Portal. Besides that, user can also use docker CLI.
@@ -32,7 +40,13 @@ The attributes of Keystone identity provider:
 
 #### User login to UI protal with Keystone identity provider
 
-After the administrator configured the Keystone identity provider, the users that login to Harbor via Keystone flow for the first time, there will be an "onboard" process, which a user record will be inserted into Harbor's Database, so that it can be associated with projects, roles, etc. The "onboard" process happen only once, next time the same user authenticates against the Keystone provider, user should be logged in with the onboarded username.
+After the administrator configured the Keystone identity provider, the users that login to Harbor flow:
+
+![Login flow](images/keystone/harbor-keystone-login.png)
+
+For the users that login Harbor via Keystone the first time, there will be an "onboard" process, which a user record will be inserted into Harbor's Database, so that it can be associated with projects, roles, etc. The "onboard" process happen only once, next time the same user authenticates against the Keystone provider, user should be logged in with the onboarded username.
+
+the users that login to Harbor via Keystone flow, input the username and password which user in Harbor UI Portal
 
 **NOTE:**
 
@@ -41,6 +55,8 @@ There are some attributes in user's profile, such as email, it is setting during
 #### User onboarded via the Keystone authentication flow accessing the API
 
 After a user is onboarded via Keystone authentication flow and assigned proper permissions, user should be able to access the API of Harbor using the identity. It like a regular user.
+
+The users call the Harbor API, it should call the login api with basic auth, and then call the other API if the login successfully. The flow similar to the db_auth.
 
 #### User onboarded via the Keystone authentication flow using the docker CLI
 
