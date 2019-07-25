@@ -3,10 +3,13 @@
 :source-highlighter: coderay
 :toc:
 
+This proposal is no longer up to date. We're merging it with https://github.com/goharbor/community/pull/82
+to have a single document describing the pluggable scanners architecture.
+
 == Overview
 
 Currently Harbor is closely coupled with https://github.com/coreos/clair[Clair] to scan images stored in its Docker
-_Registry_. The idea is integrate Harbor with any compatible image scanner by simple means of configuration
+_Registry_. The idea is to integrate Harbor with any compatible image scanner by simple means of configuration
 changes. By doing so Clair could be replaced with an open source or commercial alternatives.
 
 The main objective of this proposal is to deliver the design of a minimum valuable product (MVP) of pluggable image
@@ -307,13 +310,20 @@ type ImageScanner interface {
 
 https://github.com/danielpacak/harbor/tree/scanner_adapters_poc
 
-=== Microscanner Adapter
+=== https://github.com/coreos/clair[Clair] Adapter
 
-https://github.com/danielpacak/harbor-microscanner-adapter
+https://github.com/danielpacak/harbor-scanner-clair
+
+=== https://github.com/aquasecurity/microscanner[Microscanner] Adapter
+
+https://github.com/danielpacak/harbor-scanner-microscanner
 
 .The deployment diagram for the proposed Harbor integration with Microscanner.
 plantuml::diagrams/deployment-harbor-microscanner.plantuml[deployment-harbor-microscanner, png]
 
-=== Clair Adapter
+=== https://github.com/knqyf263/trivy[Trivy] Adapter
 
-https://github.com/danielpacak/harbor-clair-adapter
+https://github.com/danielpacak/harbor-scanner-trivy
+
+.The deployment diagram for the proposed Harbor integration with Trivy.
+plantuml::diagrams/deployment-harbor-trivy.plantuml[deployment-harbor-trivy, png]

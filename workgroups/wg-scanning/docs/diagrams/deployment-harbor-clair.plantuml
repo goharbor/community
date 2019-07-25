@@ -2,7 +2,6 @@
 
 rectangle Harbor {
   rectangle registry
-  rectangle notary
 
   rectangle jobservice {
     rectangle ClairJob

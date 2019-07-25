@@ -1,0 +1,23 @@
+@startuml
+
+rectangle Harbor {
+  rectangle registry
+
+  rectangle jobservice {
+    rectangle ScannerJob
+  }
+  rectangle core {
+    rectangle RepositoryAPI
+  }
+}
+
+rectangle TrivyAdapterAPI {
+  rectangle trivy <<exec>> {
+  }
+}
+
+ScannerJob ..> TrivyAdapterAPI : R/W
+RepositoryAPI ..> TrivyAdapterAPI : R
+TrivyAdapterAPI ..> registry : R
+
+@enduml
