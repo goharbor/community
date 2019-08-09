@@ -24,6 +24,7 @@ Initial [design proposal PR](https://github.com/goharbor/community/pull/98)
 | 2019/07/11   |[Recording](https://vmware.zoom.us/recording/share/4HQjTnOjf4OjrlK2HXHXRBwn4li7FbWzmFmx4Eo--bSwIumekTziMw?startTime=1562850526000)|[Minutes](https://drive.google.com/open?id=1zj-quucnsFo6Z2VMe25EjJFsDqdvDzkD)|
 | 2019/07/18   |[Recording](https://vmware.zoom.us/recording/share/BstyNuO6q7hn48fhoO0iYv4GdwfbFhItUPV0zVcI3WCwIumekTziMw)|[Minutes](https://drive.google.com/open?id=1rJT-W8yw3hearme08DrlSYHRKuVzJ353)|
 | 2019/07/25   |[Recording](https://vmware.zoom.us/recording/share/QNuFU34G9zEXUiAqfr4DBhVylBXqepapjfElwiAYrMywIumekTziMw)|[Minutes](https://drive.google.com/open?id=1I2OsIKH15nhgJgBHqAXEZGuYdytEqqAx)|
+| 2019/08/08   | MISSED~~ | [Minutes](https://drive.google.com/file/d/1-uB-FOIoR562GiS8K7kDryApnad62DNP/view?usp=sharing)|
 
 # Documents
 - [1st version of high-level design](https://drive.google.com/open?id=1Na17WgMatiU6wFh_K4w-NIcOReC9P386)
