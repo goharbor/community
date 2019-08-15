@@ -17,6 +17,8 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
+| 2019/08/14 |  @bitsf || [China Recording](https://zoom.us/recording/share/w6UhpfQ5BwFNqAmsWfK_0PFd_8I8jxB7LZjN0y8aMWKwIumekTziMw)  | upcoming community events, 1.9 planning, tag retention, quota per project, User case sharing from SongGe, User case share from Maxime  ||
+| 2019/07/31 |  @heww || [China Recording](https://zoom.us/recording/share/WdOlft5X4lzXu9nTSwzlK3Zrl22g2vOCXLvqt-AWV-qwIumekTziMw?startTime=1564578451000)  | upcoming community events, 1.9 planning, tag retention, quota per project ||
 | 2019/07/17 |  @bitsf || [China Recording](https://zoom.us/recording/share/j4tRARdxPnln2MUiTu9dMI2UD3KnPqQ4FIibNBhVBO-wIumekTziMw)  | upcoming community events, 1.9 planning, quota per project, webhook support, azure replication, User case sharing from caicloud  ||
 | 2019/07/03 |  @heww || [China Recording](https://zoom.us/recording/share/RquB6Q5Pl_fSl6TSwPynRlUKRJ4gFysvRiSGJ-FXvNWwIumekTziMw)  | upcoming community events, 1.9 planning, System level CVE whitelist, External syslog driver, User case sharing from qihoo360 ||
 | 2019/04/24 |  @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/cOzI-WGqIO7bJb3upT1cwxAnko59icH-PVEXFBbV97GwIumekTziMw)  | upcoming community events, 1.9 planning, replication to non-harbor registry demo  ||
