@@ -52,15 +52,7 @@ For now, harbor doesn't provide offical ha solution but we need to make sure our
 First, we need to implement metrics service for components as listed above. Here we listed a few metrics indicator we care when harbor is running in our production system.
 
 
-Then we need to collect metrics data and define metrics data interface.Details as follows:
-| Component     | Expectation metrics                                       | Reference                                                    |
-| ------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
-| Core          | Number of authentication(Failure)                         |                                                              |
-| Jobservice    | Job count.Synchronization status.                         |                                                              |
-| Proxy         | Number of connections. Request latency.Number of request. | [nginx-exportor](https://github.com/knyar/nginx-lua-prometheus) |
-| RegistryCtl   | health status                                             |                                                              |
-| Log collector | Log sizes in bytes.request latencies in microseconds.     | [fluentd-exportor](https://github.com/V3ckt0r/fluentd_exporter) |
-
+Then we need to collect metrics data and define metrics data interface.
 
 
 The reason why we need a metrics api is because it simplify the process of processing metrics data in monitoring system by adding more workload related context information.
