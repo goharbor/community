@@ -16,6 +16,7 @@ Initial [design proposal PR](https://github.com/goharbor/community/pull/98)
 * Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))
 * Alex Xu@VMware ([xaleeks](https://github.com/xaleeks))
 * Daniel Jiang@VMware ([reasonerjt](https://github.com/reasonerjt))
+* Ye Liu@HP ([cafeliker](https://github.com/cafeliker))
 
 ## Meetings
 
