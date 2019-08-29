@@ -23,7 +23,7 @@ Workgroup is a virtual team of aggregating the efforts of all the interested par
 
 ## Structure
 
-* **presentations**: keeps the related slides about Harbor
+* **presentations**: slides on Harbor
 * **conf-calls**: keeps the meeting materials and minutes sorted by meeting date
 * **proposals**: keeps the proposals from community
   * new: normal proposal pool, contains the proposals which are neither `completed` nor `failed`. Use the [Proposal Template](./proposals/TEMPLATE.md) as a starting point.
