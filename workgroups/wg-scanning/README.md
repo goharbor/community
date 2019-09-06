@@ -28,9 +28,10 @@ Initial [design proposal PR](https://github.com/goharbor/community/pull/98)
 | 2019/08/08   | MISSED~~ | [Minutes](https://drive.google.com/file/d/1-uB-FOIoR562GiS8K7kDryApnad62DNP/view?usp=sharing)|
 | 2019/08/15   | [Recording](https://VMware.zoom.us/recording/share/unJHiGOBEwcPiSq6GKACqczM5Xphy6BroYMzm6Ds12OwIumekTziMw?startTime=1565873935000)| [Minutes](https://drive.google.com/file/d/10JjHLykTmUOaLKg2_czKeMFF8RQd-S50/view?usp=sharing) |
 | 2019/08/22 | [Recording](https://VMware.zoom.us/recording/share/CrHCTH5G8cL31lCAtjb-ZgwGCNPLdMe7yhtDxFyei8SwIumekTziMw?startTime=1566478748000) | [Minutes](https://drive.google.com/open?id=17Apx2zIKUQ8oXA7iHqkKu4rA9XnyN4B3)|
+| 2019/09/05 | [Recording](https://VMware.zoom.us/recording/share/CrHCTH5G8cL31lCAtjb-ZgwGCNPLdMe7yhtDxFyei8SwIumekTziMw?startTime=1566478748000) | [Minutes](https://drive.google.com/file/d/1szlL_hc2nMhudWeALN93lhKjwglwKKo9/view?usp=sharing) |
 
 # Documents
-- [1st version of high-level design](https://drive.google.com/open?id=1Na17WgMatiU6wFh_K4w-NIcOReC9P386)
+- [1st version of high-level design by Steven Zou@VMware](https://drive.google.com/open?id=1Na17WgMatiU6wFh_K4w-NIcOReC9P386)
 - [PoC demo by Daniel Pacak@Aqua Security](https://aquasecurity-my.sharepoint.com/:v:/g/personal/daniel_pacak_aquasec_com/EULA35mJvlZLjAr_sER-PpgB2LJjIoNSpkKUEgnjpYhllg?e=KntmzF)
 - [PoC implementation introduction by Daniel Pacak@Aqua Security](https://aquasecurity-my.sharepoint.com/:v:/g/personal/daniel_pacak_aquasec_com/ER-h4qjLIY5Np4OyUN8-KiEBMW74k6LYe_JRNdEyC4xhOg?e=V6d9F0)
 - [Orignal PR by Zach Hill@Anchore](https://github.com/goharbor/community/pull/82)
