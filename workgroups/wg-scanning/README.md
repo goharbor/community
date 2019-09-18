@@ -22,13 +22,20 @@ Initial [design proposal PR](https://github.com/goharbor/community/pull/98)
 
 | Meeting Date |                 Recordings             |    Minutes                       |
 |--------------|----------------------------------------|----------------------------------|
-| 2019/07/11   |[Recording](https://vmware.zoom.us/recording/share/4HQjTnOjf4OjrlK2HXHXRBwn4li7FbWzmFmx4Eo--bSwIumekTziMw?startTime=1562850526000)|[Minutes](https://drive.google.com/open?id=1zj-quucnsFo6Z2VMe25EjJFsDqdvDzkD)|
-| 2019/07/18   |[Recording](https://vmware.zoom.us/recording/share/BstyNuO6q7hn48fhoO0iYv4GdwfbFhItUPV0zVcI3WCwIumekTziMw)|[Minutes](https://drive.google.com/open?id=1rJT-W8yw3hearme08DrlSYHRKuVzJ353)|
-| 2019/07/25   |[Recording](https://vmware.zoom.us/recording/share/QNuFU34G9zEXUiAqfr4DBhVylBXqepapjfElwiAYrMywIumekTziMw)|[Minutes](https://drive.google.com/open?id=1I2OsIKH15nhgJgBHqAXEZGuYdytEqqAx)|
-| 2019/08/08   | MISSED~~ | [Minutes](https://drive.google.com/file/d/1-uB-FOIoR562GiS8K7kDryApnad62DNP/view?usp=sharing)|
-| 2019/08/15   | [Recording](https://vmware.zoom.us/recording/share/unJHiGOBEwcPiSq6GKACqczM5Xphy6BroYMzm6Ds12OwIumekTziMw)| [Minutes](https://drive.google.com/file/d/10JjHLykTmUOaLKg2_czKeMFF8RQd-S50/view?usp=sharing) |
-| 2019/08/22 | [Recording](https://VMware.zoom.us/recording/share/CrHCTH5G8cL31lCAtjb-ZgwGCNPLdMe7yhtDxFyei8SwIumekTziMw) | [Minutes](https://drive.google.com/open?id=17Apx2zIKUQ8oXA7iHqkKu4rA9XnyN4B3)|
+| 2019/09/17 | [Recording](https://VMware.zoom.us/recording/share/iw0_yMXw-29MhtrCLHuEfL1FiDRMLtRpQ5kvVulfV8ywIumekTziMw) | [Minutes](https://drive.google.com/file/d/1Smbx7hrwbEg-zLk-God9LjsemQq3y7E1/view?usp=sharing) |
 | 2019/09/05 | [Recording](https://vmware.zoom.us/recording/play/h7TObph_9nNX8E0WlxM7bHC1LWwT-FkHn2NtByx9HsGF3NIK0NMWZHQe6_FrtQoq?continueMode=true) | [Minutes](https://drive.google.com/file/d/1szlL_hc2nMhudWeALN93lhKjwglwKKo9/view?usp=sharing) |
+| 2019/08/22 | [Recording](https://VMware.zoom.us/recording/share/CrHCTH5G8cL31lCAtjb-ZgwGCNPLdMe7yhtDxFyei8SwIumekTziMw) | [Minutes](https://drive.google.com/open?id=17Apx2zIKUQ8oXA7iHqkKu4rA9XnyN4B3)|
+| 2019/08/15   | [Recording](https://vmware.zoom.us/recording/share/unJHiGOBEwcPiSq6GKACqczM5Xphy6BroYMzm6Ds12OwIumekTziMw)| [Minutes](https://drive.google.com/file/d/10JjHLykTmUOaLKg2_czKeMFF8RQd-S50/view?usp=sharing) |
+| 2019/08/08   | MISSED~~ | [Minutes](https://drive.google.com/file/d/1-uB-FOIoR562GiS8K7kDryApnad62DNP/view?usp=sharing)|
+| 2019/07/25   |[Recording](https://vmware.zoom.us/recording/share/QNuFU34G9zEXUiAqfr4DBhVylBXqepapjfElwiAYrMywIumekTziMw)|[Minutes](https://drive.google.com/open?id=1I2OsIKH15nhgJgBHqAXEZGuYdytEqqAx)|
+| 2019/07/18   |[Recording](https://vmware.zoom.us/recording/share/BstyNuO6q7hn48fhoO0iYv4GdwfbFhItUPV0zVcI3WCwIumekTziMw)|[Minutes](https://drive.google.com/open?id=1rJT-W8yw3hearme08DrlSYHRKuVzJ353)|
+| 2019/07/11   |[Recording](https://vmware.zoom.us/recording/share/4HQjTnOjf4OjrlK2HXHXRBwn4li7FbWzmFmx4Eo--bSwIumekTziMw?startTime=1562850526000)|[Minutes](https://drive.google.com/open?id=1zj-quucnsFo6Z2VMe25EjJFsDqdvDzkD)|
+
+
+
+
+
+
 
 # Documents
 - [1st version of high-level design by Steven Zou@VMware](https://drive.google.com/open?id=1Na17WgMatiU6wFh_K4w-NIcOReC9P386)
