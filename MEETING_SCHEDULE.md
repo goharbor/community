@@ -17,6 +17,7 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
+| 2019/09/25 |  @stevenr || [Recording] | community update, Harbor security process udpate, 1.10 feature demo - pluggable scanner, talk by Josh Dolitsky about "From ChartMuseum to Harbor" ||
 | 2019/08/28 |  @xaleeks || [Recording](https://zoom.us/recording/share/pG6Xyc2TyEZqmytWKRkjC2fnX9EHcuSkZU5OQplvhwmwIumekTziMw?startTime=1566996466000)  | community update (Gitlab, Datadog), 1.9 release update, 1.10 release feature preview, Demo by Martin Juhl of Aperta ||
 | 2019/08/14 |  @bitsf || [China Recording](https://zoom.us/recording/share/w6UhpfQ5BwFNqAmsWfK_0PFd_8I8jxB7LZjN0y8aMWKwIumekTziMw)  | upcoming community events, 1.9 planning, tag retention, quota per project, User case sharing from SongGe, User case share from Maxime  ||
 | 2019/07/31 |  @heww || [China Recording](https://zoom.us/recording/share/WdOlft5X4lzXu9nTSwzlK3Zrl22g2vOCXLvqt-AWV-qwIumekTziMw?startTime=1564578451000)  | upcoming community events, 1.9 planning, tag retention, quota per project ||
