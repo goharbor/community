@@ -23,6 +23,6 @@ describes governance guidelines and maintainer responsibilities.
 | Qian Deng | [ninjadq](https://github.com/ninjadq) | [VMware](https://www.github.com/vmware/) |
 | Mia Zhou | [zhoumeina](https://github.com/zhoumeina) | [VMware](https://www.github.com/vmware/) |
 | Nathan Lowe | [nlowe](https://github.com/nlowe) | [Hyland Software](https://github.com/HylandSoftware) |
-| De Chen | [cd1989](https://github.com/cd1989) | [Caicloud](https://github.com/caicloud) |
+| De Chen | [cd1989](https://github.com/cd1989) | Individual |
 | Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
 | Fanjian Kong | [kofj](https://github.com/kofj) | [Qihoo360](https://github.com/Qihoo360) |
