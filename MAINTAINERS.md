@@ -21,7 +21,7 @@ describes governance guidelines and maintainer responsibilities.
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
 | Yan | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Qian Deng | [ninjadq](https://github.com/ninjadq) | [VMware](https://www.github.com/vmware/) |
-| Mia Zhou | [zhoumeina](https://github.com/zhoumeina) | [VMware](https://www.github.com/vmware/) |
+| Daniel Pacak | [danielpacak](https://github.com/danielpacak) | [Aqua Security](https://www.github.com/aquasecurity/) |
 | Nathan Lowe | [nlowe](https://github.com/nlowe) | [Hyland Software](https://github.com/HylandSoftware) |
 | De Chen | [cd1989](https://github.com/cd1989) | Independent |
 | Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
