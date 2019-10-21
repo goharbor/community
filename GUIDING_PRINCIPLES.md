@@ -1,6 +1,6 @@
 # Guiding Principles
 
-Harbor operates under the guiding principles described below. The Committe is responsible for upholding these principles and keeping this document updated with any changes.
+Harbor operates under the guiding principles described below. The Committe is responsible for upholding these principles and keeping this document updated with any changes. They do that by participating in the Harbor community and keeping a good pulse of all interactions. The Committe cannot unilaterally make decisions, but can instead make recomendations to the Harbor maintainers and community. Issues will be tracked with PRs and follow the proper approval process. The Committee can also flag issues in community calls for further discussion and brainstorming. 
 
 # Mission Statement
 
