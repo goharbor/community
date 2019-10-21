@@ -24,12 +24,4 @@ Harbor is driven by high technical standards, and these must be maintained. It i
 
 # Committe
 
-The Harbor Project has appointed this committe to uphold the values and guiding principles of the project
-
-| Name | GitHub ID | Role |
-| --------------- | --------- | ----------- |
-| Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | Harbor Technical Lead |
-| Steven Ren | [renmaosheng](https://github.com/renmaosheng) | Harbor Core Maintainer |
-| Alex Xu | [xaleeks](https://github.com/xaleeks) | Harbor Contributor |
-| Jonas Rosland | [jonasrosland ](https://github.com/jonasrosland)| Open Source Community Manager |
-| Michael Michael | [michmike](https://github.com/michmike)| Harbor Core Maintainer |
+The Harbor Project has appointed this committe to uphold the values and guiding principles of the project. The committe is comprised of the [Harbor Core Maintainers](https://github.com/goharbor/community/blob/master/MAINTAINERS.md#core-maintainers) and Jonas Rosland ([jonasrosland](https://github.com/jonasrosland)), our Open Source Community Manager.
