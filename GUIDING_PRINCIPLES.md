@@ -8,7 +8,7 @@ Harbor operates under the guiding principles described below. The Committe is re
 
 # Vision
 
-The vision of the Harbor project is to deliver policy, security, and compliance for container images, helm charts, and other cloud native artifacts to the cloud native community. Success metrics include gaining popularity and widespread adoption.
+The vision of the Harbor project is to deliver policy, security, and compliance for container images, Helm Charts, and other cloud native artifacts to the cloud native community. Success metrics include gaining popularity and widespread adoption.
 
 # Values
 
@@ -24,4 +24,4 @@ Harbor is driven by high technical standards, and these must be maintained. It i
 
 # Committe
 
-The Harbor Project has appointed this committe to uphold the values and guiding principles of the project. The committe is comprised of the [Harbor Core Maintainers](https://github.com/goharbor/community/blob/master/MAINTAINERS.md#core-maintainers) and Jonas Rosland ([jonasrosland](https://github.com/jonasrosland)), our Open Source Community Manager.
+Harbor on purpose does not have a specialized Committe to uphold the values and guiding principles of the project. The project [maintainers](https://github.com/goharbor/community/blob/master/MAINTAINERS.md) are responsible for the overall health, technical architecture, and direction of Harbor and making sure Harbor is well-operated. Along with our Open Source Community Manager, Jonas Rosland ([jonasrosland](https://github.com/jonasrosland)), they should monitor all Harbor community activities and ensure we honor our values and principles in every interaction. Any Harbor community member, including maintainers, contributors, and users, can flag situations or instances that go against our guiding principles. The Committee can assign anyone from the community to investigate and discuss the issue so that we can resolve it. Such discussions can happen in community calls or specialized one-off meetings.
