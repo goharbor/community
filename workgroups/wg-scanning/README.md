@@ -22,6 +22,7 @@ Initial [design proposal PR](https://github.com/goharbor/community/pull/98)
 
 | Meeting Date |                 Recordings             |    Minutes                       |
 |--------------|----------------------------------------|----------------------------------|
+| 2019/10/24   |[Recording](https://VMware.zoom.us/recording/share/9VwDOMhToVdnKhbYX-cHEQIrS-fMZOwL8NEYeqc3hf2wIumekTziMw?startTime=1571921933000)|[Minutes](https://drive.google.com/file/d/1MzFSQHdeNel6VZURFJsZc0yMJTeMVKM9/view?usp=sharing)|
 | 2019/10/17   |[Recording](https://VMware.zoom.us/recording/share/hrW94X_3biayZcQLEY-TBwHSqIF4UY-Gslk8Z63dDvOwIumekTziMw?startTime=1571317092000)|[Minutes](https://drive.google.com/file/d/16B7PAB7Kaktre5mGP3zsqOVC-pUPuLUQ/view?usp=sharing)|
 | 2019/10/11   |[Recording](https://VMware.zoom.us/recording/share/y0rnDkpzivLnZeMBiRLiui1iv1OlQfdOxl4oX7xbnJCwIumekTziMw?startTime=1570798807000)|[Minutes](https://drive.google.com/file/d/1LnCQBTGuTd8hq-7kEIgRIta4dbL3GOmD/view?usp=sharing)|
 | 2019/09/26   |[Recording](https://VMware.zoom.us/recording/share/mJ5m52jjYAqXzy846AdPezAVouuo8rKuqG-E8ULQENSwIumekTziMw?startTime=1569502669000)|[Minutes](https://drive.google.com/file/d/17ZgtnMKpgEnPuN_JsCiuU4diBi7qIlQR/view?usp=sharing)|
