@@ -15,7 +15,7 @@ Currently, we have the following members:
 
 * Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))
 * Wenkai Yin@VMware ([ywk253100](https://github.com/ywk253100))
-* De Chen@CaiCloud ([cd1989](https://github.com/cd1989))
+* De Chen ([cd1989](https://github.com/cd1989))
 * Fanjian Kong@Qihoo360 ([kofj](https://github.com/kofj))
 * Mingming Pei@Netease ([mmpei](https://github.com/mmpei))
 * Lei Yuan@HuaWei ([yuanshuhan](https://github.com/yuanshuhan))

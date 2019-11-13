@@ -18,6 +18,7 @@ The short-term mission is to:
 * De Chen@Caicloud ([cd1989](https://github.com/cd1989))
 * Mingming Pei ([mmpei](https://github.com/mmpei))
 * Fanjian Kong ([kofj](https://github.com/kofj))
+* Chenyu Zhang ([chlins](https://github.com/chlins))
 
 ## Meetings
 

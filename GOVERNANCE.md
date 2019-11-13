@@ -22,7 +22,7 @@ maintained under the `goharbor` namespace.
 ## Community Roles
 
 * **Users:** Members that engage with the Harbor community via any medium (Slack, WeChat, GitHub, mailing lists, etc.).
-* **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). Two levels of maintainership are defined below.
+* **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). 
 * **Maintainers**: Two levels of maintainership are defined in the Project Leadership section [below](#total-maintainership).
 
 ## Project Leadership
@@ -66,7 +66,7 @@ vote will be decided by a supermajority of the total maintainership, with
 a requirement of at least one core maintainer voting.
 
 Votes by maintainers (either core or non-core) belonging to the same company
-will count as one vote; e.g., 4 maintainers employed by company `${x}` will
+will count as one vote; e.g., 4 maintainers employed by fictional company **Harboretum** will
 only have **one** combined vote. If voting members from a given company do not
 agree, the company's vote is determined by a supermajority of voters from that
 company. If no supermajority is achieved, the company is considered to have

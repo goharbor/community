@@ -14,7 +14,7 @@ More details, please check the [slides](./community_call_2018-10-24.pptx).
     * `HA by Harbor Helm Chart` is under verification testing.
     * `Helm Chart repository enhancements` is ready.
     * Rel **V1.6.1** is released (Bump Clair to V2.0.6).
-    * Feature `retag` contributed by Ca1989@CaiCloud is merged into master.
+    * Feature `retag` contributed by cd1989@CaiCloud is merged into master.
     * Feature `image build history` contributed by kofj@360 is merged into master.
   * CNCF related
     * CI/CD pipeline refactoring work is almost done. The related design is documented in the [PR 8](https://github.com/goharbor/community/pull/8)
