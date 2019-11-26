@@ -1,10 +1,10 @@
 # Harbor Workshop
 
-The workshop guide can be used for accomplishing various tasks with Harbor. After completing all the tasks, you will have a better understanding of Project Harbor's features and functionality.
+This workshop guide can be used for accomplishing various tasks with Harbor. After completing all the tasks, you will have a better understanding of Project Harbor's features and functionality.
 
 ## Environment Setup & Harbor Installation
 
-The first step is to get Harbor installed into an environment where tasks can be performed. There are a few options available.
+The first step is to get Harbor installed into an environment where the following scenarios can be performed. There are a few options available.
 
 Environment Options:
 
@@ -12,12 +12,29 @@ Environment Options:
 2. An Ubuntu Virtual Machine on VMware Fusion or VirtualBox
 3. Create an account on https://demo.goharbor.io/ (this will not allow you to perform all tasks as the user accounts are restricted)
 
-Steps for Installation (taken from [Official Documentation](https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md)):
 
-1. Install Docker - [Ubuntu](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [Mac](https://docs.docker.com/v17.09/docker-for-mac/install/)
+Steps for Installation on Ubuntu VM (taken from [Official Documentation](https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md)):
+
+1. On a Ubuntu VM, Install Docker - [Ubuntu](https://docs.docker.com/v17.09/engine/installation/linux/docker-ce/ubuntu/), [Mac](https://docs.docker.com/v17.09/docker-for-mac/install/)
 2. [Install Docker Compose](https://docs.docker.com/compose/install/) if you are on Ubuntu. It's already included in Docker for Mac.
 3. Select either the [online or offline installer and download](https://github.com/goharbor/harbor/releases) the latest Harbor stable release
-4. Use tar to extract the installer package `tar xvf harbor-<type>-installer-<version>.tgz`
+4. Download the latest [v1.10](https://storage.googleapis.com/harbor-builds/harbor-offline-installer-v1.10.0-build.2534.tgz) Harbor offline installer and use tar to extract the installer package `tar xvf harbor-<type>-installer-<version>.tgz`
+5. Configure harbor.yml to use http by commenting out https, enter the correct IP address 
+6. When using http, configure the ‘insecure registry’ in daemon.json as described [here](https://github.com/goharbor/harbor/blob/master/docs/user_guide.md#pulling-and-pushing-images-using-docker-client) 
+Or checkout [this guide](https://docs.docker.com/registry/insecure/)
+7. I.e. enter `0.0.0.0/0` into list of `insecure registries` in daemon.json located in dir `/etc/docker` by default
+{
+  "insecure-registries" : ["myregistrydomain.com:5000","0.0.0.0/0"]
+}
+8. Restart Docker engine after configuring daemon.json (with `systemctl restart docker`)
+9. Install Harbor with `sudo ./install.sh --with-clair` 
+(If you forget to configure daemon.json to allow insecure registry before installing Harbor, you need to restart Harbor after restarting docker engine with `docker-compose down -v` + `./prepare` + `docker-compose up -d`
+10. Run `docker-compose ps` to verify all Harbor services are up and healthy
+11. From your preferred browser, log into your Harbor registry with username/pw : `admin`/`Harbor12345` and create a project called `yourname-workshop`
+12.  From Docker CLI, you can now `docker login` with username/pw : `admin`/`Harbor12345` and push an image to project `yourname-workshop` to verify
+
+
+
 
 **If Installing Locally on Mac/Linux**
 
@@ -50,41 +67,69 @@ To reconfigure Harbor configuration bring down services with `docker-compose dow
 ### Goal: Push An Image to Harbor
 
 1. Download redis with `docker pull redis:latest`
-2. Go to Harbor and create a new Project called `workshop`.
-3. With the carrot of `Push Image`, copy the command to retag the docker image that was downloaded.
-4. Retag the image `docker tag redis:latest local.goharbor.io/workshop/redis:latest`
-5. Login to the docker CLI with `docker login https://local.goharbor.io/` using the default `admin` user and password `Harbor12345`.
-5. Copy the command to push the image to repository, change the IMAGE[:TAG] to match your new tag and push. `docker push local.goharbor.io/workshop/redis:latest`.
-6. Go to the Images tab and look at the new image that was pushed.
+2. In Harbor web console, create a new Project called `yourname-workshop`.
+3. Retag the image with `docker tag redis:latest yourregistry/yourname-workshop/redis:latest`
+4. Login to the docker CLI with `docker login yourregistry` using the default `admin` user and password `Harbor12345`.
+5. Push image with `docker push yourregistry/yourname-workshop/redis:latest`
+6. Go to the Images tab in harbor web console and verify image was pushed.
+
 
 
 ### Goal: As a project admin, I would like to ensure that no developer can deploy(pull) a vulnerable container
 
-1. Go into the `workshop` project.
-2. Create a policy for vulnerability scanning in the configuration tab with Low and Automatically scan on push.
-3. Retag the original redis image and push the new image tag into the project.
-	1. `docker tag redis:latest local.goharbor.io/workshop/redis:v1`
-	2. `docker push local.goharbor.io/workshop/redis:v1`
-4. Go to the redis in the repository and manually scan it.
-5. On your local client, remove the image with `docker rmi local.goharbor.io/workshop/redis:v1`
-6. Try to pull the image with `docker pull local.goharbor.io/workshop/redis:v1`. Take note of the failure message.
-7. Go to the Configuration tab and Remove the policy and save. Pull again and it will work.
+1. In Harbor web console, create a project called `yourname-cve`
+2. Push two image tags into the aforementioned project by first retrieving them from Dockerhub
+pull 2 images from Dockerhub
+`docker pull alpine:3.8.4` (verified has CVE)
+`docker pull alpine:3.10.3` (verified has no CVEs)
+Now retag them
+`docker tag alpine:3.10.3 yourregistry/yourname-cve/alpine:3.10.3`
+`docker tag alpine:3.8.4 yourregistry/yourname-cve/alpine:3.8.4`
+Push to Harbor
+`docker push yourregistry/yourname-cve/alpine:3.10.3`
+`docker push yourregistry/yourname-cve/alpine:3.8.4`
+3. Go into the `configuration` tab of your project and check the box `Prevent vulnerable images from running`
+4. Go back to your repository and scan both images one at a time (must wait a few minutes after installation so that the vulnerability database is properly populated)
+5. `Docker pull alpine:3.8.4` and verify you get an error message that alpine:3.8.4 is vulnerable and can't be pulled
+6. `Docker pull alpine:3.10.3` and verify that alpine:3.10.3 can be pulled
+
 
 
 ### Goal: as a project admin / developer, I would like to configure webhook notifications upon image pushes to my project
 
-1. In the `workshop` project, go to the Webhook tab.
-2. To simulate a webhook endpoint, go to https://webhook.site and copy the unique URL.
-3. Configure a webhook (listener) by pasting endpoint url in web console. No Auth Header is needed for Authentication for this example. Select `verify remote certificate` to use HTTPS over HTTP.
-4. Test the endpoint to make sure it works. Look at https://webhook.site to see the POST operation is complete.
-5. Click on Continue to complete setup.
-6. Do any operation listed such as push, pull, delete, or scan an image in the project to see the webhook. View the JSON payload to see the information received.
+1. Create a project called `yourname-webhooks`
+2. In that project, go to the Webhooks tab and simulate a webhook by configuring a webhook (listener) by setting endpoint url in web console 
+    >Use https://webhook.site/#!/ as webhook receiving endpoint which will auto-generate an endpoint URL for you
+    no auth header is needed for this example
+    select `verify remote certificate` to use HTTPS POST over HTTP POST
+    Click `test endpoint` to make sure it works and click `save`
+3. push any image to your project `yourname-webhooks` as follows
+    >`docker tag alpine:3.8 yourregistry/yourname-webhooks/alpine:3.8`
+    `docker push yourregistry/yourname-webhooks/alpine:3.8`
+4. Look at webhook listener and verify webhook payload received
+5. Perform any operation listed such as push, pull, delete, or scan an image in the project to see the webhook.
+6. Look at webhook listener and verify webhook payload received
+
+
+
+### Goal: As a project admin, I would like to scan all images as they are pushed to my project and enable CVE whitelisting
+
+1. Create a project called `yourname-scanned-on-push`
+2. Turn on `scan for vulnerability on push` in configuration tab of your project
+3. Push one image with no vulnerability (alpine:3.10.3), see image pushed to harbor with no CVE
+4. Push another image with vulnerability (alpine:3.8.4), see image pushed to Harbor with one High vulnerability
+5. Drill down into (tagged 3.8.4) to see vulnerability `CVE-2019-14697` with severity high
+6. Now try `docker pull alpine:3.8.4`, which will fail as `deployment security` is enabled
+7. Add the discovered CVE `CVE-2019-14697` to the `project CVE whitelist`
+8. Try `docker pull alpine:3.8.4` again which should succeed this time
+
+
 
 
 ### Goal: As a developer, I would like to retag and delete certain tags from my project/repo
 
 1. Create a few more tags and push them to the `workshop` project.
-  1. `docker tag redis:latest local.goharbor.io/workshop/redis:v2`
+    1. `docker tag redis:latest local.goharbor.io/workshop/redis:v2`
 	2. `docker tag redis:latest local.goharbor.io/workshop/redis:prod`
 	3. `docker push local.goharbor.io/workshop/redis:v2`
 	4. `docker push local.goharbor.io/workshop/redis:prod`
@@ -95,20 +140,46 @@ To reconfigure Harbor configuration bring down services with `docker-compose dow
 6. Try using multiple rules to see what other things can be done.
 
 
+
 ### Goal: As a project admin, I'd like to set quotas on my project
 
-1. Create a new project named `quota` with image count of 2 and 100MB in size.
-2. Retag and push the redis image to this project
-  1. `docker tag redis:latest local.goharbor.io/quota/redis:v1`
-	2. `docker push local.goharbor.io/quota/redis:v1`
-3. Go into the `quota` project and view the summary tab to see the used count and space.
-4. Retag it two more times and try to push. Notice artifact count goes up but the 2nd image adds no space since it's the same image. So no effect on quota for storage. Look at the error on step 4 when pushing more images than allowed.
-  1. `docker tag redis:latest local.goharbor.io/quota/redis:v2`
-	2. `docker tag redis:latest local.goharbor.io/quota/redis:v3`
-	3. `docker push local.goharbor.io/quota/redis:v2`
-	4. `docker push local.goharbor.io/quota/redis:v3`
-5. Go to `Project Quotas` under Administration and edit the `quota` project to increase the size or image count if needed. Any re-push will be successful.
-6. Run Garbage Collection since layers from previous push have been pushed so space needs to be freed up. Quotas are great to not fill up your drive with unneeded images. Pushed layers are not automatically released back and GC needs to be run.
+1. Create a project `yourname-quota` with 5 image count + 20MB
+2. Push 2 small images < 5mb to it, for example the alpine images (alpine:3.8.4, alpine:3.10.3) 
+3. Now push a 10mb image ie `redis:alpine`
+4. Retag `redis:alpine` as `redis:alpine2` and push this image as well
+5. Notice the total artifact count went up to 4 but the second redis:alpine2 added no space since it's the same image, so has no effect on quota
+6. Finally push a large image ie. `ubuntu:latest`, which is much larger than 20MB
+7. Verify that push will be denied and show error message that `request failed due to quota exceeded`
+8. Now as a system admin, go to `project quotas` under Administration (only accessible to system admin) and edit quota for `yourname-quota` to increase to 100MB
+9. Repush the `ubuntu:latest` image and verify that push is now be successful
+10. Run Garbage Collection since layers from previous push have been pushed so space needs to be freed up
+Takeaway: Quotas are great to not fill up your drive with unneeded images. Pushed layers are not automatically released back and GC needs to be run.
+
+
+scenario 2:
+Shared layers s cenario : 
+1. Create a new project called `yourname-quota2` with image count 5 and disk space 200MB
+2. First pull the following 3 custom images from goharbor repo on Dockerhub
+`sudo docker pull goharbor/demo1:20M`
+`sudo docker pull goharbor/demo2:60M`
+`sudo docker pull goharbor/demo3:160M`
+
+Where demo1:20M's layer is shared with demo2:60M, and demo2:60M's layers are also shared with demo3:160M.
+
+3. Retag 1st image and push as follows:
+`docker tag goharbor/demo1:20M 35.166.150.163/alexquota2/shared:20M`
+`docker push 35.166.150.163/alexquota2/shared:20M`
+4. Check quota that 20MB occupied
+5. Retag 2nd image and push as follows:
+`docker tag goharbor/demo2:60M 35.166.150.163/alexquota2/shared:60M`
+`docker push 35.166.150.163/alexquota2/shared:60M`
+6. Check that quota is 60MB and only increased by 40MB since the first layer was shared
+7. Retag 3rd image and push as follows:
+`docker tag goharbor/demo3:160M 35.166.150.163/alexquota2/shared:160M`
+`docker push 35.166.150.163/alexquota2/shared:160M`
+8. Check that quota is 160MB and only increased by 100MB since first 2 layers were shared
+
+
 
 
 ### Goal: As a system admin, I would like to replicate images between registries
@@ -134,23 +205,54 @@ To reconfigure Harbor configuration bring down services with `docker-compose dow
 
 Test this out on your own doing pulls and pushes between different types of container registry offerings.
 
+
 ### Goal: As a project admin, I'd like to create retention policies for compliance purposes
 
-We will only keep images that have been tagged `prod`.
+1. Create a project called `yourname-retention`
+2. push some images (particular these images in this order, since we will create a rule to retain based on push time)
+        `docker tag alpine:3.6 yourregistry/yourname-retention/alpine:3.6-nightly1`  
+        `docker tag alpine:3.6 yourregistry/yourname-retention/alpine:3.6-staging1`    
+        `docker tag alpine:3.6 yourregistry/yourname-retention/alpine:3.6-dev1`
+        `docker tag alpine:3.7 yourregistry/yourname-retention/alpine:3.7-nightly1`
+        `docker tag alpine:3.7 yourregistry/yourname-retention/alpine:3.7-staging1`
+        `docker tag alpine:3.8 yourregistry/yourname-retention/alpine:3.8-staging1`
+        
+    `docker push yourregistry/yourname-retention/alpine:3.6-nightly1`
+        `docker push yourregistry/yourname-retention/alpine:3.6-staging1`
+        `docker push yourregistry/yourname-retention/alpine:3.7-nightly1`
+        `docker push yourregistry/yourname-retention/alpine:3.7-staging1`
+        `docker push yourregistry/yourname-retention/alpine:3.8-staging1`
+        `docker push yourregistry/retention2/alpine:3.6-dev1`
 
-1. In the `workshop` project, go to the Tag Retention tab.
-2. Click on `Add Rule`
-3. Keep `**` for all the repositories and set `By image count or number of days` to `retain always`. Set tags from `**` to `prod`. Click Add.
-4. On the bottom half of the screen, click on `Dry Run`.
-5. Click on the retention run and look at the log for each. The golang image will be deleted because it doesn't have an image that matches the `prod` tag. The redis image won't be deleted because `prod` tag is the same image as the rest.
-6. To see this in more action push more images such as
-  1. `docker tag alpine:3.6 local.goharbor.io/workshop/alpine:3.6-nightly1`
-  2. `docker tag alpine:3.7 local.goharbor.io/workshop/alpine:3.7-nightly1`
-  3. `docker tag alpine:3.7 local.goharbor.io/workshop/alpine:3.7-staging1`
-  4. `docker tag alpine:3.8 local.goharbor.io/workshop/alpine:prod`
-	5. `docker push local.goharbor.io/workshop/alpine:3.6-nightly1`
-	6. `docker push local.goharbor.io/workshop/alpine:3.7-nightly1`
-	7. `docker push local.goharbor.io/workshop/alpine:3.7-staging1`
-	8. `docker push local.goharbor.io/workshop/alpine:prod`
-7. Run the dry run again and you will find only the `alpine:prod` image will remain on retention.
-8. Try creating multiple rules for different images and tags to see what happens.
+3. Create tag retention rule #1 -
+"For the repositories matching alpine, retain the most recently pushed 1 images with tags matching *staging*"
+hit `dry run` and open log to see result
+dry run result: only alpine:3.8-staging1 is retained
+
+4. Create tag retention rule #2 -
+"For the repositories matching alpine, retain the most recently pushed 2 images with tags matching *staging*"
+dry run result: only alpine:3.8-staging1, alpine:3.7-nightly1, alpine:3.7-staging1 are retained, *3.6* are deleted because alpine:3.7-staging1 is retained, so is alpine:3.7-nightly1 since they share same digest
+
+5. Create tag retention rule #3 -
+"For the repositories matching alpine, retain the most recently pushed 2 images with tags matching *3.6*"
+dry run result: only alpine:3.6-nightly1, alpine:3.6-staging1, alpine:3.6-dev1 are retained, only 2 of 3 alpine:3.6 are retained but since last one shares the same digest with one of the retained tags, this tag will be saved as well 3.7 and 3.8 are not matched for retention and are hence deleted
+
+6. Finally, create tag retention rule #4 -
+"For the repositories matching alpine, retain the most recently pushed 1 images with tags excluding *3.6*"
+dry run result: only alpine:3.8-staging1 is retained, excluding *3.6* means all *3.6* tags will not be retained, of the remaining 3, only the most recently pushed 3.8 is retained
+
+
+### [OPTIONAL] Goal: As a system admin, I'd like to configure multiple image scanners (Aqua Trivy, Anchore, Clair) that multiple project admins can consume for scanning for vulnerabilities
+
+1. Prepare the scanners: install one of the below supported external scanner engines by following the deployment guide
+    1. Trivy: https://github.com/aquasecurity/harbor-scanner-trivy
+    2. Anchore: https://github.com/anchore/harbor-scanner-adapter
+2. Log into Harbor as a system admin. Navigate to the `Interrogation Service` under the `Administration` section of the left nav panel
+3. In the `Scanner` tab, click `New Scanner` to open the wizard. Input the required name, endpoint url of the scanner you setup in the step 1 and check the option of `Skip Certification Verification` if https with self-signed cert is enabled for the scanner.
+4. Click `TEST CONNECTION` to verify the configurations are correct and the scanner is reachable. Then Click `ADD` to add it to the scanner list. A success alert will popup if no errors happened.
+5. Activate the new added scanner with one of the following ways:
+    1. Click `SET AS DEFAULT` to set the new added scanner as default scanner of the system. That means all the project without configuring specified project level scanner will use this system default one.
+    2. Navigate to your project, e.g : `kubecon`, in the `Scanner` tab, click `Edit` button to open the scanner selection dialog. From the scanner list, find your new added scanner and choose it. The project will use this one to scan the artifacts under the project. 
+6. Navigate to your project, locate an image tag and click `SCAN` to start the scanning process. After scan completed, check the scan summary which indicates the overall severity and scan timestamp. Click the tag name, you can find more scan details in the opened page.
+7. Back to the root of your project, refer 5b to switch the scanner engine of your project. Once successfully done, repeat step 6 and compare the two scan summaries. You`ll find differences between the two scan summaries.
+8. Navigate back to the `Interrogation Service` under the `Administration` section of the left nav panel. In the `Vulnerability` tab, click the `SCAN NOW` button to start the process of scanning all the images in the system. You can check the overall progress via a progress report close to the `SCAN NOW` button.
