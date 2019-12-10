@@ -33,7 +33,7 @@ New maintainers must be nominated by an existing maintainer and must be elected 
 
 A supermajority is defined as two-thirds of members in the group.
 A supermajority of [Maintainers](#maintainers) is required for certain
-decisions as outlined above.
+decisions as outlined above. Voting on decisions can happen on the mailing list, GitHub, Slack, email, or via a voting service, when appropriate. Maintainers can either vote "agree, yes, +1", "disagree, no, -1", or "abstain". A vote passes when supermajority is met. An abstain vote equals not voting at all.
 
 ### Decision Making
 
