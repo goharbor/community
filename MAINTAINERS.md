@@ -26,7 +26,7 @@ describes governance guidelines and maintainer responsibilities.
 
 N/A
 
-| Harbor Technical Feature Area | Tech Lead |
+| Harbor Technical Feature Area | Lead |
 | ----------------------------- | :---------------------: |
 | Technical Lead | Daniel Jiang (reasonerjt) |
 | Chief Architects | Daniel Jiang (reasonerjt), Steven Zou (steven-zou) |
@@ -36,11 +36,12 @@ N/A
 | Interrogation Service/Pluggable Scanners | Daniel Pacak (danielpacak), Zach Hill (zhill), Steven Zou (steven-zou) |
 | Setup, Installation, Upgrade Experience | Daojun Zhang (stonezdj) , Qian Deng (ninjadq) |
 | Helm Chart & HA | Wenkai Yin (ywk253100), Daniel Jiang (reasonerjt) |
-| Policy Engine | Nathan Lowe (nlowe), Yan Wang (wy65701436)  |
+| Policy Engine | Nathan Lowe (nlowe), Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
 | Security | Daniel Pacak (danielpacak), Michael Michael (michmike) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Documentation | Stuart Clements (stuclem) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
-| Community Manager | Jonas Rosland (jonasrosland) |
+| Community Manager | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
+| Product Management | Michael Michael (michmike), Alex Xu (xaleeks) |
