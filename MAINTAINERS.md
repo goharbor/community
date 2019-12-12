@@ -26,7 +26,9 @@ describes governance guidelines and maintainer responsibilities.
 
 N/A
 
-| Harbor Technical Feature Area | Lead |
+## Harbor Stakeholders
+
+| Harbor Feature Area | Lead |
 | ----------------------------- | :---------------------: |
 | Technical Lead | Daniel Jiang (reasonerjt) |
 | Chief Architects | Daniel Jiang (reasonerjt), Steven Zou (steven-zou) |
