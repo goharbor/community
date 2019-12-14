@@ -1,16 +1,42 @@
 # Community Meeting Schedule
 
-We usually set up conference calls bi-weekly to listen to the voices from the Harbor community and also collect related requirements/use cases from the community. Sometimes there might be adhoc weekly meetings by demand.
+We have two recurring bi-weekly Harbor community conference calls. One meeting will cater to the Asia members `9pm UTC+8 Timezone`, and a second meeting will cater to Europe and Americas members `1pm Pacific Timezone`. We will use these meetings to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meetings to your calendar.
 
-**Meeting link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
+**Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
+
+**Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
+
+**Meeting Slides**: [Conf Call Slides](/conf-calls)
+
+**Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
+
+**Harbor YouTube Channel**: [Project Harbor on YouTube](https://www.youtube.com/channel/UCSxaozHKrX3F0UnZeYe5Itg)
+
+**************************************************************************************************************************************
+## OLD CONTENT NO LONGER UPDATED BUT KEPT FOR HISTORICAL REFERENCE
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
-| 2019/02/20 | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
-| 2019/01/23 | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
-|**2019/01/09 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)**|Host: [@wenkai yin](https://github.com/ywk253100) Speaker: [@steven-zou](https://github.com/steven-zou)|||1.harbor+dragonfly introduction and demo 2. release progress updates||
+| 2019/09/25 |  @stevenr || [Recording] | community update, Harbor security process udpate, 1.10 feature demo - pluggable scanner, talk by Josh Dolitsky about "From ChartMuseum to Harbor" ||
+| 2019/08/28 |  @xaleeks || [Recording](https://zoom.us/recording/share/pG6Xyc2TyEZqmytWKRkjC2fnX9EHcuSkZU5OQplvhwmwIumekTziMw?startTime=1566996466000)  | community update (Gitlab, Datadog), 1.9 release update, 1.10 release feature preview, Demo by Martin Juhl of Aperta ||
+| 2019/08/14 |  @bitsf || [China Recording](https://zoom.us/recording/share/w6UhpfQ5BwFNqAmsWfK_0PFd_8I8jxB7LZjN0y8aMWKwIumekTziMw)  | upcoming community events, 1.9 planning, tag retention, quota per project, User case sharing from SongGe, User case share from Maxime  ||
+| 2019/07/31 |  @heww || [China Recording](https://zoom.us/recording/share/WdOlft5X4lzXu9nTSwzlK3Zrl22g2vOCXLvqt-AWV-qwIumekTziMw?startTime=1564578451000)  | upcoming community events, 1.9 planning, tag retention, quota per project ||
+| 2019/07/17 |  @bitsf || [China Recording](https://zoom.us/recording/share/j4tRARdxPnln2MUiTu9dMI2UD3KnPqQ4FIibNBhVBO-wIumekTziMw)  | upcoming community events, 1.9 planning, quota per project, webhook support, azure replication, User case sharing from caicloud  ||
+| 2019/07/03 |  @heww || [China Recording](https://zoom.us/recording/share/RquB6Q5Pl_fSl6TSwPynRlUKRJ4gFysvRiSGJ-FXvNWwIumekTziMw)  | upcoming community events, 1.9 planning, System level CVE whitelist, External syslog driver, User case sharing from qihoo360 ||
+| 2019/04/24 |  @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/cOzI-WGqIO7bJb3upT1cwxAnko59icH-PVEXFBbV97GwIumekTziMw)  | upcoming community events, 1.9 planning, replication to non-harbor registry demo  ||
+| 2019/04/10 | @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/Km_X9jlouC_NzXTy_x2BFNoaPMtlZUVBAX2mGqBaz9qwIumekTziMw), [US Recording](https://zoom.us/recording/share/r0NGQBWAsRlq1dDMuVVu2CIzqDPX5rYKlePjuxpUBTiwIumekTziMw) | 1.8 updates, community survey updates, 1.8 features preview ||
+| -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis | |
+| -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network ||
+| 2019/03/27 | Host: @michmike || `short meeting with no recording` |v1.9 proposal collection & introduction of proposal submission process ||
+| 2019/03/27 | Host: @renmaosheng | 13 |[Recording](https://zoom.us/recording/share/q3XXCv2VuPhmiyH8-sX2KVHWT4TmuaG3uhqE9cFCZAuwIumekTziMw)|v1.9 proposal collection & introduction of proposal submission process ||
+| 2019/03/13 | Host: @michmike ||[Recording](https://zoom.us/recording/share/7aELbP8mDdRxOMnsH8BEKuauQx8XE_5iiUyiZOjD8KmwIumekTziMw)|Prepare script updates, Survey, 2 new maintainers, Replication Updates||
+| 2019/03/13 | Host: Mia |22||Prepare script updates, Survey, 2 new maintainers, Replication Updates||
+| US TimeZone: 2019/02/27 08:00-08:30 AM(PST) | Host: [@michmike](https://github.com/michmike) ||[Recording](https://zoom.us/recording/share/kv1pGufDoe0k3Am2Wad5CQZJUWRJs84bXbkb8SpVXruwIumekTziMw)|1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8| |
+| CHINA TimeZone: 2019/02/27 21:00-21:30(UTC+8) | Host: [@wang yan](https://github.com/wy65701436) |22|[Recording](https://zoom.us/recording/share/r9yAq3gKQ4z6zhHtORTCCHu3tiwGAFACd060ijRQIm-wIumekTziMw)|1. Discussion about the requirements of changing governance model 2. DEV progress updates for the features included in the V1.8 3. Events update||
+| 2019/01/23 06:00-06:30 AM(PST)/21:00-21:30 (UTC+8)| Host: [@steven-zou]([@steven-zou](https://github.com/steven-zou)) |18|[Recording](https://zoom.us/recording/share/DAo6M0Gv9h7KRlRCmAEH7lj_tqQQNHB_ZAq2KQALIDqwIumekTziMw?startTime=1548250019000)|Share some DEV progress/updates/demos of the features included in the release V1.8 by the feature owners||
+|2019/01/09 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)|Host: [@wenkai yin](https://github.com/ywk253100) Speaker: [@steven-zou](https://github.com/steven-zou)|30|[Recording](https://zoom.us/recording/share/agWHQkgV7G4H1G722sQdvbN6WrcQTaoc9FsYiUIzNH6wIumekTziMw?startTime=1547038592000)|[[Meeting Minutes]](conf-calls/2019-01-09/minutes.md)1.harbor+dragonfly introduction and demo 2. release progress updates||
 | 2018/12/26 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)| [@steven-zou](https://github.com/steven-zou) & [@reasonerjt](https://github.com/reasonerjt) |12|[Recording](https://zoom.us/recording/share/t_F2PdraDA7h8Lbmr-7TIV1gXMWQFYsShGnYfNY7VFqwIumekTziMw?startTime=1545829608000)|[[Meeting Minutes]](https://github.com/goharbor/community/blob/master/conf-calls/2018-12-26/minutes.md)Release V1.8 introduction and discussion||
-|2018/11/28 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)| [@wang yan](https://github.com/steven-zou) |19|[Recording](https://zoom.us/recording/share/VobuBSKfKeeHMyzMOQVuPX6ifFiTso3CNfuJTLgcxQWwIumekTziMw?startTime=1543410923000)|Introduction & Demo: Tencent Cloud Native Platform (TCNPlatform) ||
+|2018/11/28 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)| [@wang yan](https://github.com/wy65701436) |19|[Recording](https://zoom.us/recording/share/VobuBSKfKeeHMyzMOQVuPX6ifFiTso3CNfuJTLgcxQWwIumekTziMw?startTime=1543410923000)|Introduction & Demo: Tencent Cloud Native Platform (TCNPlatform) ||
 |2018/11/07 06:00-07:00 AM(PST)/21:00-22:00 (UTC+8)|[@wang yan](https://github.com/wy65701436) & [@wenkai yin](https://github.com/ywk253100)|25|[Recording](https://zoom.us/recording/share/nL5GinGFYADmE7BpK0WcGt3vk5IizKPvHwJPuYuP7OqwIumekTziMw?startTime=1541595468000)|Harbor HA and retag/build history features demo|
 | 2018/10/24 06:00-07:00 AM(PST)/21:00-22:00 (Beijing time) | [@wang yan](https://github.com/wy65701436) | 25 | [Recording](https://zoom.us/recording/share/T4uMWlhuQp4Hzlp-gX6ILpBlD7XexDkOZ40UWD6urd2wIumekTziMw?startTime=1540386198000)|[[Meeting Minutes]](https://github.com/goharbor/community/blob/master/conf-calls/2018-10-24/minutes.md) Online GC demo||
 | 2018/10/10 06:00-07:00 AM(PDT)/21:00-22:00 (Beijing time)| [@steven-zou](https://github.com/steven-zou) |19|[Recording](https://zoom.us/recording/share/GbVH9evjq4GDXGN9mGC0ZFYxPeINEzQkLw26E0of6R6wIumekTziMw?startTime=1539176657000)|[[Meeting Minutes]](https://github.com/goharbor/community/blob/master/conf-calls/2018-10-10/minutes.md) KubeCon event related and goverance model workflow introduction||
