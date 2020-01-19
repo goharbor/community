@@ -36,6 +36,7 @@ The short-term mission is to:
 
 |  Round | Date | Meeting Notes | Recordnings |
 |--------|------|---------------|-------------|
+| R5 | 2020/01/17 | [Notes](https://docs.google.com/document/d/1ltUOG42GsDnGpx0lrmhCOjkUOJGsrQy3B1_H_8TZwTg/edit?usp=sharing) | - |
 | R4 | 2020/01/08 | [Notes](https://docs.google.com/document/d/1f2SvLclRTb4nHD2kz3tk1T-3PUiJeTW2bmHb8SkExmc/edit?usp=sharing)| - |
 | R3 | 2019/12/27 | [Notes](https://docs.google.com/document/d/14prZGVqWodXnxoKKCOJHwd7ziwzJwtJW_oSa4FZRc6I/edit?usp=sharing) | - |
 | R2 | 2019/12/17 | [Notes](https://docs.google.com/document/d/1iefPjzcCvX8k1cA1pSm0JWgDZwfnXUOy-fbKuzY81RM/edit?usp=sharing) | - |
