@@ -1,0 +1,11 @@
+21:28:32	 From Michael Michael : docker pull demo.goharbor.io/jprivateproject2/ubuntu:bionic
+21:29:21	 From bj151v : We have OPA policy in tag, which are allowed in prod and staging....it will be tough it those are SHA ...although CICD can put the SHAs
+21:29:55	 From Steven Zou : how about highlight the tags?
+21:30:12	 From Michael Michael : sha256:707f5243: latest
+21:30:20	 From Michael Michael : sha256:707f5243: v1.23
+21:33:34	 From CNCF Harbor : it is 3 minutes passed, let’s discuss it offline.
+21:36:26	 From bj151v : bj151v=Bipin Jethwani :-)
+21:36:36	 From Steven Zou : thanks
+21:37:44	 From bj151v : Any public annoucments on harbor operator?
+
+https://zoom.us/rec/play/upV5dr2gqzs3HdWQsQSDBKBxW47pJvms0nVI_PBcyxy1UXdXNVDwNLdBMOFA6cuj5AlE9N48ufbrrcg2 
