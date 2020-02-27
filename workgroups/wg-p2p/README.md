@@ -25,7 +25,7 @@ The short-term mission is to:
 * [M] Fanjian Kong@Qihoo ([kofj](https://github.com/kofj))
 * Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
 * Alex Xu@VMware
-* YuHai Li@Dragonfly
+* YuHai Li@Dragonfly ([ansinlee](https://github.com/ansinlee))
 * YuXi Liu@Dragonfly
 * YiRan Wang@Uber
 * tedgxt@Netease ([tedgxt](https://github.com/tedgxt))
@@ -36,6 +36,7 @@ The short-term mission is to:
 
 |  Round | Date | Meeting Notes | Recordnings |
 |--------|------|---------------|-------------|
+| R8 | 2020/02/27 | [Notes](https://docs.google.com/document/d/1RKwO5Mqc-qbhv8yH-7WQnjD_OLprBiFtuQNXYbqr9hI/edit?usp=sharing) | - |
 | R7 | 2020/02/21 | [Notes](https://docs.google.com/document/d/1AFC2TW5yyW3wWQJrpabt2Pi4OjBH2Mr-I2ROyt746e8/edit?usp=sharing) | - |
 | R6 | 2020/02/13 | [Notes](https://docs.google.com/document/d/1CGz2rnmx0g8YXkbI4C5uTb9bSfUsup94wGUFcni0w1M/edit?usp=sharing) | - |
 | R5 | 2020/01/17 | [Notes](https://docs.google.com/document/d/1ltUOG42GsDnGpx0lrmhCOjkUOJGsrQy3B1_H_8TZwTg/edit?usp=sharing) | - |
