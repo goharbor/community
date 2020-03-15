@@ -4,7 +4,7 @@ Author: Prahalad Deshpande
 
 ## Abstract
 This proposal introduces an integration between Harbor and the [Open Policy Agent](https://www.openpolicyagent.org/). This integration will allow users to evaluate and enforce custom policies on images being stored and retrieved from Harbor. Additionally, the integration would also allow a variety of security and compliance enforcement checks to be performed as a part of the build and deploy pipelines by exposing a uniform set of APIs.
-The motivation behind this proposal is the Common Vunerability Schema Specification for the Cloud Native Workload
+The motivation behind this proposal is the Common Vunerability Schema Specification for the Cloud Native Workload. Integrating Harbor with OPA will introduce rich policy evaluation capabilities within Harbor in addition to opening up to other potential integrations with the tools for enforcement of IT GRC compliance in the cloud native ecosystem
 
 ## Background
 Harbor currently has support for scanning images for OS vulnerabilities using the [pluggable scanner framework](https://github.com/goharbor/pluggable-scanner-spec). Using the framework, end users can use OS vulnerability scanners of their choice to understand the OS vulnerabilities present within the system. However, reporting capabilities of Harbor with respect to the security and compliance posture of the images persisted within it is very minimal and is restricted to providing a summarized aggregate for the High, Medium and Low vulnerabilities within the images. There are some other crucial limitations such as:
@@ -18,9 +18,11 @@ Additionally, from the dev-ops perspective; it is not possible to build a deploy
 As can be seen from the use cases above; there is a requirement to persist the results of a scan or vulnerability evaluation in a format that supports ad-hoc querying as well as presentable within a report.
 Additionally, there also exists a critical requirement for the end user to be able to author complex policies that can evaluate the results of an image scan and produce an output that flags the image as matching or failing the acceptance criteria and also share the policies across departments to implement and enforce set of best practices uniformly.
 
-## Proposal
 To address the above requirements and use cases, an integration between Harbor and [Open Policy Agent](https://www.openpolicyagent.org/) is proposed. Open Policy Agent (OPA) is the policy authoring and evaluation framework that is being adopted widely by the Cloud Native Computing Foundation. Refer to [OPA Integrations](https://www.openpolicyagent.org/docs/latest/ecosystem/) to see a set of compelling and interesting integrations.
-Integrating Harbor with OPA will introduce rich policy evaluation capabilities within Harbor in addition to opening up to other potential integrations with the tools for enforcement of IT GRC compliance in the cloud native ecosystem
+
+
+## Proposal
+
 The next sections describe the architectures and workflows for integrating Harbor with OPA
 
 ### Harbor Policy Agent 
