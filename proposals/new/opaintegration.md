@@ -28,7 +28,7 @@ The next sections describe the architectures and workflows for integrating Harbo
 ### Harbor Policy Agent 
 
 The **Harbor Policy Agent** provides policy evaluation and reporting capabilities within the Harbor ecosystem. A component view of the policy agent is shown below
-![Harbor Policy Agent Component View](proposals/images/opaintegration/Harbor_Policy_Agent.png)
+![Harbor Policy Agent Component View](../images/opaintegration/Harbor_Policy_Agent.png)
 
 The core components of the policy evaluation and reporting layer are
 * Policy Agent 
