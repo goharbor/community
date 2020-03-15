@@ -25,9 +25,10 @@ To address the above requirements and use cases, an integration between Harbor a
 
 The next sections describe the architectures and workflows for integrating Harbor with OPA
 
-### Harbor Policy Agent 
+### Harbor Policy Agent Component View
 
 The **Harbor Policy Agent** provides policy evaluation and reporting capabilities within the Harbor ecosystem. A component view of the policy agent is shown below
+
 ![Harbor Policy Agent Component View](../images/opaintegration/Harbor_Policy_Agent.png)
 
 The core components of the policy evaluation and reporting layer are
@@ -48,5 +49,25 @@ The PostgresSQL DB will store the results of the policy evaluation process in a 
 #### ElasticSearch
 The Elasticsearch data store will store the results of the policy evaluation indexed by the text contents so that a Full Text Search capability is available on the policy data and the policy evaluation results.
 
+### Harbor Policy  Agent Low Level Design
 
+The low level (interface and struct level) components of the Policy Agent are specified in the below diagram
 
+![Harbor Policy Agent Low Level Component Diagram](../images/opaintegration/Harbor_Policy_Agent_Detailed_View.png)
+
+### Harbor Policy Agent Policy Upload Workflow
+
+The below sequence diagram depicts the interactions between the various components of the **Harbor Policy Agent** during the Policy upload process
+
+![Harbor Policy Agent Policy Upload Workflow](../images/opaintegration/Harbor_Policy_Workflow_PolicyUpload.png)
+
+### Harbor Policy Agent Policy Evaluation Workflow
+
+Harbor Policy Evaluation can be triggered in any of the below three forms
+* Inline with an image scan - Policy evaluation happens immediately after an image scan completes
+* On demand - Policy evaluation is triggered by the user by specifying a policy Id and an image id for the purposes of the scan
+* Scheduled - Policy evaluation can be scheduled to trigger off exactly once or at a periodic interval.
+  
+The below sequence diagram depicts the interactions between the various components of the **Harbor Policy Agent** during the Policy evaluation process. It also depicts how Harbor interacts with the Policy Agent using the Policy HTTP Endpoint to trigger a policy evaluation.
+
+![Harbor Policy Agent Policy Evaluation Workflow](../images/opaintegration/Harbor_Policy_Evaluation_Workflow.png)
