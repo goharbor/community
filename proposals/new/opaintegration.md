@@ -71,3 +71,7 @@ Harbor Policy Evaluation can be triggered in any of the below three forms
 The below sequence diagram depicts the interactions between the various components of the **Harbor Policy Agent** during the Policy evaluation process. It also depicts how Harbor interacts with the Policy Agent using the Policy HTTP Endpoint to trigger a policy evaluation.
 
 ![Harbor Policy Agent Policy Evaluation Workflow](../images/opaintegration/Harbor_Policy_Evaluation_Workflow.png)
+
+### Deployment
+
+The **Harbor Policy Agent** would be deployed as a service within a container alongside other services that make up the Harbor installation.
