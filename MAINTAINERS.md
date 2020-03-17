@@ -26,7 +26,7 @@ describes governance guidelines and maintainer responsibilities.
 ## Emeritus Maintainers
 * Nathan Lowe, [nlowe](https://github.com/nlowe), [Hyland Software](https://github.com/HylandSoftware)
 
-## Harbor Stakeholders
+## Harbor Core Contributors & Stakeholders
 
 | Harbor Feature Area | Lead |
 | ----------------------------- | :---------------------: |
