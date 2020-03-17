@@ -8,7 +8,6 @@ describes governance guidelines and maintainer responsibilities.
 | Maintainer | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | De Chen | [cd1989](https://github.com/cd1989) | Independent |
-| Qian Deng | [ninjadq](https://github.com/ninjadq) | [VMware](https://www.github.com/vmware/) |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
 | Fanjian Kong | [kofj](https://github.com/kofj) | [Qihoo360](https://github.com/Qihoo360) |
 | Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
@@ -18,7 +17,6 @@ describes governance guidelines and maintainer responsibilities.
 | Yan Wang | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) | 
-| Daojun Zhang | [stonezdj](https://github.com/stonezdj) | [VMware](https://www.github.com/vmware/) |
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
@@ -43,6 +41,7 @@ describes governance guidelines and maintainer responsibilities.
 | Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
 | Security | Daniel Pacak (danielpacak), Michael Michael (michmike) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
+| Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
 | Documentation | Stuart Clements (stuclem) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
