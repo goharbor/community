@@ -24,8 +24,7 @@ describes governance guidelines and maintainer responsibilities.
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
 
 ## Emeritus Maintainers
-
-N/A
+* Nathan Lowe, [nlowe](https://github.com/nlowe), [Hyland Software](https://github.com/HylandSoftware)
 
 ## Harbor Stakeholders
 
@@ -39,8 +38,9 @@ N/A
 | Interrogation Service/Pluggable Scanners | Daniel Pacak (danielpacak), Zach Hill (zhill), Steven Zou (steven-zou) |
 | Setup, Installation, Upgrade Experience | Daojun Zhang (stonezdj) , Qian Deng (ninjadq) |
 | Helm Chart & HA | Wenkai Yin (ywk253100), Daniel Jiang (reasonerjt) |
-| Policy Engine | Nathan Lowe (nlowe), Yan Wang (wy65701436), Steven Zou (steven-zou) |
+| Policy Engine | Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
+| Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
 | Security | Daniel Pacak (danielpacak), Michael Michael (michmike) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Documentation | Stuart Clements (stuclem) |
