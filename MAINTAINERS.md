@@ -11,7 +11,6 @@ describes governance guidelines and maintainer responsibilities.
 | Qian Deng | [ninjadq](https://github.com/ninjadq) | [VMware](https://www.github.com/vmware/) |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
 | Fanjian Kong | [kofj](https://github.com/kofj) | [Qihoo360](https://github.com/Qihoo360) |
-| Nathan Lowe | [nlowe](https://github.com/nlowe) | [Hyland Software](https://github.com/HylandSoftware) |
 | Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
 | Daniel Pacak | [danielpacak](https://github.com/danielpacak) | [Aqua Security](https://www.github.com/aquasecurity/) |
 | Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
