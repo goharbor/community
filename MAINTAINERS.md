@@ -46,5 +46,5 @@ describes governance guidelines and maintainer responsibilities.
 | Documentation | Stuart Clements (stuclem) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
-| Community Manager | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
+| Community Management | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
 | Product Management | Michael Michael (michmike), Alex Xu (xaleeks) |
