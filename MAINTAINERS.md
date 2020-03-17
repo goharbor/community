@@ -20,6 +20,7 @@ describes governance guidelines and maintainer responsibilities.
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) | 
 | Daojun Zhang | [stonezdj](https://github.com/stonezdj) | [VMware](https://www.github.com/vmware/) |
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
+| Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
 
 ## Emeritus Maintainers
