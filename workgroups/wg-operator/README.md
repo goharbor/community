@@ -11,10 +11,8 @@ Currently, we have the following members:
 - Wenkai Yin @VMware ([ywk253100](https://github.com/ywk253100))
 - Daniel Jiang @VMware ([reasonerjt](https://github.com/reasonerjt))
 - Baofa Fan @Daocloud ([carlory](https://github.com/carlory))
-- Xiaoyang Zhu @QingCloud ([soulseen](https://github.com/soulseen))
 - Kevin Zhao @Linaro ([kevin-zhaoshuai](https://github.com/kevin-zhaoshuai))
 - Yuandong Xie @Unisound ([xieydd](https://github.com/xieydd))
-- Herman Zhu @Yunmanman ([Ghostbaby](https://github.com/Ghostbaby))
 - JinLin Fu @Jointown ([withlin](https://github.com/withlin))
 - Shang Jia @LenovoCloud ([meua](https://github.com/meua))
 - Changcheng Wei @3vjia ([weiccTest](https://github.com/weiccTest))
@@ -23,6 +21,15 @@ Currently, we have the following members:
 
 Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj)) is taking the responsibilities of being coordinator of this group to call and host related activities, Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is the co-coordinator.
 
+## Harbor cluster operator contributors
+
+- Herman Zhu @Yunmanman ([Ghostbaby](https://github.com/Ghostbaby))
+- Xiaoyang Zhu @QingCloud ([soulseen](https://github.com/soulseen))
+- Canfeng Wang @Netease ([wangcanfengxs](https://github.com/wangcanfengxs))
+
+
 ## Meetings
 
-TBD
+| Datetime | Meeting minutes | Recording |
+|----------|-----------------|-----------|
+|2020/03/17|[Minutes](https://docs.google.com/document/d/1eYSVOPmXGJIYUnsgN5ZnD03JY1zRcGiNJvwlzJ4bs4E/edit?usp=sharing)| - |
