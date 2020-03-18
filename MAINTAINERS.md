@@ -9,7 +9,7 @@ describes governance guidelines and maintainer responsibilities.
 | --------------- | --------- | ----------- |
 | De Chen | [cd1989](https://github.com/cd1989) | Independent |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
-| Fanjian Kong | [kofj](https://github.com/kofj) | [Qihoo360](https://github.com/Qihoo360) |
+| Fanjian Kong | [kofj](https://github.com/kofj) | [Tencent](https://github.com/Tencent) |
 | Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
 | Daniel Pacak | [danielpacak](https://github.com/danielpacak) | [Aqua Security](https://www.github.com/aquasecurity/) |
 | Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
