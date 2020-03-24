@@ -20,6 +20,39 @@ Additionally, there also exists a critical requirement for the end user to be ab
 
 To address the above requirements and use cases, an integration between Harbor and [Open Policy Agent](https://www.openpolicyagent.org/) is proposed. Open Policy Agent (OPA) is the policy authoring and evaluation framework that is being adopted widely by the Cloud Native Computing Foundation. Refer to [OPA Integrations](https://www.openpolicyagent.org/docs/latest/ecosystem/) to see a set of compelling and interesting integrations.
 
+##Use Cases
+
+### Security Admin Persona
+* What are the **Critical** vulnerabilities present in my **Harbor registry**?
+* Which images are impacted by **CVE-12345** which has been flagged as business critical?
+* Which Helm charts use images with **Critical** vulnerabilities?
+* Where can I get access to a summary report on a regular cadence?
+* What **Services** out in the field use an image containing **CVE-12345**?
+* I have a set of enterprise wide "Acceptance for Use" critieria that must be satisified. How can I identify images that satisfy these criteria and those that do not?
+* How can I share the best practice checks that I have designed with my enterprise partner organizations so all maintain the same level of compliance?
+* I want to evaluate images against standard IT-GRC policies (PCI, HIPAA) and score images against these policies.
+* I want to apply custom scoring policy on images based on my organization's acceptance criteria. I then want to ensure that images with low score are not permitted to be used when launching any workloads.
+  
+
+### Dev Ops Persona
+
+* Do not deploy a service S which uses images containing a **Critical** vulnerability **V**
+* Fail the creation of Helm charts if they use an image with **Critical** vulnerabilities.
+
+### Application Developer/Owner Persona
+* Pull images having that have a PCI compliance policy evaluation score greater than 8 out of 10
+
+### Project Owner Persona
+* Quarantine images whose PCI compliance policy evaluation score is less than 8
+* Do not replicate images having vulnerability **CVE-12345** to any destination.
+* Do not replicate images with low PCI scores to my production Harbor registry.
+
+
+
+  
+As can be seen from the use cases above; there is a requirement to persist the results of a scan or vulnerability evaluation in a format that supports ad-hoc querying as well as presentable within a report.
+
+Additionally, there also exists a critical requirement for the end user to be able to author complex policies that can evaluate the results of an image scan and produce an output that flags the image as matching or failing the acceptance criteria and also share the policies across departments to implement and enforce set of best practices uniformly.
 
 ## Proposal
 
