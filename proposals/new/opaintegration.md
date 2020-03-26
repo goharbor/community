@@ -99,6 +99,8 @@ The below diagram depicts the user workflow to be followed for a image centric e
 ![Harbor Policy Evaluation Reporting Workflow](../images/opaintegration/User_Policy_Evaluation_Reports.png)
 
 
+The next sections detail the low level architecture and component view and interaction diagrams for the Harbor Policy Agent
+
 ### Harbor Policy Agent Component View
 
 The **Harbor Policy Agent** provides policy evaluation and reporting capabilities within the Harbor ecosystem. A component view of the policy agent is shown below
