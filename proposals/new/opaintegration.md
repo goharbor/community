@@ -56,7 +56,48 @@ Additionally, there also exists a critical requirement for the end user to be ab
 
 ## Proposal
 
-The next sections describe the architectures and workflows for integrating Harbor with OPA
+The next sections describe the user workflows, low level architectures and messaging flow that enable the Harbor - OPA integration
+
+### Harbor Policy Agent User Workflow
+
+Keeping adherance the multi-tenancy tenets of Harbor, OPA policies would be  scoped at a per-user level and would be availble for use across **all** projects of which the user is a member. This level of scoping will satisfy the following scenarios:
+* Users can author policies relevant to the projects that they manage or a member of and ensure that images within those projects can evaluated against the policies
+* Helps easy migration to a cloud based deployment where-in each user would be a tenant and could own multiple projects against which the policies can be evaluated.
+* To satisfy the use case of an uber registry wide or organization specific Security Admin persona, a new user account for the Security Admin can be created and all enterprise wide acceptance policies can be placed under the Security Admin account. Security Admins can then run evaluations against these policies either on demand or inline with a scan or using a periodinc schedule.
+
+* **Note Security Admin Persona is not within the scope of this proposal and would need to be treated as a separate proposal**
+
+
+The below sub-sections detail some of the proposed workflows. Instead of providing a UI mockup, the focus is on the segues through which the user will navigate to accomplish actions related to Policy evaluation and reporting
+
+**Images and icons need to be finalized and are used for illustration purposes only**
+
+#### Accessing Policy Functionality in Harbor
+
+The below mockup shows the mechanism of accessing the Policy functionality within harbor
+![Harbor Policy Upload Screen](../images/opaintegration/Harbor_Policy_Link.png)
+
+#### Policy Upload User Workflow
+
+![Harbor Policy Upload User Workflow](../images/opaintegration/User_Policy_Upload_Diagram.png)
+
+#### Policy Evaluation - Policy Centric Workflow
+
+The below diagram depicts the user workflow to be followed for a policy centric evaluation i.e. the policy is a reference point against which images are evaluated
+
+![Harbor Policy Evaluation Policy_Centric](../images/opaintegration/User_Policy_Evaluation_Policy_Centric.png)
+
+
+#### Policy Evaluation - Policy Centric Workflow
+
+The below diagram depicts the user workflow to be followed for a image centric evaluation i.e. the image is a reference point against which policies are evaluated
+
+![Harbor Policy Evaluation Image_Centric](../images/opaintegration/User_Policy_Evaluation_Image_Centric.png)
+
+#### Policy Evaluation Reporting Workflow
+
+![Harbor Policy Evaluation Reporting Workflow](../images/opaintegration/User_Policy_Evaluation_Reports.png)
+
 
 ### Harbor Policy Agent Component View
 
@@ -104,6 +145,12 @@ Harbor Policy Evaluation can be triggered in any of the below three forms
 The below sequence diagram depicts the interactions between the various components of the **Harbor Policy Agent** during the Policy evaluation process. It also depicts how Harbor interacts with the Policy Agent using the Policy HTTP Endpoint to trigger a policy evaluation.
 
 ![Harbor Policy Agent Policy Evaluation Workflow](../images/opaintegration/Harbor_Policy_Evaluation_Workflow.png)
+
+##Misc Considerations
+
+###  Multi-tenancy
+
+The proposed solution 
 
 ### Deployment
 
