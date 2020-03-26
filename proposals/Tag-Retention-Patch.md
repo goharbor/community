@@ -2,6 +2,8 @@
 
 Author: [Steven Zou](https://github.com/steven-zou)
 
+please see updated user guide at https://github.com/goharbor/harbor/blob/release-1.10.0/docs/user_guide.md
+
 Discussion:
 
 * See epic [#6654][https://github.com/goharbor/harbor/issues/6654]
