@@ -1,6 +1,6 @@
 Proposal: Non-Blocking GC
 
-Author: Yan Wang
+Author: Yan Wang/He WeiWei
 
 ## Abstract
 
@@ -92,10 +92,21 @@ Base on the above data, what we knows:
 
 As a system admin, you configure Harbor to run a garbage collection job on a fixed schedule. At the scheduled time, Harbor:
 
+    Identifies and delete the untaggged artifact(optional)
     Identifies and marks unused image layers.
     Deletes the marked image layers.
 
+### Remove the untagged artifact
+GC job provides a optional for the end user to define whether to remove the untagged manifest.
+
+#### Question 1, how to deal with the uploading untagged manifest at the phase of deleting untagged manifest.
+Optimistic concurrency control, use blob update time.
+
+![mark](../images/non-blocking-gc/head_blob.png)
+
+
 ### Mark
+
 Bases on the Harbor DB, we can count each blob/manifest's reference count, and select the reference count 0 as the candidate.
 ![mark](../images/non-blocking-gc/mark.png)
 
@@ -105,11 +116,18 @@ We do have a table to record the uploading blobs info, that's project & blob.
 The delete candidate excludes all of blobs that in the project & blob.
 
 1. candidate set 1 -- all blobs from table blob exclude the items in the table project & blob.
-2. candidate set 1 excludes all of referenced blobs (artifact -> artifact & blob -> blob).
+2. candidate set 1 excludes all of referenced blobs (artifact -> artifact & blob).
 
 ![mark_uploading](../images/non-blocking-gc/mark_uploading.png)
 
+All of selected candidate are marked as status **delete**.
+
 ### Sweep
+
+#### Blob Lifecycle
+![blob_status](../images/non-blocking-gc/blob_status.png)
+
+
 The registry controller will grant the capability of deleting blob & manifest.
 
 #### Question 1, how to deal with the uploading blobs at the phase of sweeping.
@@ -120,6 +138,9 @@ all of the uploaded data are stored at '_upload' folder.
 2. if the blob is in delete status, remove it from the candidate.
 
 ![head_blob](../images/non-blocking-gc/mark_manifest.png)
+
+Not in candidate, Head request returns 200. But GC marks it as delete at this time.
+![blob_status_change](../images/non-blocking-gc/blob_status_change.png)
 
 #### Question 2, how to deal with the uploading manifest at the phase of sweeping.
 Docker client will always send a put request to push manifest(not for Index), we will intercept that request.
@@ -144,8 +165,15 @@ We'd like to enable the registry controller to have the capability to delete blo
 
 **DOUBLE GUARANTEE**
 
-We need to introduce the cutoff time, any to be deleted blob & manifest, the update time must not be later than the cutoff time.
+1. Cutoff time -- We need to introduce the cutoff time, any to be deleted blob & manifest, the update time must not be later than the cutoff time.
 ![delete_manifest](../images/non-blocking-gc/delete_manifest.png)
+
+2. Time window -- We need to introduce the time window, the blobs/manifest in the time window will be reserved.
+Even we introduce a update time to resolve the read/write, it still cannot resolve all of problems, like:
+![time_window](../images/non-blocking-gc/time_window.png)
+
+### To Be Discussed
+What about if harbor crash but the blob status was marked as **deleting**, for the current desgin, this blob cannot be pushed in the following operations.
 
 #### API
 
@@ -180,7 +208,7 @@ Draft code PR has been created: https://github.com/goharbor/harbor/pull/10441
 ### Overall flow
 The basic flow is:
 
-* Mark the GC candidates in Harbor Core
+* Mark the GC candidates in GC job.
 * Trigger a GC job and pass the candidates.
 * Call registry controller API to delete blob & manifest in GC job.
 
