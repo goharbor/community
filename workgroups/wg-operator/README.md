@@ -30,8 +30,9 @@ Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj)) is taking the responsib
 
 ## Meetings
 
-| Datetime | Meeting minutes | Recording |
-|----------|-----------------|-----------|
-|2020/03/31|[Minutes](https://docs.google.com/document/d/1nt7yZvNxOPzVkLhDaNzwnsb78SL8fk2BiG16FMBjOkw/edit?usp=sharing)| - |
-|2020/03/24|[Minutes](https://docs.google.com/document/d/1Z8KK_zxljzdTsq5Hk_GaqHlOeSKcw1Gr2Rsv0SnI7SI/edit?usp=sharing) | - |
-|2020/03/17|[Minutes](https://docs.google.com/document/d/1eYSVOPmXGJIYUnsgN5ZnD03JY1zRcGiNJvwlzJ4bs4E/edit?usp=sharing)| - |
+| Topic | Datetime | Meeting minutes | Recording |
+|-------|----------|-----------------|-----------|
+|harbor core operator|2020/04/01|[Minutes](https://docs.google.com/document/d/1SPpHP-_TlLbyt3jqIdA5ojn8EGjE43tjW1kmFQjXXIs/edit?usp=sharing) | - |
+|harbor cluster operator |2020/03/31|[Minutes](https://docs.google.com/document/d/1nt7yZvNxOPzVkLhDaNzwnsb78SL8fk2BiG16FMBjOkw/edit?usp=sharing)| - |
+|harbor cluster operator|2020/03/24|[Minutes](https://docs.google.com/document/d/1Z8KK_zxljzdTsq5Hk_GaqHlOeSKcw1Gr2Rsv0SnI7SI/edit?usp=sharing) | - |
+|harbor cluster operator|2020/03/17|[Minutes](https://docs.google.com/document/d/1eYSVOPmXGJIYUnsgN5ZnD03JY1zRcGiNJvwlzJ4bs4E/edit?usp=sharing)| - |
