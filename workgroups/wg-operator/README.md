@@ -6,10 +6,19 @@ The mission of Operator Group is to aggregating the efforts from all the interes
 
 Currently, we have the following members:
 
-- Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj))
-- Steven Zou @VMware ([steven-zou](https://github.com/steven-zou))
-- Wenkai Yin @VMware ([ywk253100](https://github.com/ywk253100))
-- Daniel Jiang @VMware ([reasonerjt](https://github.com/reasonerjt))
+- [M]Steven Zou @VMware ([steven-zou](https://github.com/steven-zou))
+- [M]Pierre @OVH ([holyhope](https://github.com/holyhope))
+- [M]Jeremie @OVH ([jMonsinjon](https://github.com/jMonsinjon))
+- Maxie @OVH ([mhurtrel](https://github.com/mhurtrel))
+- Herman Zhu @Yunmanman ([Ghostbaby](https://github.com/Ghostbaby))
+- Xiaoyang Zhu @QingCloud ([soulseen](https://github.com/soulseen))
+- Canfeng Wang @Netease ([wangcanfengxs](https://github.com/wangcanfengxs))
+- ZiMing Zhang @VMware ([bitsf](https://github.com/bitsf))
+- Weiwei He @VMware ([heww](https://github.com/heww))
+- =============================================
+- [M]Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj))
+- [M]Wenkai Yin @VMware ([ywk253100](https://github.com/ywk253100))
+- [M]Daniel Jiang @VMware ([reasonerjt](https://github.com/reasonerjt))
 - Baofa Fan @Daocloud ([carlory](https://github.com/carlory))
 - Kevin Zhao @Linaro ([kevin-zhaoshuai](https://github.com/kevin-zhaoshuai))
 - Yuandong Xie @Unisound ([xieydd](https://github.com/xieydd))
@@ -20,6 +29,19 @@ Currently, we have the following members:
 - Lisong Qiu @Transwarp ([fyqls](https://github.com/fyqls))
 
 Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj)) is taking the responsibilities of being coordinator of this group to call and host related activities, Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is the co-coordinator.
+
+Notes: [M] means the member is also harbor maintainer.
+
+## Operator development leads
+
+- Steven Zou @VMware ([steven-zou](https://github.com/steven-zou))
+- Pierre @OVH ([holyhope](https://github.com/holyhope))
+
+## Harbor core operator contributors
+
+- Pierre @OVH ([holyhope](https://github.com/holyhope))
+- Jeremie @OVH ([jMonsinjon](https://github.com/jMonsinjon))
+- Maxie @OVH ([mhurtrel](https://github.com/mhurtrel))
 
 ## Harbor cluster operator contributors
 
