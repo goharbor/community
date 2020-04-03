@@ -13,6 +13,8 @@ The short-term mission is to:
 - Prototype design of P2P distribution for Harbor
 - Deliver the minimal set of P2P functions in Harbor
 
+For more details, check the [P2P integration roadmap](https://docs.google.com/document/d/1Lc54kMXRi23dU_TDIljxEcmuN_gux6dqp6Rur7mCess/edit?usp=sharing).
+
 ## Coordinator
 * [M] Fanjian Kong@Qihoo ([kofj](https://github.com/kofj))
 * [M] De Chen@Tencent ([cd1989](https://github.com/cd1989)) (co-coordinator)
