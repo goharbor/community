@@ -28,7 +28,7 @@ Currently, we have the following members:
 - Junfeng Hu @MapNav ([hujf2](https://github.com/hujf2))
 - Lisong Qiu @Transwarp ([fyqls](https://github.com/fyqls))
 
-Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj)) is taking the responsibilities of being coordinator of this group to call and host related activities, Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is the co-coordinator.
+Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is taking the responsibilities of being coordinator of this group to call and host related activities.
 
 Notes: [M] means the member is also harbor maintainer.
 
