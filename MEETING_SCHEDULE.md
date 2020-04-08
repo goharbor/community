@@ -4,9 +4,9 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 **Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
-**Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
+**Meeting Agenda**: Read, comment, or add agenda items on the [meeting notes](https://github.com/goharbor/community/wiki/Harbor-Community-Meetings)
 
-**Meeting Slides**: [Conf Call Slides](/conf-calls)
+**Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 
 **Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
 
@@ -14,6 +14,7 @@ We have two recurring bi-weekly Harbor community conference calls. One meeting w
 
 **************************************************************************************************************************************
 ## OLD CONTENT NO LONGER UPDATED BUT KEPT FOR HISTORICAL REFERENCE
+The old community meeting slides are located [here](/conf-calls) for historical reasons.
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
