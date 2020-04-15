@@ -39,6 +39,7 @@ For more details, check the [P2P integration roadmap](https://docs.google.com/do
 
 |  Round | Date | Meeting Notes | Recordnings |
 |--------|------|---------------|-------------|
+| R12 | 2020/04/15 | [Notes](https://docs.google.com/document/d/1AEapk2CIrfZJDj6p1kH3kV3mUuQWFi452paGNrYRg-g/edit?usp=sharing) | - |
 | R11 | 2020/04/02 | [Notes](https://docs.google.com/document/d/1m6SeRP_zNnWO5Iyqk-4mG_MGjBdP7x58q2Aiks_5SxY/edit?usp=sharing) | - |
 | R10 | 2020/03/12 | [Notes](https://docs.google.com/document/d/1jJqGGqvnDA-SZC2CaHNqQ8caifL6fxl7sGrMGjRN53o/edit?usp=sharing) | _ |
 | R9 | 2020/03/05 | [Notes](https://docs.google.com/document/d/1vtmqxIDR-2EJ_4Kx_Kyg1YXvUu32Z8wku1miUvid5Rc/edit?usp=sharing) | - |
