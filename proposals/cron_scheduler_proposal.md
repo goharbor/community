@@ -88,6 +88,6 @@ This component provide 3 predefined schedule jobs:
 
 For the other customized cron, User need to input it in a input box. Frontend will check it based on Regex rules.
 Mockup is as follows: 
-![predefined schedule](./_content/cron_image_1.png)
-![predefined schedule](./_content/cron_image_2.png)
-![custom schedule by cron](./_content/cron_image_3.png)
+![predefined schedule](./images/cron/cron_image_1.png)
+![predefined schedule](./images/cron/cron_image_2.png)
+![custom schedule by cron](./images/cron/cron_image_3.png)
