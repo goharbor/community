@@ -13,9 +13,12 @@ The short-term mission is to:
 - Prototype design of P2P distribution for Harbor
 - Deliver the minimal set of P2P functions in Harbor
 
-## Coordinator
+For more details, check the [P2P integration roadmap](https://docs.google.com/document/d/1Lc54kMXRi23dU_TDIljxEcmuN_gux6dqp6Rur7mCess/edit?usp=sharing).
 
-* [M] Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))
+## Coordinator
+* [M] Fanjian Kong@Qihoo ([kofj](https://github.com/kofj))
+* [M] De Chen@Tencent ([cd1989](https://github.com/cd1989)) (co-coordinator)
+* [M] Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) (co-coordinator)
 
 ## Members
 
@@ -36,6 +39,8 @@ The short-term mission is to:
 
 |  Round | Date | Meeting Notes | Recordnings |
 |--------|------|---------------|-------------|
+| R12 | 2020/04/15 | [Notes](https://docs.google.com/document/d/1AEapk2CIrfZJDj6p1kH3kV3mUuQWFi452paGNrYRg-g/edit?usp=sharing) | - |
+| R11 | 2020/04/02 | [Notes](https://docs.google.com/document/d/1m6SeRP_zNnWO5Iyqk-4mG_MGjBdP7x58q2Aiks_5SxY/edit?usp=sharing) | - |
 | R10 | 2020/03/12 | [Notes](https://docs.google.com/document/d/1jJqGGqvnDA-SZC2CaHNqQ8caifL6fxl7sGrMGjRN53o/edit?usp=sharing) | _ |
 | R9 | 2020/03/05 | [Notes](https://docs.google.com/document/d/1vtmqxIDR-2EJ_4Kx_Kyg1YXvUu32Z8wku1miUvid5Rc/edit?usp=sharing) | - |
 | R8 | 2020/02/27 | [Notes](https://docs.google.com/document/d/1RKwO5Mqc-qbhv8yH-7WQnjD_OLprBiFtuQNXYbqr9hI/edit?usp=sharing) | - |
