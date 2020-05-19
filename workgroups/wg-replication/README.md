@@ -18,9 +18,29 @@ Currently, we have the following members:
 * De Chen ([cd1989](https://github.com/cd1989))
 * Fanjian Kong@Qihoo360 ([kofj](https://github.com/kofj))
 * Mingming Pei@Netease ([mmpei](https://github.com/mmpei))
-* Lei Yuan@HuaWei ([yuanshuhan](https://github.com/yuanshuhan))
+* ZiMing Zhang@VMware ([bitsf](https://github.com/bitsf))
+* Javis Zhou@Huawei ([jarvis-zhou](https://github.com/jarvis-zhou))
+* Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
+
 
 Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is taking the responsibilities of being coordinator of this group to call and host related activities.
+
+## Adapter Contributors
+
+| Registry Adapter |     Contributor      |      GitHub ID     |
+|------------------|---------------|--------------------|
+| Harbor           | Wenkai Yin@VMware    | [ywk253100](https://github.com/ywk253100) |
+| Docker Distribution | Wenkai Yin@VMware    | [ywk253100](https://github.com/ywk253100) |
+| Docker Hub           | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
+| ACR(Azure Container Registry) | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
+| Ali-ACR(Alibaba Container Registry) | Fanjian Kong@Tencent | [kofj](https://github.com/kofj) |
+| AWS ECR(Elastic Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
+| Helm Hub | MingMing Pei@Netease | [mmpei](https://github.com/mmpei) |
+| Huawei SWR | Javis Zhou@Huawei | [jarvis-zhou](https://github.com/jarvis-zhou) |
+| JFrog Artifactory | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
+| Quay | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
+| Gitlab Registry | Vikto | [lxShaDoWxl](https://github.com/lxShaDoWxl) |
+
 
 ## Meetings
 
