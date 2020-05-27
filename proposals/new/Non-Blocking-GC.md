@@ -17,6 +17,12 @@ And in some cases, especially on the cloud based backend, the execution time of 
 This proposal wants to try to introduce a way to enable non-blocking GC without setting Harbor to readonly. Push is still 
 work at the time of GC execute.
 
+## Non Goal
+This proposal is assuming that the data in the Harbor Database is accurate, and any data asymmetry is out of scope:
+
+* It has artifact in Harbor DB but no corresponding manifest in registry storage.
+* It has manifest in registry storage but no corresponding artifact in Harbor DB.
+
 ### OCI Database
 
 To facilitate non-blocking GC, Harbor builds up a OCI Data Base to track all the uploaded assets,
@@ -88,7 +94,7 @@ Base on the above data, what we knows:
     Indetifier of each blob/manifest.
     Reference count of each blob/manifest.
 
-## Non-Blocking
+## Non-Blocking [optional 1]
 
 As a system admin, you configure Harbor to run a garbage collection job on a fixed schedule. At the scheduled time, Harbor:
 
@@ -127,8 +133,19 @@ All of selected candidate are marked as status **delete**.
 #### Blob Lifecycle
 ![blob_status](../images/non-blocking-gc/blob_status.png)
 
+* Non-status: normal blob that is being consumed by Harbor.
+* Delete: GC candidate
+* Deleting: The blob is being removed during GC.
+
+1. Non-status -> Delete : Mark the blob as candidate.
+2. Delete -> Deleting : Select the blob and call the API to delete asset in the backend storage.
+3. Deleting -> Trash : Delete success.
+4. Delete -> Non-status : Client asks the existence of blob, remove it from the candidate.
 
 The registry controller will grant the capability of deleting blob & manifest.
+
+How does docker client push a blob?
+![blob_status](../images/non-blocking-gc/push_blob.png)
 
 #### Question 1, how to deal with the uploading blobs at the phase of sweeping.
 Docker client will send a head request to ask the existence of the blob, we will intercept that request.
@@ -138,6 +155,8 @@ all of the uploaded data are stored at '_upload' folder.
 2. if the blob is in delete status, remove it from the candidate.
 
 ![head_blob](../images/non-blocking-gc/mark_manifest.png)
+
+![put_blob](../images/non-blocking-gc/put_blob.png)
 
 Not in candidate, Head request returns 200. But GC marks it as delete at this time.
 ![blob_status_change](../images/non-blocking-gc/blob_status_change.png)
@@ -153,15 +172,40 @@ The put manifest will be eventually passed to proxy, and let registry to deal wi
 ![put_manifest](../images/non-blocking-gc/put_manifest.png)
 
 #### Question 3, how to deal with the uploading "untagged manifest" of a index at the phase of sweeping.
-Different wit push a stand alone artifact, docker client will send a head request before putting a manifest in push a **untagged** manifest in the process of pushing Index,  we will intercept that request.
+Different with push a stand alone artifact, docker client will send a head request before putting a manifest in push a **untagged** manifest in the process of pushing Index,  we will intercept that request.
 
 ![head_manifest](../images/non-blocking-gc/head_manifest.png)
 
 #### Question 4, what about if client only sends head request, and no put following.
 The manifest or blob will only be removed from the deletion candidates, and it can be GCed in the next execution.
 
+### Blob DB scheme
+
+It needs to add two more attributes, **update_time and status**.
+
+```
+CREATE TABLE blob
+(
+  id            SERIAL PRIMARY KEY NOT NULL,
+  /*
+     digest of config, layer, manifest
+  */
+  digest        varchar(255)        NOT NULL,
+  content_type  varchar(1024)       NOT NULL,
+  size          bigint              NOT NULL,
+  status        varchar(255)        NOT NULL, 
+  update_time   timestamp default CURRENT_TIMESTAMP,
+  creation_time timestamp default CURRENT_TIMESTAMP,
+  UNIQUE (digest)
+);
+```
+
 ### Delete Blob & Manifest
 We'd like to enable the registry controller to have the capability to delete blob & manifest via digest by leveraging the distribution code as library.
+
+To grant the capability to delete blob & manifest, the registyctl should share the configuration file of registry.
+
+![registry_controller](../images/non-blocking-gc/registry_controller.png)
 
 **DOUBLE GUARANTEE**
 
@@ -171,9 +215,6 @@ We'd like to enable the registry controller to have the capability to delete blo
 2. Time window -- We need to introduce the time window, the blobs/manifest in the time window will be reserved.
 Even we introduce a update time to resolve the read/write, it still cannot resolve all of problems, like:
 ![time_window](../images/non-blocking-gc/time_window.png)
-
-### To Be Discussed
-What about if harbor crash but the blob status was marked as **deleting**, for the current desgin, this blob cannot be pushed in the following operations.
 
 #### API
 
@@ -203,7 +244,7 @@ BODY         :
 
 ```
 
-Draft code PR has been created: https://github.com/goharbor/harbor/pull/10441
+Draft code PR has been created: https://github.com/goharbor/harbor/pull/12006
 
 ### Overall flow
 The basic flow is:
@@ -213,3 +254,23 @@ The basic flow is:
 * Call registry controller API to delete blob & manifest in GC job.
 
 ![over_flow](../images/non-blocking-gc/overall_flow.png)
+
+## Fragment Read-Only [optional 2]
+
+The basic idea is that, Harbor selects a subset for the GC candidate full-set, marks these blob as read-only, and recover read-only after deletion success.
+The read-only is not a system wide, just within the subset. Harbor only blocks the request that pushes blob & manifest belongs to the selected subset.
+
+![fragment_read_only](../images/non-blocking-gc/fragment_read_only.png)
+
+### To Be Discussed 
+
+* (This can be handled by job-service) What about if harbor crash but the blob status was marked as **deleting**, for the current desgin, this blob cannot be pushed in the following operations.
+
+* How to deal with the untagged manifest in pre Harbor v2.0.0?
+
+* What about if harbor crash but the system was marked as **GC Running**? To erase it on core launching?
+ 
+* It needs to clean data in table **blob** on upgrading from v1.10.0/v2.0.0,to v2.1.0.
+
+* Orphan blobs management. Can we show the orphan blobs in UI? Enable orphan blobs deletion?
+
