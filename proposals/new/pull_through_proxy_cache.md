@@ -1,0 +1,174 @@
+# Proposal:  `Proxy Project`
+
+Author: `stonezdj` `ywk253100`
+
+## Abstract
+
+It proposes an approach to enable Harbor to support proxy a remote container registry. 
+
+## Background
+
+For some cases, docker nodes reside in the environment have limit access to internet or no access to the external network to public container registry, or there are too many requests to the public repository that consumes too much bandwidth or it is at the risk of being throttled by the server. there is a need to proxy and cache the request to the target public/private container repository.
+
+## Proposal
+
+We can enhance the current project implementation, add a proxy project type, when a user create a new project in Harbor, the user can enable the proxy project feature and select a existing registry to proxy.
+
+![new project](../images/proxy/proxy-project.png)
+
+When proxy project is created, for example, its name is "dockerhub_proxy", the previous command to pull a registry is:
+```
+docker pull example/hello-world:latest
+```
+Then the user can pull the image with the new command after login
+
+```
+docker login <harbor_servername> -u xxxx -p *****
+docker pull <harbor_servername>/dockerhub_proxy/example/hello-world:latest
+```
+
+All pull request to the proxy project, if the image is not cached in the proxy project, it pulls the image from the target server, dockerhub.com and serves the pull command as if it is a local image. after that, it stores the proxied content to local registry. when the pull request to the same image comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project .
+
+Excessive pulling from hosted registries like dockerhub will result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
+
+## Goal
+
+Because the proxy project need to pull images from remote registry, and also have some concurrent limiation on the request, the overall image pull performance should not be less than the 50% of the pull request to normal Harbor project.  
+
+## Non-Goals
+
+The current implementation is implement the proxy in the project level, not a whole Harbor server level, it is different with the docker distribution's [pull through proxy cache](https://docs.docker.com/registry/recipes/mirror/)
+
+In a proxy project, the retag operation doesn’t bring any side effect to the proxy, it will be kept. the content trust can not be enabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
+
+The proxied artifact only includes container images.
+
+## Rationale 
+
+
+## Terminology
+
+
+* Target server — The original container registry server
+* Proxy Server — The Harbor server that receives the request from client and proxy the request to the target server if when required.
+
+
+## Compatibility
+
+Support to proxy the dockerhub.com or Harbor.
+
+## Implementation
+
+### Basic mechanism
+
+A docker image pull command can be decomposed into serveral HTTP request. for example
+```
+docker pull library/hello-world:latest
+```
+The HTTP request to get the content of manifest example/hello-world:latest, this request will send to the repository and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with the response of Get the manifest blob.
+
+```
+GET /v2/library/hello-world/manifests/latest
+GET manifest blob  sha256:92c7f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e899a
+```
+The client parses the content of the manifest, then get all dependency blobs.
+```
+GET /v2/library/hello-world/blobs/sha256:1b930d010525941c1d56ec53b97bd057a67ae1865eebf042686d2a2d18271ced
+GET /v2/library/hello-world/blobs/sha256:fce289e99eb9bca977dae136fbe2a82b6b7d4c372474c9235adc1741675f587e
+```
+In summary, the proxy middleware need to handle the Get method to the manifest and blob.
+The following parts describe the detail on how to get manifest and get blob. 
+The detail implementation of proxy cache include the following parts:
+
+### Components
+![component diagram](../images/proxy/proxy-cache-comp.png)
+
+### Get manifest
+To enable the proxy feature in Harbor, it is required to add a proxy middleware, which detects HTTP requests of docker pull command. If it is a request to get the manifest, get it in the target server and proxied the latest manifest to the client, then persistent the content to the local registry later.
+![pull_manifest](../images/proxy/pull-manifest.png)
+
+### Get blob
+
+For get blob request, it get the blob in local, if the blob doesn’t exist, get the blob from the target server, then store the content to the local registry. When the get blob request comes the second time, then the proxy serves the request with the cached content. When the target server is offline, the proxy serves the pull request like a normal container registry.
+
+Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer.  It might take a long time to pull a large blob. so it is possible that there are many request request the same blob simutaniously, to avoid too many connection/request to the target server, set to setup a mutex lock for each inflight blob, make sure only one reader is created for each blob.
+
+![pull_blob](../images/proxy/pull-blob.png)
+
+### Cache Storage
+
+Cached manifests and the blobs are stored in the local storage, they are stored in the same way like manifest and blobs in normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to validate all related blobs are ready before put a manifest into Harbor. It queries all dependent blobs in blob table which is updated when pushing proxied blobs.  When all dependent blobs are ready, then push the manifest into the local storage. if it exceed the max wait time (30minutes), the current push manifest operation is quit. 
+
+The push operation is accomplished by the replication adapter, it send HTTP request to the core container.
+
+If the image is pull from library/hello-world:latest, the actual storage is shared with the current registry but it will be named with
+dockerhub_proxy/library/hello-world:latest, and share the same blob storage with other repos.
+Use this command to pull the latest image from Harbor repository
+```
+docker pull <harbor_fqdn>/dockerhub_proxy/library/hello-world:latest 
+```
+
+** Notes ** The image cache is handled by subsequent go function after pull command, it also can be done by replication job. because the replication job schedule the replication job in different component and container. in order to cache the content more quickly, we prefer use the go function to cache proxied image.
+
+### Data Models
+
+
+project_proxy_config table to store the project proxy relationship and its proxy config
+
+project_id | proxy_registry_id 
+-----------| -----------------
+   2       |      1
+
+project_meta table 
+
+IsProxy is stored in project metadata table.   
+project_id | name | value 
+----------- | ------------- | -----------
+2           | proxy_project | true
+
+
+### API Change
+
+Project Metadata:
+
+URL  | Request Body   | Response
+---- | -------------- | ---------
+/projects/{project_id}/metadatas/{meta_name} | { "is_proxy":"true"} | 200 - Updated metadata successfully. <br/>400 - Invalid request. <br/>401 - User need to log in first. <br/>403 - User does not have permission to the project. <br/>404 - Project or metadata does not exist. <br/>500 - Internal server errors.
+
+Project proxy config
+
+URL  | Request Body   | Response
+---- | -------------- | ---------
+/projects/{project_id}/proxyconfig/ | { "proxy_registry_id": 1 } | 200 - Updated metadata successfully. <br/>400 - Invalid request. <br/>401 - User need to log in first. <br/>403 - User does not have permission to the project. <br/>404 - Project or metadata does not exist. <br/>500 - Internal server errors.
+
+### Impact to existing feature
+
+In order to reduce the impact of existing project implement, proxy projects keep the most of the project function as much as possible. except for pushing image is disabled. the 
+The retag operation doesn’t bring any side effect to the proxy, it will be kept. the content trust can not be enabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
+
+The operation log for the artifact should be recorded when pull images by proxy. 
+
+#### PUSH
+
+It is not allowed to push image to a proxied project, but it is supported to push to the normal project. this feature is implemented by a PUT middleware on manifest.
+
+#### RBAC
+
+The proxy server use the same RBAC with the existing project,  if current user has permission to access the current project, pull image and cache the images.  each role include guest, master, developer, admin can use the proxy to pull image from remote server. if current user has no permission to access the current project, it returns 404 error to the client.
+
+#### Cached Image expire
+
+The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
+
+### Quota
+
+The cached image are stored in local through replication adatper, its push requests are handled by all core middlewares, there is no need to handle the quota in the proxy middleware.
+
+### Misc
+
+Other features such as vulnerability scan and tag retention should work in the same way with the normal project. the content trust feature can not be enabled because the content trust information can not be cached.
+
+## Open issues
+
+* Move registry to src/pkg/registry from src/pkg/replication?
+* Can normal project and proxy project be changed to each types? 
