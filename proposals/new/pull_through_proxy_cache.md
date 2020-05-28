@@ -128,7 +128,7 @@ Project proxy config
 Method | URL  | Request Body   | Response
 ---   | ---- | -------------- | ---------
 PUT | /projects/{project_id}/proxyconfig/ | { "enabled": "true", "proxy_registry_id": 1 } | 200 - Updated metadata successfully. <br/>400 - Invalid request. <br/>401 - User need to log in first. <br/>403 - User does not have permission to the project. <br/>404 - Project or metadata does not exist. <br/>500 - Internal server errors.
-GET | /projects/{project_id}/proxyconfig/ |    | { "enabled": "true", "proxy_registry_id": 1 } 
+GET | /projects/{project_id}/proxyconfig/ |    | 200 - { "enabled": "true", "proxy_registry_id": 1 } 
 
 ### Impact to existing feature
 
