@@ -63,7 +63,7 @@ A docker image pull command can be decomposed into serveral HTTP request. For ex
 ```
 docker pull library/hello-world:latest
 ```
-The HTTP request to get the content of manifest example/hello-world:latest, this request will send to the repository and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with that of get the manifest blob.
+The HTTP request to get the content of manifest library/hello-world:latest, this request will send to the repository and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with that of get the manifest blob.
 
 ```
 GET /v2/library/hello-world/manifests/latest
