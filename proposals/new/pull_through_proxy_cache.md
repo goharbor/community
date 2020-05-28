@@ -115,7 +115,7 @@ docker pull <harbor_fqdn>/dockerhub_proxy/library/hello-world:latest
 project_proxy_config table to store the project proxy relationship and its proxy config.
 
 project_id |  enabled  | proxy_registry_id 
------------| -----------------------------
+-----------| ---------- | -------------------
    2       |   true    |       1
 
 
@@ -132,29 +132,22 @@ GET | /projects/{project_id}/proxyconfig/ |    | { "enabled": "true", "proxy_reg
 
 In order to reduce the impact of existing project implement, proxy projects keep the most of the project function as much as possible. except for pushing image is disabled.  
 
-#### PUSH
+Name  | Change | Justification |
+------|  ------ | --------------------------- 
+Pull image  |  Yes    |  Discussed in implementation
+Push image  |  Yes    |  It is not allowed to push image to a proxied project, but it is supported to push to the normal project. this feature is implemented by a PUT middleware on manifest.
+AuditLog | Yes | The audit log for the artifact should be recorded when pull images by proxy. it will be used by tag retention.
+RBAC  |  No     | If current user has permission to access the current project, pull image and cache the images.  each role include guest, master, developer, admin can use the proxy to pull image from remote server. if current user has no permission to access the current project, it returns 404 error to the client.
+Tag retention | No | 
+Quota | No | Cached images are stored in local through replication adatper, its push requests are handled by core middlewares, there is no need to handle the quota in the proxy middleware.
+vulnerability scan | No | 
+content trust | No | 
 
-It is not allowed to push image to a proxied project, but it is supported to push to the normal project. this feature is implemented by a PUT middleware on manifest.
-
-#### RBAC
-
-No change. if current user has permission to access the current project, pull image and cache the images.  each role include guest, master, developer, admin can use the proxy to pull image from remote server. if current user has no permission to access the current project, it returns 404 error to the client.
 
 #### Cached Image expire
 
-No change. The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
+The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
 
-### Quota
-
-No change, the cached image are stored in local through replication adatper, its push requests are handled by all core middlewares, there is no need to handle the quota in the proxy middleware.
-
-### AuditLog
-
-The audit log for the artifact should be recorded when pull images by proxy. it will be used by tag retention.
-
-### Misc
-
-Other features such as vulnerability scan and tag retention should work in the same way with the normal project. the content trust feature can not be enabled because the content trust information can not be cached.
 
 ## Open issues
 
