@@ -28,6 +28,7 @@ The workgroup will sync DEV status and discuss issues every week. You can check 
 
 | Meeting Date |    Attendees    |    Minutes                                       |
 |--------------|-----------------|--------------------------------------------------|
+| 17/04/2020   | in minutes      | [minutes](https://docs.google.com/document/d/1Qu8KvxhJSIFSaeavb-IZ_Gn-B5svLyaJZB6m8xVBFM0/edit?usp=sharing)|
 | 09/04/2019   | All             | [minutes](sync-meetings/2019-04-09/minutes.md)   |
 | 03/04/2019   | All             | [minutes](sync-meetings/2019-04-03/minutes.md)   |
 | 28/03/2019   | All             | [minutes](sync-meetings/2019-03-28/minutes.md)   |
