@@ -90,7 +90,7 @@ To enable the proxy feature in Harbor, it is required to add a proxy middleware,
 For get blob request, it tries to get the blob in local first, if not exist, get the blob from the target server, then store the content to the local registry. When same request comes the second time, then serves the request with the cached content. When the target server is offline, serves the pull request like a normal project.
 
 Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer. 
-It is likely there are many request to pull same blob in the sametime, to avoid put same blob mutliple times, setup a inflight map to check if there is any existing proxy blob request. if exist, skip to put the blob into cache.
+It is likely many requests pull same blob in a period, to avoid put same blob mutliple times, setup an inflight map to check if there is any existing proxy blob request. If exist, skip to put the blob into cache.
 
 ![pull_blob](../images/proxy/pull-blob.png)
 
