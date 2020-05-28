@@ -106,8 +106,10 @@ Use this command to pull the latest image from Harbor repository
 ```
 docker pull <harbor_fqdn>/dockerhub_proxy/library/hello-world:latest 
 ```
-
 ** Notes ** The image cache is handled by subsequent go function after pull command, it also can be implemented by replication job. Because the replication job schedule the replication job in different component and container. In order to cache the content more quickly, we prefer use the go function to cache proxied image.
+#### Cached Image expire
+
+The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
 
 ### Data Models
 
@@ -142,11 +144,6 @@ Tag retention | No |
 Quota | No | Cached images are stored in local through replication adatper, its push requests are handled by core middlewares, there is no need to handle the quota in the proxy middleware.
 vulnerability scan | No | 
 content trust | No | 
-
-
-#### Cached Image expire
-
-The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
 
 
 ## Open issues
