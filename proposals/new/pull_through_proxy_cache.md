@@ -29,7 +29,7 @@ docker pull <harbor_servername>/dockerhub_proxy/example/hello-world:latest
 
 All pull request to the proxy project, if the image is not cached in the proxy project, it pulls the image from the target server, dockerhub.com and serves the pull command as if it is a local image. after that, it stores the proxied content to local registry. when the pull request to the same image comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project .
 
-Excessive pulling from hosted registries like dockerhub will result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
+Excessive pulling from hosted registries like dockerhub might result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
 
 ## Goal
 
@@ -39,12 +39,9 @@ Because the proxy project need to pull images from remote registry, and also hav
 
 The current implementation is implement the proxy in the project level, not a whole Harbor server level, it is different with the docker distribution's [pull through proxy cache](https://docs.docker.com/registry/recipes/mirror/)
 
-In a proxy project, the retag operation doesn’t bring any side effect to the proxy, it will be kept. the content trust can not be enabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
-
 The proxied artifact only includes container images.
 
-## Rationale 
-
+In a proxy project, the retag operation doesn’t bring any side effect to the proxy, it will be kept. the content trust can not be enabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
 
 ## Terminology
 
@@ -84,14 +81,16 @@ The detail implementation of proxy cache include the following parts:
 ![component diagram](../images/proxy/proxy-cache-comp.png)
 
 ### Get manifest
-To enable the proxy feature in Harbor, it is required to add a proxy middleware, which detects HTTP requests of docker pull command. If it is a request to get the manifest, get it in the target server and proxied the latest manifest to the client, then persistent the content to the local registry later.
+
+To enable the proxy feature in Harbor, it is required to add a proxy middleware, which detects HTTP requests of docker pull command. If it is a request to get the manifest, get it in the target server and proxied the latest manifest to the client, then persistent the content to the local registry later, if the manifest doesn't exist in the target server, it clean it from cache if exist.
 ![pull_manifest](../images/proxy/pull-manifest.png)
 
 ### Get blob
 
 For get blob request, it get the blob in local, if the blob doesn’t exist, get the blob from the target server, then store the content to the local registry. When the get blob request comes the second time, then the proxy serves the request with the cached content. When the target server is offline, the proxy serves the pull request like a normal container registry.
 
-Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer.  It might take a long time to pull a large blob. so it is possible that there are many request request the same blob simutaniously, to avoid too many connection/request to the target server, set to setup a mutex lock for each inflight blob, make sure only one reader is created for each blob.
+Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer. 
+It is likely there are many request to pull same blob in the sametime, to avoid put same blob mutliple times, setup a inflight map to check if there is any existing proxy blob request. if exist, skip to put the blob into local cache.
 
 ![pull_blob](../images/proxy/pull-blob.png)
 
