@@ -96,7 +96,7 @@ It is likely many requests pull same blob in a period, to avoid put same blob mu
 
 ### Cache Storage
 
-Cached manifests and blobs are stored in the local storage in the same way like normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to validate all related blobs are ready before put a manifest into Harbor. It queries all dependent blobs in blob table which is updated when pushing proxied blobs.  When all dependent blobs are ready, then push the manifest into the local storage. if it exceed the max wait time (30minutes), the current push manifest operation is quit. 
+Cached manifests and blobs are stored in the local storage in the same way like normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to wait for all related blobs are ready. It queries all dependent blobs in blob table which is updated when pushing proxied blobs.  When all dependent blobs are ready, push the manifest into the local storage. If it exceed the max wait time (30minutes), the current push manifest operation is quit. 
 
 The push operation is accomplished by the replication adapter, it send HTTP request to the core container.
 
