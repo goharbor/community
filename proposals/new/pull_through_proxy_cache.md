@@ -82,7 +82,7 @@ In summary, the proxy middleware need to handle the GET method to manifests and 
 
 ### Get manifest
 
-To enable the proxy feature in Harbor, it is required to add a proxy middleware, which detects HTTP requests of docker pull command. If it is a request to get the manifest, get it in the target server and proxied the latest manifest to the client, then persistent the content to the local registry later, if the manifest doesn't exist in the target server, it clean it from cache if exist.
+To enable the proxy feature in Harbor, it is required to add a proxy middleware, which detects HTTP requests of docker pull command. If it is a request to get the manifest, get it in the target server and proxied the latest manifest to the client, then persistent the content to the local registry later, if the manifest doesn't exist in the target server, clean it from cache if exist.
 ![pull_manifest](../images/proxy/pull-manifest.png)
 
 ### Get blob
