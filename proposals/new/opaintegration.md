@@ -72,8 +72,11 @@ The below sub-sections detail some of the proposed workflows. Instead of providi
 
 #### Accessing Policy Functionality in Harbor
 
-The below mockup shows the mechanism of accessing the Policy functionality within harbor
+The below mockup shows the mechanism of accessing the Policy functionality within Harbor for a user with **System Admin** privileges.
 ![Harbor Policy Upload Screen](../images/opaintegration/Harbor_Policy_Link.png)
+
+Project owners who are not system admins can also upload policies for their respective project by accessing the **Policies** tab shown in the below screenshot.
+![Har Project Owner Policy Upload Link](../images/opaintegration/Harbor_User_Policy_Authoring.png)
 
 #### Policy Upload User Workflow
 
