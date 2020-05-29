@@ -12,24 +12,29 @@ For some cases, docker nodes reside in the environment have limit access to inte
 
 ## Proposal
 
-We can enhance the current project implementation by adding a proxy project type. When a user create a new project in Harbor, the user can enable the proxy an existing registry.
+We can enhance the current project implementation by adding a proxy project type. 
+
+As a Harbor admin, the user can create a new proxy project in Harbor, and associate to an existing registry need to proxy.
 
 ![new project](../images/proxy/proxy-project.png)
 
-When proxy project is created, for example, its name is "dockerhub_proxy", the previous command to pull a registry is:
+As a common user in Harbor, if this user have login and have the permission to the proxy project. the user need to pull the image:
 ```
 docker pull example/hello-world:latest
 ```
-Then the user can pull the image with a updated prefix  `<harbor_servername>/dockerhub_proxy/`
+After login, the user can pull the image with a prefix add to image name:  `<harbor_servername>/dockerhub_proxy/`
 
 ```
 docker login <harbor_servername> -u xxxx -p *****
 docker pull <harbor_servername>/dockerhub_proxy/example/hello-world:latest
 ```
+For kubernetes, the user can update the pod spec manually or update it with a mutating webhook.
 
-When pull request comes to the proxy project, if the image is not cached, it pulls the image from the target server, dockerhub.com, and serves the pull command as if it is a local image. after that, it stores the proxied content to local cache. when same request comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project .
+When pull request comes to the proxy project, if the image is not cached, it pulls the image from the target server, dockerhub.com, and serves the pull command as if it is a local image. after that, it stores the proxied content to local cache. when same request comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project.
 
 Excessive pulling from hosted registries like dockerhub might result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
+
+Cached proxy images might consume storage, the admin user could setup a policy such as keep last 7 days visited images on the disk. 
 
 ## Goal
 
@@ -66,6 +71,9 @@ docker pull library/hello-world:latest
 The HTTP request to get the content of manifest library/hello-world:latest, this request will send to the repository and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with that of get the manifest blob.
 
 ```
+# The background HTTP authentication request which can be handled by replication adapter 
+GET /v2/
+GET /service/token?account=admin&scope=&scope=repository%3Alibrary%2Fhello-world%3Apush%2Cpull&service=harbor-registry
 GET /v2/library/hello-world/manifests/latest
 # change to actual request in background
 GET /v2/library/hello-world/blobs/sha256:92c7f9c92844bbbb5d0a101b22f7c2a7949e40f8ea90c8b3bc396879d95e899a
@@ -75,6 +83,7 @@ The client parses the content of the manifest, then get all dependency blobs.
 GET /v2/library/hello-world/blobs/sha256:1b930d010525941c1d56ec53b97bd057a67ae1865eebf042686d2a2d18271ced
 GET /v2/library/hello-world/blobs/sha256:fce289e99eb9bca977dae136fbe2a82b6b7d4c372474c9235adc1741675f587e
 ```
+
 In summary, the proxy middleware need to handle the GET method to manifests and blobs. 
 
 ### Components
@@ -90,15 +99,15 @@ To enable the proxy feature in Harbor, it is required to add a proxy middleware,
 For get blob request, it tries to get the blob in local first, if not exist, get the blob from the target server, then store the content to the local registry. When same request comes the second time, then serves the request with the cached content. When the target server is offline, serves the pull request like a normal project.
 
 Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer. 
-It is likely many requests pull same blob in a period, to avoid put same blob mutliple times, setup an inflight map to check if there is any existing proxy blob request. If exist, skip to put the blob into cache.
+It is likely many requests pull same blob in a period, to avoid put same blob mutliple times, setup an inflight map to check if there is any existing proxy blob request. If exist, skip to put the blob into proxy cache.
 
 ![pull_blob](../images/proxy/pull-blob.png)
 
 ### Cache Storage
 
-Cached manifests and blobs are stored in the local storage in the same way like normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to wait for all related blobs are ready. It queries all dependent blobs in blob table which is updated when pushing proxied blobs.  When all dependent blobs are ready, push the manifest into the local storage. If it exceed the max wait time (30minutes), the current push manifest operation is quit. 
+Cached manifests and blobs are stored in the local storage in the same way like normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to wait for all related blobs are ready. It send HEAD request to check if the current blob exist.  When all dependent blobs are ready, push the manifest into the local storage. If it exceed the max wait time (30minutes), the current push manifest operation is quit. 
 
-The push operation is accomplished by the replication adapter, it send HTTP request to the core container.
+The push operation is accomplished by the replication adapter, it send HTTP request to the core container with service account.
 
 If the image is pull from library/hello-world:latest, the actual storage is shared with the current registry but it will be named with
 dockerhub_proxy/library/hello-world:latest, and share the same blob storage with other repos.
@@ -110,6 +119,10 @@ docker pull <harbor_fqdn>/dockerhub_proxy/library/hello-world:latest
 #### Cached Image expire
 
 The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
+
+### Mutating webhook
+
+<TBD>
 
 ### Data Models
 
