@@ -256,7 +256,7 @@ The workflow of pushing a custom artifact to Harbor with the help of `HTTPProces
 
 <p align="center">
 <img src="images/artifact-processor-extender/workflow-new.png" height="600">
-<p align="center">Fig. 5 Workflow of HTTPProcessor</p>
+<p align="center">Fig. 5 Workflow of Pushing an Artifact using the HTTPProcessor</p>
 </p>
 
 When `HTTPProcessor.AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error)` is invoked, it will send a HTTP POST request to the processor extender:
@@ -281,7 +281,7 @@ When users deal with these built-in artifact types like OCI Image, CNAB or Helm 
 
 <p align="center">
 <img src="images/artifact-processor-extender/workflow.png" height="600">
-<p align="center">Fig. 6 Workflow of the Build-in Processor</p>
+<p align="center">Fig. 6 Workflow of Pushing an Artifact using the Build-in Processor</p>
 </p>
 
 #### Processor Extender
