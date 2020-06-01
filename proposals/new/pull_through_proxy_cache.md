@@ -46,7 +46,7 @@ The current implementation is implement proxy function on project level, not a w
 
 The proxied artifact only includes container images.
 
-In a proxy project, the retag operation doesn’t bring any side effect to the proxy, it will be kept. the content trust can not be enabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
+In a proxy project, the content trust should be disabled in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
 
 ## Terminology
 
@@ -151,12 +151,12 @@ Name  | Change | Justification |
 ------|  ------ | --------------------------- 
 Pull image  |  Yes    |  Discussed in implementation
 Push image  |  Yes    |  It is not allowed to push image to a proxied project, but it is supported to push to the normal project. this feature is implemented by a PUT middleware on manifest.
-AuditLog | Yes | The audit log for the artifact should be recorded when pull images by proxy. it will be used by tag retention.
+content trust | Yes | Disabled 
 RBAC  |  No     | If current user has permission to access the current project, pull image and cache the images.  each role include guest, master, developer, admin can use the proxy to pull image from remote server. if current user has no permission to access the current project, it returns 404 error to the client.
 Tag retention | No | 
 Quota | No | Cached images are stored in local through replication adatper, its push requests are handled by core middlewares, there is no need to handle the quota in the proxy middleware.
 vulnerability scan | No | 
-content trust | No | 
+AuditLog | No | 
 
 
 ## Open issues
