@@ -187,5 +187,7 @@ AuditLog | No |
 
 ## Open issues
 
+* All engineering work should be tracked by the Epic:https://github.com/goharbor/harbor/issues/11658
 * Move registry to src/pkg/registry from src/pkg/replication?
 * Can normal project and proxy project be changed to each types? 
+* Should the HEAD method to the registry be proxied?
