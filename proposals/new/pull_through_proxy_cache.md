@@ -18,7 +18,7 @@ As a Harbor admin, the user can create a new proxy project in Harbor, and associ
 
 ![new project](../images/proxy/proxy-project.png)
 
-As a common user in Harbor, if this user have login and have the permission to the proxy project. the user need to pull the image:
+As a common user in Harbor, if the user is already login and has the permission to the proxy project. if he need to pull the image:
 ```
 docker pull example/hello-world:latest
 ```
@@ -30,11 +30,37 @@ docker pull <harbor_servername>/dockerhub_proxy/example/hello-world:latest
 ```
 For kubernetes, the user can update the pod spec manually or update it with a mutating webhook.
 
-When pull request comes to the proxy project, if the image is not cached, it pulls the image from the target server, dockerhub.com, and serves the pull command as if it is a local image. after that, it stores the proxied content to local cache. when same request comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+      - containerPort: 80
+```
+It should be updated to:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: <harbor_servername>/dockerhub_proxy/library/nginx
+    ports:
+      - containerPort: 80
+```
+
+When a pull request comes to the proxy project, if the image is not cached, it pulls the image from the target server, dockerhub.com, and serves the pull command as if it is a local image. after that, it stores the proxied content to local cache. when same request comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project.
 
 Excessive pulling from hosted registries like dockerhub might result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
 
-Cached proxy images might consume storage, the admin user could setup a policy such as keep last 7 days visited images on the disk. 
+Cached proxy images might consume storage, the project admin could setup a policy such as keep last 7 days visited images on the disk. 
 
 ## Goal
 
