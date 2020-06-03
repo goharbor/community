@@ -18,10 +18,32 @@ This proposal wants to try to introduce a way to enable non-blocking GC without 
 work at the time of GC execute.
 
 ## Non Goal
-This proposal is assuming that the data in the Harbor Database is accurate, and any data asymmetry is out of scope:
+
+1.  As in v1.10.0 & v2.0.0, Harbor doesn't clean table blob, the proposal doesn't cover the blob data clean part.
+
+2. For the existing untagged manifest in Harbor(pre v2.0.0), the proposal doesn't handle them. In future, we can introduce
+an new API to capture the untagged manifests and their blobs from storage, and let the registryCtl to delete them.
+
+3. The proposal doesn't cover orphan blobs management. But, in future, we can consider showing them in UI? and enable orphan blobs deletion?
+
+4. This proposal is assuming that the data in the Harbor Database is accurate, and any data asymmetry as following is out of scope. 
 
 * It has artifact in Harbor DB but no corresponding manifest in registry storage.
 * It has manifest in registry storage but no corresponding artifact in Harbor DB.
+
+## Personas and User Stories 
+This section lists the user stories for the different personas interacting with GC.
+
+* Personas
+
+Garbage Collection is a System Administrator only operation in Harbor.
+
+* User Stories
+
+1. As a System Administrator, I can trigger a GC and view the GC status in history page and view GC logs.
+2. As a System Administrator, I can trigger a replication job when Harbor is in GC.
+3. As a Project Administrator/Developer/Master Role, I can push a artifact/pull a artifact/delete a artifact/trigger Tag Retention when Harbor is in GC.
+4. As a Project Guest, I can pull artifacts when Harbor is in GC.
 
 ### OCI Database
 
@@ -133,14 +155,17 @@ All of selected candidate are marked as status **delete**.
 #### Blob Lifecycle
 ![blob_status](../images/non-blocking-gc/blob_status.png)
 
-* Non-status: normal blob that is being consumed by Harbor.
-* Delete: GC candidate
-* Deleting: The blob is being removed during GC.
+* Non-status(head - 200): normal blob that is being consumed by Harbor.
+* Delete(head - 200): GC candidate
+* Deleting(head - 404): The blob is being removed during GC.
+* Delete Failed(head - 404): The blob fails to removed from storage, and it will be in the candidate in the next GC execution.
 
 1. Non-status -> Delete : Mark the blob as candidate.
 2. Delete -> Deleting : Select the blob and call the API to delete asset in the backend storage.
 3. Deleting -> Trash : Delete success.
 4. Delete -> Non-status : Client asks the existence of blob, remove it from the candidate.
+5. Delete Failed -> Non-status : The delete failed blobs can be pushed again, and back to normal.
+6. Delete Failed -> Delete : The delete failed blobs should be in the candidate.
 
 The registry controller will grant the capability of deleting blob & manifest.
 
@@ -265,12 +290,8 @@ The read-only is not a system wide, just within the subset. Harbor only blocks t
 ### To Be Discussed 
 
 * (This can be handled by job-service) What about if harbor crash but the blob status was marked as **deleting**, for the current desgin, this blob cannot be pushed in the following operations.
-
-* How to deal with the untagged manifest in pre Harbor v2.0.0?
-
-* What about if harbor crash but the system was marked as **GC Running**? To erase it on core launching?
  
-* It needs to clean data in table **blob** on upgrading from v1.10.0/v2.0.0,to v2.1.0.
+* What about if harbor crash but the system was marked as **GC Running**? To erase it on core launching?
 
-* Orphan blobs management. Can we show the orphan blobs in UI? Enable orphan blobs deletion?
-
+We can consider not to introduce it.
+ 
