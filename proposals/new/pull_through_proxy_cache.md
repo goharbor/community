@@ -22,7 +22,7 @@ As a common user in Harbor, if the user is already login and has the permission 
 ```
 docker pull example/hello-world:latest
 ```
-After login, the user can pull the image with a prefix add to image name:  `<harbor_servername>/dockerhub_proxy/`
+After login, the user can pull the image with a prefix add to image name:  `<harbor_servername>/<projectname>/`
 
 ```
 docker login <harbor_servername> -u xxxx -p *****
@@ -60,7 +60,7 @@ When a pull request comes to the proxy project, if the image is not cached, it p
 
 Excessive pulling from hosted registries like dockerhub might result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
 
-Cached proxy images might consume storage, the project admin could setup a policy such as keep last 7 days visited images on the disk. 
+The project admin can setup a retention policy for the proxy project, such as keep last 7 days visited images on the disk. 
 
 ## Goal
 
