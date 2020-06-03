@@ -54,6 +54,8 @@ spec:
     image: <harbor_servername>/dockerhub_proxy/library/nginx
     ports:
       - containerPort: 80
+ imagePullSecrets:
+    - name: myregistrykey
 ```
 
 When a pull request comes to the proxy project, if the image is not cached, it pulls the image from the target server, dockerhub.com, and serves the pull command as if it is a local image. after that, it stores the proxied content to local cache. when same request comes the second time, it checks the latest manifest and serves the blob with local content. if the dockerhub.com is not reachable, it serves the image pull command like a normal Harbor project.
