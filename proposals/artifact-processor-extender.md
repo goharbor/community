@@ -9,7 +9,12 @@
   - [Goals](#goals)
   - [Non-Goals](#non-goals)
   - [Implementation](#implementation)
-    - [HTTPProcessor and Processor Extender](#httpprocessor-and-processor-extender)
+  - [In-tree processor](#in-tree-processor)
+    - [Config schema](#config-schema)
+    - [GeneralProcessor](#generalprocessor)
+      - [```GeneralProcessor``` Implement](#generalprocessor-implement)
+  - [Out-of-tree processor](#out-of-tree-processor)
+      - [HTTPProcessor and Processor Extender](#httpprocessor-and-processor-extender)
       - [`HTTPProcessor`](#httpprocessor)
       - [Processor Extender](#processor-extender)
     - [Configuration file `processors.yaml`](#configuration-file-processorsyaml)
@@ -17,10 +22,10 @@
       - [Policy Check Interceptor](#policy-check-interceptor)
       - [OAuth 2 Bearer Tokens](#oauth-2-bearer-tokens)
       - [Robot Accounts](#robot-accounts)
-  - [Development Process](#development-process)
-    - [First Iteration: HTTPProcessor and Extender without Auth](#first-iteration-httpprocessor-and-extender-without-auth)
-    - [Second Iteration: Registration](#second-iteration-registration)
-    - [Third Iteration: Auth in the Processor Extender](#third-iteration-auth-in-the-processor-extender)
+    - [Development Process](#development-process)
+      - [First Iteration: HTTPProcessor and Extender without Auth](#first-iteration-httpprocessor-and-extender-without-auth)
+      - [Second Iteration: Registration](#second-iteration-registration)
+      - [Third Iteration: Auth in the Processor Extender](#third-iteration-auth-in-the-processor-extender)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -159,7 +164,158 @@ This proposal is not to:
 
 ## Implementation
 
-To address these problems, we propose a new feature **artifact processor extender** in Harbor Core. Some contributions have been made in this proposal:
+To address these problems, we propose a new feature **artifact processor extender** in Harbor Core. There are two ways to achieve our goals. One is in-tree processor which we define config JSON object in a certain format in the config layer of an artifact. The other is out-of-tree processor which define data format in HTTP API. 
+
+## In-tree processor
+
+Contributions about in-tree processor:  
+
+- Define a JSON schema for the config layer of an artifact.
+- The new processor struct ```GeneralProcessor``` to support user-defined artifacts.
+
+### Config schema
+manifest
+```
+{
+   "schemaVersion": 2,
+   "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+   "config": {
+      "mediaType": "application/vnd.custom.artifact.config.v1+json",
+      "size": 11830,
+      "digest": "sha256:2ffd3c3d87aac9d99c93ba84fbec6ae59c9946cbef2531bb1dc5e02fb905971a"
+   },
+   "layers": []
+}
+```
+As is showed above, we can define a media type ```application/vnd.custom.artifact.config.v1+json``` to show it is a media type of user-defined artifact config
+
+
+config layer
+```
+{ 
+    // user defined config
+    // abstract metadata will use this config data as extra attrs
+    "key1": ...,
+    "key2": ...,
+
+    // harbor defined config
+    "harbor": {
+        // artifact config
+        "artifactMetadata":{
+            // artifact type
+            "type": "ORMB",
+            // artifact media type
+            "mediaType": "application/vnd.caicloud.ormb.xxx",
+            // additions
+            "additions": [
+                {
+                    // content type
+                    "contentType": "plain"
+                    // addition type name, one of addition type
+                    "type": "type_xxx",
+                    "digest": "sha256:xxx"
+                },
+                {
+                    "contentType": "json",
+                    "type": "type_xxx",
+                    "digest": "sha256:xxx"
+                },
+                {
+                    "contentType": "markdown"
+                    "type": "type_xxx",
+                    "digest": "sha256:xxx"
+                },
+                ...
+            ]
+        }
+    }
+}
+```
+Mainly there are two parts about this config. One is custom for user to put their config, the other is harbor defined config.
+
+### GeneralProcessor
+
+The Processor interface is defined in Harbor Core.
+
+```go
+// Processor processes specified artifact
+type Processor interface {
+	// GetArtifactType returns the type of one kind of artifact specified by media type
+	GetArtifactType() string
+	// ListAdditionTypes returns the supported addition types of one kind of artifact specified by media type
+	ListAdditionTypes() []string
+	// AbstractMetadata abstracts the metadata for the specific artifact type into the artifact model,
+	// the metadata can be got from the manifest or other layers referenced by the manifest.
+	AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error
+	// AbstractAddition abstracts the addition of the artifact.
+	// The additions are different for different artifacts:
+	// build history for image; values.yaml, readme and dependencies for chart, etc
+	AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error)
+}
+```
+We need config layer digest for every functions defined above. So we need to do a little change about the ```Processor``` interface. ```artifact.Artifact``` is needed in all fuctions.
+
+```go
+// Processor processes specified artifact
+type Processor interface {
+	// GetArtifactType returns the type of one kind of artifact specified by media type
+	GetArtifactType(artifact *artifact.Artifact) string
+	// ListAdditionTypes returns the supported addition types of one kind of artifact specified by media type
+	ListAdditionTypes(artifact *artifact.Artifact) []string
+	// AbstractMetadata abstracts the metadata for the specific artifact type into the artifact model,
+	// the metadata can be got from the manifest or other layers referenced by the manifest.
+	AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error
+	// AbstractAddition abstracts the addition of the artifact.
+	// The additions are different for different artifacts:
+	// build history for image; values.yaml, readme and dependencies for chart, etc
+	AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error)
+}
+```
+
+#### ```GeneralProcessor``` Implement
+```
+func (g *GeneralProcessor) GetArtifactType(artifact *artifact.Artifact) string {
+	configLayer := pullBlob(artifact.manifest.config.digest)
+	return configLayer.harbor.artifactMetadata.type
+}
+
+func (g *GeneralProcessor) ListAdditionTypes(artifact *artifact.Artifact) []string {
+	configLayer := pullBlob(artifact.manifest.config.digest)
+	// Traverse configLayer.harbor.artifactMetadata.additons array to get all addition type
+	return []string{configLayer.harbor.artifactMetadata.additons.type...}
+}
+
+func (g *GeneralProcessor) AbstractMetadata(artifact *artifact.Artifact) error {
+	configLayer := pullBlob(artifact.manifest.config.digest)
+    // do something with configLayer json, remove harbor object, keep user config
+    userConfig := ...
+	artifact.ExtraAttrs = configLayer.userConfig
+}
+
+func (g *GeneralProcessor) AbstractAddition(artifact artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
+	configLayer := pullBlob(artifact.manifest.config.digest)
+	// make a map map[type]struct{
+	//                         contentType
+	//                         digest
+	//                     }
+	additionDigest := map[type]struct.digest
+	additionLayer := pullBlob(additionDigest)
+	return Addition{
+		Content: additionType,
+		Content: additionLayer,
+	}
+}
+```
+
+<p align="center">
+<img src="images/artifact-processor-extender/in-tree-workflow.png" height="600">
+<p align="center">Fig. 4 Workflow of Pushing an Artifact using the General Processor</p>
+</p>
+
+
+## Out-of-tree processor
+
+Some contributions have been made about out-of-tree processor:
 
 - The new Processor struct `HTTPProcessor` to support artifact processor extender feature for extending custom artifact types. The current design of `Processor` interface is not changed at the same time, thus the new feature will not affect the existing supported types like OCI Image, CNAB and Helm Chart.
 
@@ -168,7 +324,7 @@ To address these problems, we propose a new feature **artifact processor extende
 - The similar mechanism to Scanner to support Auth in `HTTPProcessor`, which will be used to pull manifests from the Registry.
 
 
-### HTTPProcessor and Processor Extender
+#### HTTPProcessor and Processor Extender
 
 The Processor interface is defined in Harbor Core and we do not propose any change for it.
 
@@ -189,7 +345,7 @@ type Processor interface {
 }
 ```
 
-We propose a new implementation of the `Processor` interface, `HTTPProcessor`. The design of the processor is shown in Fig. 4. The processor acts as a proxy to the processor extender. There are two new components in the architecture:
+We propose a new implementation of the `Processor` interface, `HTTPProcessor`. The design of the processor is shown in Fig. 5. The processor acts as a proxy to the processor extender. There are two new components in the architecture:
 
 1. Remote Processor API - HTTP RESTful API between Harbor and remote processor.  
     - The API itself is defined and maintained by Harbor.
@@ -200,7 +356,7 @@ We propose a new implementation of the `Processor` interface, `HTTPProcessor`. T
 
 <p align="center">
 <img src="images/artifact-processor-extender/arch.png" height="330">
-<p align="center">Fig. 4 Design of HTTPProcessor</p>
+<p align="center">Fig. 5 Design of HTTPProcessor</p>
 </p>
 
 For a remote processor, the functions defined in ```Processor``` interface can be abstract to HTTP service API. By using these APIs, Harbor Core can communicate with remote HTTP processor extender.
@@ -252,11 +408,11 @@ func (h *HTTPProcessor) AbstractAddition(ctx context.Context, artifact *artifact
 }
 ```
 
-The workflow of pushing a custom artifact to Harbor with the help of `HTTPProcessor` is shown in Fig. 5. The Harbor works as a proxy to the registry when the user uploads the content layers and config layer. Harbor ensures that the repository exists. Then Harbor puts the manifest to the registry. After that, Harbor will check if the artifact by digest exists. In this step, Harbor will use `Processor.AbstractMetatda` in `Abstractor` to abstract the metadata ant keep in the artifact.Artifact model.
+The workflow of pushing a custom artifact to Harbor with the help of `HTTPProcessor` is shown in Fig. 6. The Harbor works as a proxy to the registry when the user uploads the content layers and config layer. Harbor ensures that the repository exists. Then Harbor puts the manifest to the registry. After that, Harbor will check if the artifact by digest exists. In this step, Harbor will use `Processor.AbstractMetatda` in `Abstractor` to abstract the metadata ant keep in the artifact.Artifact model.
 
 <p align="center">
 <img src="images/artifact-processor-extender/workflow-new.png" height="600">
-<p align="center">Fig. 5 Workflow of Pushing an Artifact using the HTTPProcessor</p>
+<p align="center">Fig. 6 Workflow of Pushing an Artifact using the HTTPProcessor</p>
 </p>
 
 When `HTTPProcessor.AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error)` is invoked, it will send a HTTP POST request to the processor extender:
@@ -277,11 +433,11 @@ POST {remote-processor-endpoint}/abstractmetadata
 
 The `manifest` and `artifact` will be sent to the extender to abstract the metadata. If the registry needs Auth, `registry` will be sent, just like Scanner.
 
-When users deal with these built-in artifact types like OCI Image, CNAB or Helm Chart, the workflow **is not affected**, like Fig. 6. For example, the user uploads a Helm Chart to Harbor, we will use Helm Chart processor to abstract the metadata. Thus the design of `HTTPProcessor` is non-invasive to the current design.
+When users deal with these built-in artifact types like OCI Image, CNAB or Helm Chart, the workflow **is not affected**, like Fig. 7. For example, the user uploads a Helm Chart to Harbor, we will use Helm Chart processor to abstract the metadata. Thus the design of `HTTPProcessor` is non-invasive to the current design.
 
 <p align="center">
 <img src="images/artifact-processor-extender/workflow.png" height="600">
-<p align="center">Fig. 6 Workflow of Pushing an Artifact using the Build-in Processor</p>
+<p align="center">Fig. 7 Workflow of Pushing an Artifact using the Build-in Processor</p>
 </p>
 
 #### Processor Extender
@@ -415,7 +571,7 @@ It is reasonable to use the same way for processor extender using bearer tokens 
 
 Refer to scan job using credentials generated by robot account mechanism, we can use the same way to use the robot account mechanism to generate credentials that work with these common OCI/Docker tooling libraries to provide credentialed access to the image data. The lifecycle of the robot account credentials can be bound to the HTTP request. For every HTTP request call remote processor API, a robot account expired at certain time will be created.Additionally, a modification is needed to ensure that the generated credentials have access to bypass the configured policy checks on the image that normal users are subject to if those checks are configured.
 
-## Development Process  
+### Development Process  
 
 There are totally three things we need to do to complete the proposal:
 
@@ -425,16 +581,16 @@ There are totally three things we need to do to complete the proposal:
 
 Thus we propose to have three iterations. Each of them is self-contained and supposed to be merged into Harbor Core.
 
-### First Iteration: HTTPProcessor and Extender without Auth
+#### First Iteration: HTTPProcessor and Extender without Auth
 
 At this stage, user defined processor will not register to harbor. So if users want to use processor extender, they still need to hard-code some logic to harbor code to register the type with the corresponding processor manually.
 
 Also, ```HTTPProcessor``` will make HTTP request to the extender without providing authentication and Harbor external endpoint. So users need to do some work to generate authentication using other user account. Harbor external endpoint should be configured any way. And policy check interceptor can not be bypassed.
 
-### Second Iteration: Registration
+#### Second Iteration: Registration
 
 At the second stage, registration logic will be added. Users don't need to modify harbor code any more. A remote processor configuration file is required to register specific processor to harbor. When harbor core starts, it will read the configuration file and register the processor to harbor.
 
-### Third Iteration: Auth in the Processor Extender
+#### Third Iteration: Auth in the Processor Extender
 
 At the final stage, using robot account mechanism to generate credentials will be finished. Harbor external endpoint and authentication will be passed directly in HTTP POST request body. Users don't need to worry about the authentication problem. But still need to find a way to use authentication properly.
