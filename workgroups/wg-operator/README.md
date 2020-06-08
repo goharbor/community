@@ -54,6 +54,11 @@ Notes: [M] means the member is also harbor maintainer.
 
 | Topic | Datetime | Meeting minutes | Recording |
 |-------|----------|-----------------|-----------|
+|harbor cluster operator|2020/06/02 | [Minutes](https://docs.google.com/document/d/1Et-mX11Y89yn6TVjsD6QjVsYpGl7UT_galZ8TZtq7rU/edit?usp=sharing) | - |
+|harbor core operator |2020/05/29| [Minutes](https://docs.google.com/document/d/1I4pAM6tpGGlSbbqToQBKT7DLWHZyzHASNoI4GZCeT2M/edit?usp=sharing)| [Recording(Password: 3H+4?**6)](https://VMware.zoom.us/rec/share/zOtVaOHQ-WdOZ6_99H_gXqAeEJ7kX6a82yQW-vsJnU2tuMosIBrnyURNRCAE0ABI) |
+|harbor cluster operator|2020/05/26|[Minutes](https://docs.google.com/document/d/1qefJHP62EUtxcfd0yItWm73TkskKnv2YpeQRDQybTwg/edit?usp=sharing) | - |
+|harbor cluster operator|2020/05/19|[Minutes](https://docs.google.com/document/d/1iX_tBHsioFMt9NZaA9dpB7agfzdGfNqYf7fTLEAe6GQ/edit?usp=sharing) | - |
+|harbor cluster operator|2020/05/12|[Minutes](https://docs.google.com/document/d/1fOG1MX9KK-RnFwxboK5Ljwx1fTsBZBHqbrcvT3fzTV0/edit?usp=sharing) | - |
 |harbor cluster operator|2020/04/28|[Minutes](https://docs.google.com/document/d/1eLHp743XaV1f2RrdELRXUO-XpjzAoc7vkOzvQhz-rkM/edit?usp=sharing) | - |
 |harbor cluster operator|2020/04/21|[Minutes](https://docs.google.com/document/d/1EfjN8RWW6UQJSomysIC5GK5xwzLi4U-NNpRjTr8SaOk/edit?usp=sharing)| - |
 |harbor cluster operator|2020/04/14|[Minutes](https://docs.google.com/document/d/1Z5TJRl4IwepzHq-Cx-W4TxulptXFVFtaVF_qcWAZPVo/edit?usp=sharing) | - |
