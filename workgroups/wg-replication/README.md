@@ -35,6 +35,7 @@ Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is taking the re
 | ACR(Azure Container Registry) | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
 | Ali-ACR(Alibaba Container Registry) | Fanjian Kong@Tencent | [kofj](https://github.com/kofj) |
 | AWS ECR(Elastic Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
+| GCR(Google Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
 | Helm Hub | MingMing Pei@Netease | [mmpei](https://github.com/mmpei) |
 | Huawei SWR | Javis Zhou@Huawei | [jarvis-zhou](https://github.com/jarvis-zhou) |
 | JFrog Artifactory | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
