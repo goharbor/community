@@ -157,25 +157,12 @@ This proposal is not to:
 
 To address these problems, we propose a new feature **Enhanced default processor** in Harbor Core. The contributions of the proposal are:
 
-- Define a JSON schema for the config layer of an artifact.
+- The Harbor-specific schema in artifact config layer to tell Harbor core more information about the user-defined artifacts.
 - The enhanced default processor implementation to support user-defined artifacts.
 
-### Config schema
-manifest
-```
-{
-   "schemaVersion": 2,
-   "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-   "config": {
-      "mediaType": "application/vnd.custom.artifact.config.v1+json",
-      "size": 11830,
-      "digest": "sha256:2ffd3c3d87aac9d99c93ba84fbec6ae59c9946cbef2531bb1dc5e02fb905971a"
-   },
-   "layers": []
-}
-```
-As is showed above, we can define a media type ```application/vnd.custom.artifact.config.v1+json``` to show it is a media type of user-defined artifact config
+### Harbor-specific Schema
 
+We introduce a harbor-specific schema in the config layer, which contains information that Harbor core needs to understand the artifact.
 
 config layer
 ```
@@ -189,10 +176,6 @@ config layer
     "harbor": {
         // artifact config
         "artifactMetadata":{
-            // artifact type
-            "type": "ORMB",
-            // artifact media type
-            "mediaType": "application/vnd.caicloud.ormb.xxx",
             // additions
             "additions": [
                 {
@@ -290,5 +273,5 @@ func (d *defaultProcessor) AbstractAddition(artifact artifact *artifact.Artifact
 
 <p align="center">
 <img src="images/artifact-processor-extender/in-tree-workflow.png" height="600">
-<p align="center">Fig. 4 Workflow of Pushing an Artifact using the General Processor</p>
+<p align="center">Fig. 4 Workflow of Pushing an Artifact using the Default Processor</p>
 </p>
