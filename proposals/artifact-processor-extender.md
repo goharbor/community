@@ -2,17 +2,15 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Proposal: `Artifact Processor Extender`](#proposal-artifact-processor-extender)
+- [Proposal: `Enhanced Default Processor`](#proposal-enhanced-default-processor)
   - [Abstract](#abstract)
   - [Background](#background)
   - [Motivation](#motivation)
   - [Goals](#goals)
   - [Non-Goals](#non-goals)
   - [Implementation](#implementation)
-  - [In-tree processor](#in-tree-processor)
     - [Config schema](#config-schema)
-    - [GeneralProcessor](#generalprocessor)
-      - [```GeneralProcessor``` Implement](#generalprocessor-implement)
+    - [Enhanced Default Processor](#enhanced-default-processor)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
