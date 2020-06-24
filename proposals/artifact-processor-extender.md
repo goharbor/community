@@ -13,23 +13,10 @@
     - [Config schema](#config-schema)
     - [GeneralProcessor](#generalprocessor)
       - [```GeneralProcessor``` Implement](#generalprocessor-implement)
-  - [Out-of-tree processor](#out-of-tree-processor)
-      - [HTTPProcessor and Processor Extender](#httpprocessor-and-processor-extender)
-      - [`HTTPProcessor`](#httpprocessor)
-      - [Processor Extender](#processor-extender)
-    - [Configuration file `processors.yaml`](#configuration-file-processorsyaml)
-    - [Artifact Data Access](#artifact-data-access)
-      - [Policy Check Interceptor](#policy-check-interceptor)
-      - [OAuth 2 Bearer Tokens](#oauth-2-bearer-tokens)
-      - [Robot Accounts](#robot-accounts)
-    - [Development Process](#development-process)
-      - [First Iteration: HTTPProcessor and Extender without Auth](#first-iteration-httpprocessor-and-extender-without-auth)
-      - [Second Iteration: Registration](#second-iteration-registration)
-      - [Third Iteration: Auth in the Processor Extender](#third-iteration-auth-in-the-processor-extender)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Proposal: `Artifact Processor Extender`
+# Proposal: `Enhanced Default Processor`
 
 Author:
 
@@ -41,6 +28,12 @@ Links:
 
 - Discussion: [goharbor/harbor#12013](https://github.com/goharbor/harbor/issues/12013)
 - Slides: [Feature Request: Harbor Artifact Processor Extender](https://docs.google.com/presentation/d/1rX7v9IhXjXEAmbJP29nkSU2RJXUrpLJujL8iemqcjnU/edit#)
+
+Status:
+
+- 2020-06-24 Draft v3
+- 2020-06-15 [Draft v2](https://github.com/hyy0322/community/blob/7349e0a4325d021b9d52ed61afbc6118f30c7774/proposals/artifact-processor-extender.md)
+- 2020-05-28 [Draft v1](https://github.com/gaocegege/community-2/blob/enhancement/proposals/artifact-processor-extender.md)
 
 ## Abstract
 
@@ -164,14 +157,10 @@ This proposal is not to:
 
 ## Implementation
 
-To address these problems, we propose a new feature **artifact processor extender** in Harbor Core. There are two ways to achieve our goals. One is in-tree processor which we define config JSON object in a certain format in the config layer of an artifact. The other is out-of-tree processor which define data format in HTTP API. 
-
-## In-tree processor
-
-Contributions about in-tree processor:  
+To address these problems, we propose a new feature **Enhanced default processor** in Harbor Core. The contributions of the proposal are:
 
 - Define a JSON schema for the config layer of an artifact.
-- The new processor struct ```GeneralProcessor``` to support user-defined artifacts.
+- The enhanced default processor implementation to support user-defined artifacts.
 
 ### Config schema
 manifest
@@ -233,66 +222,60 @@ config layer
 ```
 Mainly there are two parts about this config. One is custom for user to put their config, the other is harbor defined config.
 
-### GeneralProcessor
+### Enhanced Default Processor
 
-The Processor interface is defined in Harbor Core.
-
-```go
+We propose to have the similar arguments for all methods in Processor interface:
+```diff
 // Processor processes specified artifact
 type Processor interface {
-	// GetArtifactType returns the type of one kind of artifact specified by media type
-	GetArtifactType() string
-	// ListAdditionTypes returns the supported addition types of one kind of artifact specified by media type
-	ListAdditionTypes() []string
-	// AbstractMetadata abstracts the metadata for the specific artifact type into the artifact model,
-	// the metadata can be got from the manifest or other layers referenced by the manifest.
-	AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error
-	// AbstractAddition abstracts the addition of the artifact.
-	// The additions are different for different artifacts:
-	// build history for image; values.yaml, readme and dependencies for chart, etc
-	AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error)
+    // GetArtifactType returns the type of one kind of artifact specified by media type
+-   GetArtifactType() string
++   GetArtifactType(ctx context.Context, artifact *artifact.Artifact) string
+    // ListAdditionTypes returns the supported addition types of one kind of artifact specified by media type
+-   ListAdditionTypes() []string
++   ListAdditionTypes(ctx context.Context, artifact *artifact.Artifact) []string
+    // AbstractMetadata abstracts the metadata for the specific artifact type into the artifact model,
+    // the metadata can be got from the manifest or other layers referenced by the manifest.
+-   AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error
++   AbstractMetadata(ctx context.Context, artifact *artifact.Artifact, manifest []byte) error
+    // AbstractAddition abstracts the addition of the artifact.
+    // The additions are different for different artifacts:
+    // build history for image; values.yaml, readme and dependencies for chart, etc
+    AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error)
 }
 ```
-We need config layer digest for every functions defined above. So we need to do a little change about the ```Processor``` interface. ```artifact.Artifact``` is needed in all fuctions.
+
+The pseudo code of the `defaultProcessor` is here:
 
 ```go
-// Processor processes specified artifact
-type Processor interface {
-	// GetArtifactType returns the type of one kind of artifact specified by media type
-	GetArtifactType(artifact *artifact.Artifact) string
-	// ListAdditionTypes returns the supported addition types of one kind of artifact specified by media type
-	ListAdditionTypes(artifact *artifact.Artifact) []string
-	// AbstractMetadata abstracts the metadata for the specific artifact type into the artifact model,
-	// the metadata can be got from the manifest or other layers referenced by the manifest.
-	AbstractMetadata(ctx context.Context, manifest []byte, artifact *artifact.Artifact) error
-	// AbstractAddition abstracts the addition of the artifact.
-	// The additions are different for different artifacts:
-	// build history for image; values.yaml, readme and dependencies for chart, etc
-	AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error)
-}
-```
-
-#### ```GeneralProcessor``` Implement
-```
-func (g *GeneralProcessor) GetArtifactType(artifact *artifact.Artifact) string {
-	configLayer := pullBlob(artifact.manifest.config.digest)
-	return configLayer.harbor.artifactMetadata.type
+func (d *defaultProcessor) GetArtifactType(artifact *artifact.Artifact) string {
+	// try to parse the type from the media type
+	strs := artifactTypeRegExp.FindStringSubmatch(d.mediaType)
+	if len(strs) == 2 {
+		return strings.ToUpper(strs[1])
+	}
+	// can not get the artifact type from the media type, return unknown
+	return ArtifactTypeUnknown
 }
 
-func (g *GeneralProcessor) ListAdditionTypes(artifact *artifact.Artifact) []string {
-	configLayer := pullBlob(artifact.manifest.config.digest)
-	// Traverse configLayer.harbor.artifactMetadata.additons array to get all addition type
-	return []string{configLayer.harbor.artifactMetadata.additons.type...}
+func (d *defaultProcessor) ListAdditionTypes(artifact *artifact.Artifact) []string {
+  configLayer := pullBlob(artifact.manifest.config.digest)
+  if configLayer.Harbor == nil {
+    return nil
+  }
+	// Traverse configLayer.Harbor.ArtifactMetadata.Additions array to get all addition type
+	return []string{configLayer.Harbor.ArtifactMetadata.Additions.Type...}
 }
 
-func (g *GeneralProcessor) AbstractMetadata(artifact *artifact.Artifact) error {
-	configLayer := pullBlob(artifact.manifest.config.digest)
-    // do something with configLayer json, remove harbor object, keep user config
-    userConfig := ...
-	artifact.ExtraAttrs = configLayer.userConfig
+func (d *defaultProcessor) AbstractMetadata(artifact *artifact.Artifact) error {
+  configLayer := pullBlob(artifact.manifest.config.digest)
+  // Extract the extra attributes according to the config.
+  extraAttrs := extractAttrsFromConfig(configLayer.Harbor)
+  artifact.ExtraAttrs = extraAttrs
+  return nil
 }
 
-func (g *GeneralProcessor) AbstractAddition(artifact artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
+func (d *defaultProcessor) AbstractAddition(artifact artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
 	configLayer := pullBlob(artifact.manifest.config.digest)
 	// make a map map[type]struct{
 	//                         contentType
