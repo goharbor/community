@@ -160,12 +160,13 @@ To address these problems, we propose a new feature **Enhanced default processor
 - The Harbor-specific schema in artifact config layer to tell Harbor core more information about the user-defined artifacts.
 - The enhanced default processor implementation to support user-defined artifacts.
 
-### Harbor-specific Schema
+### Harbor-specific Configuration
 
-We introduce a harbor-specific schema in the config layer, which contains information that Harbor core needs to understand the artifact.
+We introduce a harbor-specific configuration in the config layer, which contains information that Harbor core needs to understand the artifact.
 
-config layer
-```
+Here is an example.
+
+```json
 { 
     // user defined config
     // abstract metadata will use this config data as extra attrs
@@ -173,35 +174,33 @@ config layer
     "key2": ...,
 
     // harbor defined config
-    "harbor": {
-        // artifact config
-        "artifactMetadata":{
-            // additions
-            "additions": [
-                {
-                    // content type
-                    "contentType": "plain"
-                    // addition type name, one of addition type
-                    "type": "type_xxx",
-                    "digest": "sha256:xxx"
-                },
-                {
-                    "contentType": "json",
-                    "type": "type_xxx",
-                    "digest": "sha256:xxx"
-                },
-                {
-                    "contentType": "markdown"
-                    "type": "type_xxx",
-                    "digest": "sha256:xxx"
-                },
-                ...
-            ]
-        }
+    "registry/harbor": {
+        "schemaVersion": 1,
+        "icon": "https://github.com/caicloud/ormb/raw/master/docs/images/logo.png",
+        // additions
+        "additions": [
+            {
+                // content type
+                "contentType": "plain"
+                // addition type name, one of addition type
+                "name": "type_xxx",
+                "digest": "sha256:xxx"
+            },
+            {
+                "contentType": "text"
+                "name": "readme",
+                "digest": "sha256:xxx"
+            },
+            ...
+        ]
     }
 }
 ```
-Mainly there are two parts about this config. One is custom for user to put their config, the other is harbor defined config.
+
+The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is here. Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
+
+```json
+```
 
 ### Enhanced Default Processor
 
