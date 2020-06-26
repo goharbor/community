@@ -197,10 +197,7 @@ Here is an example.
 }
 ```
 
-The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is here. Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
-
-```json
-```
+The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is [here](./assets/artifact-processor/schema.json). Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
 
 ### Enhanced Default Processor
 
