@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/goharbor/community/master/proposals/assets/artifact-processor/artifact-config-layer-schema.json",
+    "type": "object",
+    "title": "Artifact config layer schema",
+    "description": "The schema comprises the entire configuration JSON document in artifact config layer",
+    "default": {},
+    "examples": [
+        {
+            "xHarborAttributes": {
+                "schemaVersion": 1,
+                "icon": "https://github.com/caicloud/ormb/raw/master/docs/images/logo.png",
+                "additions": [
+                    {
+                        "contentType": "text/plain; charset=utf-8",
+                        "name": "yaml",
+                        "digest": "sha256:xxx"
+                    },
+                    {
+                        "contentType": "text/plain; charset=utf-8",
+                        "name": "readme",
+                        "digest": "sha256:xxx"
+                    }
+                ],
+                "skipKeyList": [
+                    "metrics"
+                ]
+            },
+            "created": "2015-10-31T22:22:56.015925234Z",
+            "author": "Ce Gao <gaoce@caicloud.io>",
+            "description": "CNN Model",
+            "tags": [
+                "cv"
+            ],
+            "labels": {
+                "tensorflow.version": "2.0.0"
+            },
+            "framework": "TensorFlow",
+            "format": "SavedModel",
+            "size": 9223372036854775807,
+            "metrics": [
+                {
+                    "name": "acc",
+                    "value": "0.9"
+                }
+            ],
+            "hyperparameters": [
+                {
+                    "name": "batch_size",
+                    "value": "32"
+                }
+            ],
+            "signature": {
+                "inputs": [
+                    {
+                        "name": "input_1",
+                        "size": [
+                            224,
+                            224,
+                            3
+                        ],
+                        "dtype": "float64",
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "output_1",
+                        "size": [
+                            1,
+                            1000
+                        ],
+                        "dtype": "float64",
+                    }
+                ],
+                "layers": [
+                    {
+                        "name": "conv"
+                    }
+                ]
+            },
+            "training": {
+                "git": {
+                    "repository": "git@github.com:caicloud/ormb.git",
+                    "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
+                }
+            },
+            "dataset": {
+                "git": {
+                    "repository": "git@github.com:caicloud/ormb.git",
+                    "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
+                }
+            }
+        }
+    ],
+    "required": [],
+    "additionalProperties": true,
+    "properties": {
+        "xHarborAttributes": {
+            "description": "The schema comprises the Harbor-specific configuration JSON document in artifact config layer",
+            "$ref": "https://raw.githubusercontent.com/goharbor/community/master/proposals/assets/artifact-processor/x-harbor-attributes.json"
+        }
+    }
+}

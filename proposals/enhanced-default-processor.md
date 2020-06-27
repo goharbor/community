@@ -9,8 +9,9 @@
   - [Goals](#goals)
   - [Non-Goals](#non-goals)
   - [Implementation](#implementation)
-    - [Config schema](#config-schema)
+    - [Harbor-specific Configuration](#harbor-specific-configuration)
     - [Enhanced Default Processor](#enhanced-default-processor)
+    - [Development Plan](#development-plan)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -37,8 +38,7 @@ Status:
 
 Harbor v2.0 makes Harbor the first OCI-compliant open source registry capable of storing a multitude of cloud-native artifacts like container images, Helm charts, OPAs, Singularity, and much more. It found strong demand on extending artifact types to support more complex scenarios. But the artifact authors now have to implement the processing logic in Harbor Core, which is not extensible.
 
-The current design might go against the adoption of Harbor in industries since there are always proprietary artifact types. Thus we design the artifact processor extender to address the problem in this proposal. When new custom artifact types are registered into Harbor Core, the core service will communicate with the remote artifact processor extender via RESTful API. Artifact-specific logic will keep in the extender, and the Harbor Core will be artifact-neutral.
-
+The current design might go against the adoption of Harbor in industries since there are always proprietary artifact types. Thus we design a Harbor-specific JSON schema in artifact config layer and enhance the default processor to make it have ability to parse the custom artifact config. So data in user-defined artifact followed the Harbor-specific JSON schema can be extracted by Harbor-core.
 ## Background
 
 There are four types of artifacts, which are image, helm v3, CNAB, OPA bundle, supported by Harbor. Each of them implements its processor to abstract metadata into artifact model defined by harbor. If users want to define a new kind of artifact, they have to implement the processor logic in Harbor Core service, which greatly limits the scalability and extensibility of Harbor.
@@ -122,21 +122,21 @@ The self-contained response is also necessary for these user-defined artifact ty
 The current design of the artifact processor is shown in Fig. 1. `Processor` interface is defined in Harbor Core, and there are four implementations for different types which embeds `base.IndexProcessor` and `base.ManifestProcessor`.
 
 <p align="center">
-<img src="images/artifact-processor-extender/current-design.png" height="330">
+<img src="images/artifact-processor/current-design.png" height="330">
 <p align="center">Fig. 1 Current Design of Harbor Artifact Processor</p>
 </p>
 
 When artifact authors extend the artifact types, they implement corresponding processor logic in Harbor Core, as shown in Fig. 2. For example, there will be four new processor implementations in Harbor Core with at least four different maintainers from different communities if we want to support these four artifact types.
 
 <p align="center"> 
-<img src="images/artifact-processor-extender/extend-problem-1.png" height="330">
+<img src="images/artifact-processor/extend-problem-1.png" height="330">
 <p align="center">Fig. 2 More Harbor Artifact Processor in Harbor Core</p>
 </p>
 
 Besides this, there will be more proprietary artifact types in industries, just like Kubernetes CRDs, as shown in Fig. 3. Each artifact vendor has to maintain their own fork to keep their proprietary artifact types, which may make Harbor a fragmented platform.
 
 <p align="center">
-<img src="images/artifact-processor-extender/extend-problem-2.png" height="330">
+<img src="images/artifact-processor/extend-problem-2.png" height="330">
 <p align="center">Fig. 3 Fragmented Problems in Harbor</p>
 </p>
 
@@ -144,14 +144,14 @@ Besides this, there will be more proprietary artifact types in industries, just 
 
 This proposal is to:
 
-- Design the new processor to extend artifact types in runtime.
+- Define Harbor-specific json schema to make default processor able to process user defined artifact.
 - Keep non-invasive to the current built-in processors, at the same time.
 
 ## Non-Goals
 
 This proposal is not to:
 
-- Support whitelist for artifact types. [goharbor/harbor#12061](https://github.com/goharbor/harbor/issues/12061)
+- Support allowlist for artifact types. [goharbor/harbor#12061](https://github.com/goharbor/harbor/issues/12061)
 
 ## Implementation
 
@@ -170,34 +170,98 @@ Here is an example.
 { 
     // user defined config
     // abstract metadata will use this config data as extra attrs
-    "key1": ...,
-    "key2": ...,
+   "created": "2015-10-31T22:22:56.015925234Z",
+   "author": "Ce Gao <gaoce@caicloud.io>",
+   "description": "CNN Model",
+   "tags": [
+       "cv"
+   ],
+   "labels": {
+       "tensorflow.version": "2.0.0"
+   },
+   "framework": "TensorFlow",
+   "format": "SavedModel",
+   "size": 9223372036854775807,
+   "metrics": [
+       {
+           "name": "acc",
+           "value": "0.9"
+       }
+   ],
+   "hyperparameters": [
+       {
+           "name": "batch_size",
+           "value": "32"
+       }
+   ],
+   "signature": {
+       "inputs": [
+           {
+               "name": "input_1",
+               "size": [
+                   224,
+                   224,
+                   3
+               ],
+               "dtype": "float64",
+           }
+       ],
+       "outputs": [
+           {
+               "name": "output_1",
+               "size": [
+                   1,
+                   1000
+               ],
+               "dtype": "float64",
+           }
+       ],
+       "layers": [
+           {
+               "name": "conv"
+           }
+       ]
+   },
+   "training": {
+       "git": {
+           "repository": "git@github.com:caicloud/ormb.git",
+           "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
+       }
+   },
+   "dataset": {
+       "git": {
+           "repository": "git@github.com:caicloud/ormb.git",
+           "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
+       }
+   },
 
     // harbor defined config
-    "registry/harbor": {
+    "xHarborAttributes": {
         "schemaVersion": 1,
         "icon": "https://github.com/caicloud/ormb/raw/master/docs/images/logo.png",
         // additions
         "additions": [
             {
                 // content type
-                "contentType": "plain"
+                "contentType": "text/plain; charset=utf-8",
                 // addition type name, one of addition type
-                "name": "type_xxx",
+                "name": "yaml",
                 "digest": "sha256:xxx"
             },
             {
-                "contentType": "text"
+                "contentType": "text/plain; charset=utf-8",
                 "name": "readme",
                 "digest": "sha256:xxx"
-            },
-            ...
+            }
+        ],
+        "skipKeyList": [
+            "metrics"
         ]
     }
 }
 ```
 
-The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is [here](./assets/artifact-processor/schema.json). Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
+The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is [here](./assets/artifact-processor). Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
 
 ### Enhanced Default Processor
 
@@ -225,7 +289,7 @@ type Processor interface {
 The pseudo code of the `defaultProcessor` is here:
 
 ```go
-func (d *defaultProcessor) GetArtifactType(artifact *artifact.Artifact) string {
+func (d *defaultProcessor) GetArtifactType(ctx context.Context, artifact *artifact.Artifact) string {
 	// try to parse the type from the media type
 	strs := artifactTypeRegExp.FindStringSubmatch(d.mediaType)
 	if len(strs) == 2 {
@@ -235,39 +299,61 @@ func (d *defaultProcessor) GetArtifactType(artifact *artifact.Artifact) string {
 	return ArtifactTypeUnknown
 }
 
-func (d *defaultProcessor) ListAdditionTypes(artifact *artifact.Artifact) []string {
-  configLayer := pullBlob(artifact.manifest.config.digest)
-  if configLayer.Harbor == nil {
-    return nil
-  }
-	// Traverse configLayer.Harbor.ArtifactMetadata.Additions array to get all addition type
-	return []string{configLayer.Harbor.ArtifactMetadata.Additions.Type...}
-}
-
-func (d *defaultProcessor) AbstractMetadata(artifact *artifact.Artifact) error {
-  configLayer := pullBlob(artifact.manifest.config.digest)
-  // Extract the extra attributes according to the config.
-  extraAttrs := extractAttrsFromConfig(configLayer.Harbor)
-  artifact.ExtraAttrs = extraAttrs
-  return nil
-}
-
-func (d *defaultProcessor) AbstractAddition(artifact artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
-	configLayer := pullBlob(artifact.manifest.config.digest)
-	// make a map map[type]struct{
-	//                         contentType
-	//                         digest
-	//                     }
-	additionDigest := map[type]struct.digest
-	additionLayer := pullBlob(additionDigest)
-	return Addition{
-		Content: additionType,
-		Content: additionLayer,
+func (d *defaultProcessor) ListAdditionTypes(ctx context.Context, artifact *artifact.Artifact) []string {
+	configLayer := extrateConfigFromArtifact(artifact)
+	if configLayer.XHarborAttributes == nil {
+		return nil
 	}
+	// Traverse configLayer.RegistryHarhor..Additions array to get all addition type
+	return []string{configLayer.XHarborAttributes.Additions.Name...}
+}
+
+func (d *defaultProcessor) AbstractMetadata(ctx context.Context, artifact *artifact.Artifact, manifest []byte) error {
+	configLayer := PullBlob(artifact.RepositoryName, manifest.Config.Digest)
+	// Extract the extra attributes according to the config.
+	// extractAttrsFromConfig will get all keys in user config except keys in skipKeyList
+	extraAttrs := extractAttrsFromConfig(configLayer)
+	artifact.ExtraAttrs = extraAttrs
+	return nil
+}
+
+func (d *defaultProcessor) AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
+	additions := extrateAddtionFromArtifact(artifact)
+
+	/*
+	"additions": [
+		{
+			"contentType": "text/plain; charset=utf-8",
+			"name": "yaml",
+			"digest": "sha256:xxx"
+		},
+		{
+			"contentType": "text/plain; charset=utf-8",
+			"name": "readme",
+			"digest": "sha256:xxx"
+		}
+	]
+
+	Traverse additions to make a map
+	map[name]struct{
+		contentType
+		digest
+	}
+	*/
+
+	additionDigest := map[additionType]struct.digest
+	additionLayer := pullBlob(additionDigest)
+	return &Addition{
+		Content: additionLayer,
+		ContentType: additionType,
+	}, nil
 }
 ```
 
 <p align="center">
-<img src="images/artifact-processor-extender/in-tree-workflow.png" height="600">
+<img src="images/artifact-processor/in-tree-workflow.png" height="600">
 <p align="center">Fig. 4 Workflow of Pushing an Artifact using the Default Processor</p>
 </p>
+
+### Development Plan
+We will start to code as soon as the proposal is accepted. We are going to finish coding within 2 weeks before code freeze which before end of July.

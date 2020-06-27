@@ -1,23 +1,26 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/goharbor/community/master/proposals/assets/artifact-processor/schema.json",
+    "$id": "https://raw.githubusercontent.com/goharbor/community/master/proposals/assets/artifact-processor/x-harbor-attributes.json",
     "type": "object",
     "title": "Harbor-specific configuration schema",
-    "description": "The schema comprises the entire configuration JSON document in artifact config layer.",
+    "description": "The schema comprises the Harbor-specific configuration JSON document in artifact config layer",
     "default": {},
     "examples": [{
         "schemaVersion": 1,
         "icon": "https://github.com/caicloud/ormb/raw/master/docs/images/logo.png",
         "additions": [{
-                "contentType": "plain",
-                "name": "type_xxx",
+                "contentType": "text/plain; charset=utf-8",
+                "name": "yaml",
                 "digest": "sha256:xxx"
             },
             {
-                "contentType": "text",
+                "contentType": "text/plain; charset=utf-8",
                 "name": "readme",
                 "digest": "sha256:xxx"
             }
+        ],
+        "skipKeyList": [
+            "metrics"
         ]
     }],
     "required": [
@@ -31,7 +34,7 @@
             "$id": "#/properties/schemaVersion",
             "type": "integer",
             "title": "The schemaVersion schema",
-            "description": "The version of the schema",
+            "description": "The version of the schema, currently it only support 1, other number will not be recognized",
             "default": 1,
             "examples": [
                 1
@@ -55,12 +58,12 @@
             "default": [],
             "examples": [
                 [{
-                        "contentType": "plain",
-                        "name": "type_xxx",
+                        "contentType": "text/plain; charset=utf-8",
+                        "name": "yaml",
                         "digest": "sha256:xxx"
                     },
                     {
-                        "contentType": "text",
+                        "contentType": "text/plain; charset=utf-8",
                         "name": "readme",
                         "digest": "sha256:xxx"
                     }
@@ -75,8 +78,8 @@
                     "description": "One artifact addition",
                     "default": {},
                     "examples": [{
-                        "contentType": "plain",
-                        "name": "type_xxx",
+                        "contentType": "text/plain; charset=utf-8",
+                        "name": "readme",
                         "digest": "sha256:xxx"
                     }],
                     "required": [
@@ -90,10 +93,10 @@
                             "$id": "#/properties/additions/items/anyOf/0/properties/contentType",
                             "type": "string",
                             "title": "The contentType schema",
-                            "description": "Content type of the addition",
+                            "description": "Content type of the addition, currently it only support plain",
                             "default": "",
                             "examples": [
-                                "plain"
+                                "text/plain; charset=utf-8"
                             ]
                         },
                         "name": {
@@ -103,7 +106,7 @@
                             "description": "Name of the addition",
                             "default": "",
                             "examples": [
-                                "type_xxx"
+                                "readme"
                             ]
                         },
                         "digest": {
@@ -120,6 +123,21 @@
                 }],
                 "$id": "#/properties/additions/items"
             }
+        },
+        "skipKeyList": {
+            "$id": "#/properties/skipKeyList",
+            "type": "array",
+            "title": "The skipKeyList schema",
+            "description": "There are key value pair in config layer describe the details of artifact.By default, all key value pair will be abstracted to artifact's extra attributes and stored in database, which will be displayed in Harbor UI. Keys in skipKeyList tells harbor that will not be added as artifact's attributes.So they can't be seen in Harbor UI",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+            "default": [],
+            "examples": [
+                "metrics"
+            ]
         }
     }
 }
