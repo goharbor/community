@@ -22,51 +22,27 @@ maintained under the `goharbor` namespace.
 ## Community Roles
 
 * **Users:** Members that engage with the Harbor community via any medium (Slack, WeChat, GitHub, mailing lists, etc.).
-* **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). Two levels of maintainership are defined below.
-* **Maintainers**: Two levels of maintainership are defined in the Project Leadership section [below](#total-maintainership).
-
-## Project Leadership
-
-There are two roles that convey project leadership: maintainers and core maintainers.
-
-* **Core Maintainers**: Responsible for the overall health and direction of the project; final reviewers of PRs and responsible for releases.
-* **Maintainers**: Responsible for one or more components within a project, and are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for these components.
-
-### Total Maintainership
-
-Total maintainership is defined as the union of maintainers and core
-maintainers.
+* **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). 
+* **Maintainers**: The Harbor project leaders. They are responsible for the overall health and direction of the project; final reviewers of PRs and responsible for releases. Some Maintainers are responsible for one or more components within a project, acting as technical leads for that component. Maintainers are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for these components.
 
 ### Maintainers
 
-New maintainers must be nominated by an existing maintainer or core maintainer
-and must be elected by a supermajority of total maintainership. Likewise,
-maintainers can be removed by a supermajority of the total maintainership or
-can resign by notifying the core maintainers.
-
-### Core Maintainers
-
-Nomination for core maintainership requires (a) a nomination by an existing
-core maintainer, and (b) election by a supermajority of the core maintainer
-group. Likewise, maintainers can be removed by a supermajority core maintainer
-vote or can resign by notifying the core maintainers.
+New maintainers must be nominated by an existing maintainer and must be elected by a supermajority of existing maintainers. Likewise, maintainers can be removed by a supermajority of the existing maintainers or can resign by notifying one of the maintainers.
 
 ### Supermajority
 
 A supermajority is defined as two-thirds of members in the group.
-A supermajority of [Maintainers](#maintainers), [Core
-Maintainers](#core-maintainers), or the union of both is required for certain
-decisions as outlined above.
+A supermajority of [Maintainers](#maintainers) is required for certain
+decisions as outlined above. Voting on decisions can happen on the mailing list, GitHub, Slack, email, or via a voting service, when appropriate. Maintainers can either vote "agree, yes, +1", "disagree, no, -1", or "abstain". A vote passes when supermajority is met. An abstain vote equals not voting at all.
 
 ### Decision Making
 
 Ideally, all project decisions are resolved by consensus. If impossible, any
 maintainer may call a vote. Unless otherwise specified in this document, any
-vote will be decided by a supermajority of the total maintainership, with
-a requirement of at least one core maintainer voting.
+vote will be decided by a supermajority of maintainers.
 
-Votes by maintainers (either core or non-core) belonging to the same company
-will count as one vote; e.g., 4 maintainers employed by company `${x}` will
+Votes by maintainers belonging to the same company
+will count as one vote; e.g., 4 maintainers employed by fictional company **Harboretum** will
 only have **one** combined vote. If voting members from a given company do not
 agree, the company's vote is determined by a supermajority of voters from that
 company. If no supermajority is achieved, the company is considered to have
@@ -111,7 +87,7 @@ status of the proposal:
 
 To maintain velocity in a project as busy as Harbor, the concept of [Lazy
 Consensus](http://en.osswiki.info/concepts/lazy_consensus) is practiced. Ideas
-and / or proposals should be shared by maintainers (core or non-core) via
+and / or proposals should be shared by maintainers via
 GitHub with the appropriate maintainer groups (e.g.,
 `@goharbor/all-maintainers`) tagged. Out of respect for other contributors,
 major changes should also be accompanied by a ping on Slack or a note on the
@@ -131,9 +107,8 @@ repo that includes proposals and governing documents.
 
 Lazy consensus does _not_ apply to the process of:
 
-* Removing core or non-core maintainers
+* Removal of maintainers from Harbor
 
 ## Updating Governance
 
-All substantive changes in Governance require a supermajority [Total
-Maintainership](#total-maintainership) vote.
+All substantive changes in Governance require a supermajority agreement by all maintainers.
