@@ -8,7 +8,7 @@ It proposes an approach to enable Harbor to support proxy remote container regis
 
 ## Background
 
-For some cases, docker nodes reside in the environment have limit access to internet or no access to the external network to public container registry, or there are too many requests to the public repository that consumes too much bandwidth or it is at the risk of being throttled by the server. There is a need to proxy and cache the request to the target public/private container repository.
+For some cases, docker nodes reside in the environment have limit access to internet or no access to the external network to public container registry, or there are too many requests to the public repository that consumes too much bandwidth, or it is at the risk of being throttled by the server. There is a need to proxy and cache the request to the target public/private container repository.
 
 ## Proposal
 
@@ -22,7 +22,7 @@ As a common user in Harbor, if the user is already login and has the permission 
 ```
 docker pull example/hello-world:latest
 ```
-After login, the user can pull the image by adding a prefix to image name:  `<harbor_servername>/<projectname>/`
+After the login, the user can pull the image by adding a prefix to image name:  `<harbor_servername>/<projectname>/`
 
 ```
 docker login <harbor_servername> -u xxxx -p *****
@@ -62,7 +62,7 @@ When a pull request comes to the proxy project, if the image is not cached, it p
 
 Excessive pulling from hosted registries like dockerhub might result in throttling or IP ban, the pull through proxy feature can help to reduce such risks.
 
-The project admin can setup a retention policy for the proxy project, such as keep last 7 days visited images on the disk. 
+The project admin can set up a retention policy for the proxy project, such as keep last 7 days visited images on the disk. 
 
 ## Goal
 
@@ -71,7 +71,7 @@ The proxy middleware involves pull requests to container images, we will compare
 * Pull image from a normal Harbor project 
 * Pull image from a proxy project with all images are cached in local
 
-Because the proxy project needs to pull images from remote registry, and also have some concurrent limitation on the request, the overall image pull performance degredation must less than 50%. 
+Because the proxy project needs to pull images from a remote registry, and have some concurrent limitation on the request, the overall image pull performance degradation must less than 50%. 
 
 ## Non-Goals
 
@@ -79,7 +79,7 @@ The current solution proxy container images request on project level, is not a w
 
 The proxied artifact only includes container images.
 
-In a proxy project, all push requests to proxy project is forbiden. Other project related features are not changed. Content trust is disabled by default in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
+In a proxy project, all push requests to proxy project is forbidden. Other project related features are  unchanged. Content trust is disabled by default in the proxy project. Other features related to Harbor projects, such as the project membership, label, scanner, tag retention policy, robot account, web hooks, CVE whitelist should work as they were.
 
 ## Terminology
 
@@ -97,11 +97,11 @@ Support docker client and containerd.
 
 ### Basic mechanism
 
-A docker image pull command can be decomposed into serveral HTTP request. For example
+A docker image pull command can be decomposed into several HTTP request. For example:
 ```
 docker pull library/hello-world:latest
 ```
-The HTTP request to get the content of manifest library/hello-world:latest, this request will send to the repository and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with that of get the manifest blob.
+The HTTP request to get the content of manifest library/hello-world:latest, this request will send to the repository, and the repository intercept the request to the example/hello-world:sha256:xxxxxxxx, and its response with that of get the manifest blob.
 
 ```
 # The background HTTP authentication request which can be handled by replication adapter 
@@ -132,55 +132,59 @@ To enable the proxy feature in Harbor, it is required to add a proxy middleware,
 For get blob request, it tries to get the blob in local cache first, if not exist, get the blob from the target server, then store the content to the local registry. When same request comes the second time, then serves the request with the cached content. When the target server is offline, serves the pull request like a normal project.
 
 Because some blobs size might be very large, to avoid out of memory, using the io.CopyN() to copy the blob content from reader to response writer. 
-It is likely many requests pull same blob in a period, to avoid put same blob mutliple times, setup an inflight map to check if there is any existing proxy blob request. If exist, skip to put the blob into proxy cache.
+It is likely many requests pull same blob in a period, to avoid put same blob multiple times, setup an inflight map to check if there is any existing proxy blob request. If exist, skip to put the blob into proxy cache.
 
 ![pull_blob](../images/proxy/pull-blob.png)
 
 ### HEAD method of manifest and blob
 
-Because the HEAD method only returns the HTTP Headers of current Get method, it will be proxied.
+Because there is no use case that requires to proxy HEAD request, it won't be proxied.
 
 ### Cache Storage
 
-Cached manifests and blobs are stored in the local storage in the same way like normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs. thus there is a dependency check to wait for all related blobs are ready. It send HEAD request to check if the current blob exist.  When all dependent blobs are ready, push the manifest into the local storage. If it exceed the max wait time (30 minutes), the current push manifest operation is quit. 
+Cached manifests and blobs are stored in the local storage in the same way as normal repository. In a typical docker pull command, the get request of manifest comes before requests to blobs. the proxy always receives the content of manifest before receiving blobs, thus there is a dependency check to wait for all related blobs are ready. It sends HEAD request to check if the current blob exist.  When all dependent blobs are ready, push the manifest into the local storage. If it exceeds the max wait time (30 minutes), the current push manifest operation quit. 
 
-The push operation is accomplished by the replication adapter, it send HTTP request to the core container with a temporary service account: harbor-proxyservice.
+The replication adapter push the images to local repository, it sends HTTP requests to the core container with a temporary service account: harbor-proxyservice.
 
-If the image is pull from library/hello-world:latest, the actual storage is shared with the current registry, named with
+If the image is pull from library/hello-world:latest, the actual storage share with the current registry, named with
 dockerhub_proxy/library/hello-world:latest, and share the same blob storage with other repos.
-Use this command to pull the latest image from Harbor repository
+Use this command to pull the latest image from Harbor repository.
 ```
 docker pull <harbor_fqdn>/dockerhub_proxy/library/hello-world:latest 
 ```
 The quota usage of the current project is the size of cached images approximately.
 
-** Notes ** The image cache is handled by subsequent go function after pull command, it also can be implemented by replication job. Because the replication job schedule the replication job in different component and container. In order to cache the content more quickly, we prefer use the go function to cache proxied image.
+** Notes ** The image cache is handled by subsequent go functions after pull command, it also can be implemented by replication job. Because the replication job schedule the replication job in different component and container. In order to cache the content more quickly, we prefer use the go function to cache proxied image.
 
 #### Manifest list
 
-A manifest list contains one or more refereneces to the manifest for different platforms. when a docker client run a pull image request, it only pull image for a specific platform, only parts blobs are pulled and cached the manifest list. 
-For example, the busybox:latest is a manifest list, when pulling it on a amd64 linux platform
+A manifest list contains one or more references to the manifest for different platforms. when a docker client run a pull image request, it only pulls image for a specific platform, the proxy server pull and cache parts blobs and manifest in the manifest list. 
+For example, the busybox:latest is a manifest list, when pulling it on an amd64 linux platform.
 ```
 docker pull busybox:latest
 ```
 Only the os=linux, arch=amd64 image will be download. the other platform such as the arm, ppc will not be download and cached.
 
-When pushing this manifest list to local proxy cache, we need to remove the missing blobs from the manifest, and push the modified manifest, because the manifest is modified, its digest will change.
+When pushing this manifest list to local proxy cache, the proxy server need to remove the missing blobs from the manifest, and push the modified manifest, because it modifies the manifest, the manifest list's digest will change.
 
-The waiting time for the manifest list should be longer than that of normal manifest, because it depends on normal manifests.
+Another case is the CNAB manifest list, which contains some manifests of same platform, the proxy server should wait all depend on manifest and blobs ready.
+
+Based on two cases, the proxy server should check the dependencies every 20-30 seconds, if all dependencies met, then push the manifest list, if some dependencies are not ready, it will wait until timeout, after timeout, it will update the manifest list correspondent with the existing manifest and blobs.
+
+The timeout for the manifest list should be longer than that of normal manifest, because it depends on normal manifests.
 
 
 #### Skipped blobs
 
-When the pull command issued from a machine where some blobs already exist, the client might skip to download existing blobs, and the proxy server will never recieve the pull request to these blobs, and the wait dependency blobs operation will timeout and quit to push the manifest to proxy cache because of missing depend blobs. thus we need to push the missing blobs to local to avoid this type of failure.
+When the pull command issued from a machine where some blobs already exist, the client might skip to download existing blobs, and the proxy server will never receive the pull request to these blobs, and the wait dependency blobs operation will timeout and quit to push the manifest to proxy cache because of missing depend on blobs, thus the proxy server need to push the missing blobs to local to avoid this type of failure.
 
 #### Cached Image expire
 
-The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are deleted, use the GC to free the disk space used by blobs. there will be a expiry date in the artifact. and when the time expires, the image will be removed.
+The cached tags can be deleted from the server storage after a period (for example 1 week), and only tags are removed, use the GC to free the disk space used by blobs. there will be an expiry date in the artifact. when the time expires, the image will be removed.
 
 ### Push Image
 
-The push request to the proxy project is forbiden. A middleware is used to check, if the current project is a proxy project, only harbor-proxyservice can push image to the proxy project. The proxy server use the harbor-proxyservice to store the cached image to local proxy cache.
+The proxy server forbid the push request to the proxy project. it uses middleware to check, if the current project is a proxy project, only harbor-proxyservice can push image to the proxy project. The proxy server use the harbor-proxyservice to store the cached image to local proxy cache.
 
 ### Mutating webhook
 
@@ -210,7 +214,7 @@ Push image  |  Yes    |  It is not allowed to push image to a proxied project, b
 content trust | Yes | Disabled 
 RBAC  |  No     | If current user has permission to access the current project, pull image and cache the images.  each role include guest, master, developer, admin can use the proxy to pull image from remote server. if current user has no permission to access the current project, it returns 404 error to the client.
 Tag retention | No | 
-Quota | No | Cached images are stored in local through replication adatper, its push requests are handled by core middlewares, there is no need to handle the quota in the proxy middleware.
+Quota | No | Cached images are stored in local through replication adapter, its push requests are handled by core middleware, there is no need to handle the quota in the proxy middleware.
 vulnerability scan | No | 
 AuditLog | No | 
 
