@@ -20,6 +20,7 @@ describes governance guidelines and maintainer responsibilities.
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
+| Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
 
 ## Emeritus Maintainers
 * Nathan Lowe, [nlowe](https://github.com/nlowe), [Hyland Software](https://github.com/HylandSoftware)
