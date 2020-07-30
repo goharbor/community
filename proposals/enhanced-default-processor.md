@@ -30,7 +30,8 @@ Links:
 
 Status:
 
-- 2020-06-24 Draft v3
+- 2020-07-30 Draft v4
+- 2020-06-24 [Draft v3](https://github.com/hyy0322/community/blob/4143b80fe75d737e3442c557655668f80f69f59f/proposals/enhanced-default-processor.md)
 - 2020-06-15 [Draft v2](https://github.com/hyy0322/community/blob/7349e0a4325d021b9d52ed61afbc6118f30c7774/proposals/artifact-processor-extender.md)
 - 2020-05-28 [Draft v1](https://github.com/gaocegege/community-2/blob/enhancement/proposals/artifact-processor-extender.md)
 
@@ -38,7 +39,8 @@ Status:
 
 Harbor v2.0 makes Harbor the first OCI-compliant open source registry capable of storing a multitude of cloud-native artifacts like container images, Helm charts, OPAs, Singularity, and much more. It found strong demand on extending artifact types to support more complex scenarios. But the artifact authors now have to implement the processing logic in Harbor Core, which is not extensible.
 
-The current design might go against the adoption of Harbor in industries since there are always proprietary artifact types. Thus we design a Harbor-specific JSON schema in artifact config layer and enhance the default processor to make it have ability to parse the custom artifact config. So data in user-defined artifact followed the Harbor-specific JSON schema can be extracted by Harbor-core.
+The current design might go against the adoption of Harbor in industries since there are always proprietary artifact types. Thus we design a Harbor-specific schema in artifact manifest annotations and enhance the default processor to make it have ability to parse the custom artifact config.
+
 ## Background
 
 There are four types of artifacts, which are image, helm v3, CNAB, OPA bundle, supported by Harbor. Each of them implements its processor to abstract metadata into artifact model defined by harbor. If users want to define a new kind of artifact, they have to implement the processor logic in Harbor Core service, which greatly limits the scalability and extensibility of Harbor.
@@ -140,11 +142,17 @@ Besides this, there will be more proprietary artifact types in industries, just 
 <p align="center">Fig. 3 Fragmented Problems in Harbor</p>
 </p>
 
+## Glossary
+
+| Term     	| Definition 	|
+|----------	|------------	|
+| Manifest 	| [OCI Image Manifest](https://github.com/opencontainers/image-spec/blob/master/manifest.md)	|
+
 ## Goals
 
 This proposal is to:
 
-- Define Harbor-specific json schema to make default processor able to process user defined artifact.
+- Define Harbor-specific schema to let default processor process user defined artifact.
 - Keep non-invasive to the current built-in processors, at the same time.
 
 ## Non-Goals
@@ -157,111 +165,53 @@ This proposal is not to:
 
 To address these problems, we propose a new feature **Enhanced default processor** in Harbor Core. The contributions of the proposal are:
 
-- The Harbor-specific schema in artifact config layer to tell Harbor core more information about the user-defined artifacts.
+- The Harbor-specific schema in artifact manifest to tell Harbor core more information about the user-defined artifacts.
 - The enhanced default processor implementation to support user-defined artifacts.
 
 ### Harbor-specific Configuration
 
-We introduce a harbor-specific configuration in the config layer, which contains information that Harbor core needs to understand the artifact.
+We introduce a harbor-specific configuration in the manifest annotations, which contains information that Harbor core needs to understand the artifact.
+
+The harbor-specific configuration follows the style of [OCI Pre-Defined Annotation Keys](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys). There are two proposed keys in `manifest.config.annotations`:
+
+- **io.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration.
+- **io.goharbor.artifact.schema.version** The schema version.
+
+There is one key in `manifest.layers[].annotations` which is used to support icons:
+
+- **io.goharbor.artifact.icon** The identifier of artifact icon.
 
 Here is an example.
 
 ```json
-{ 
-    // user defined config
-    // abstract metadata will use this config data as extra attrs
-   "created": "2015-10-31T22:22:56.015925234Z",
-   "author": "Ce Gao <gaoce@caicloud.io>",
-   "description": "CNN Model",
-   "tags": [
-       "cv"
-   ],
-   "labels": {
-       "tensorflow.version": "2.0.0"
-   },
-   "framework": "TensorFlow",
-   "format": "SavedModel",
-   "size": 9223372036854775807,
-   "metrics": [
-       {
-           "name": "acc",
-           "value": "0.9"
-       }
-   ],
-   "hyperparameters": [
-       {
-           "name": "batch_size",
-           "value": "32"
-       }
-   ],
-   "signature": {
-       "inputs": [
-           {
-               "name": "input_1",
-               "size": [
-                   224,
-                   224,
-                   3
-               ],
-               "dtype": "float64",
-           }
-       ],
-       "outputs": [
-           {
-               "name": "output_1",
-               "size": [
-                   1,
-                   1000
-               ],
-               "dtype": "float64",
-           }
-       ],
-       "layers": [
-           {
-               "name": "conv"
-           }
-       ]
-   },
-   "training": {
-       "git": {
-           "repository": "git@github.com:caicloud/ormb.git",
-           "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
-       }
-   },
-   "dataset": {
-       "git": {
-           "repository": "git@github.com:caicloud/ormb.git",
-           "revision": "22f1d8406d464b0c0874075539c1f2e96c253775"
-       }
-   },
-
-    // harbor defined config
-    "xHarborAttributes": {
-        "schemaVersion": 1,
-        "icon": "https://github.com/caicloud/ormb/raw/master/docs/images/logo.png",
-        // additions
-        "additions": [
-            {
-                // content type
-                "contentType": "text/plain; charset=utf-8",
-                // addition type name, one of addition type
-                "name": "yaml",
-                "digest": "sha256:xxx"
-            },
-            {
-                "contentType": "text/plain; charset=utf-8",
-                "name": "readme",
-                "digest": "sha256:xxx"
+{
+    "schemaVersion": 2,
+    "config": {
+        "mediaType": "application/vnd.caicloud.model.config.v1alpha1+json",
+        "digest": "sha256:be948daf0e22f264ea70b713ea0db35050ae659c185706aa2fad74834455fe8c",
+        "size": 187,
+        "annotations": {
+            "io.goharbor.artifact.schema.version": "0.1",
+            "io.goharbor.artifact.skiplist": "metrics,git"
+        }
+    },
+    "layers": [
+        {
+            "mediaType": "image/png",
+            "digest": "sha256:d923b93eadde0af5c639a972710a4d919066aba5d0dfbf4b9385099f70272da0",
+            "size": 166015,
+            "annotations": {
+                "io.goharbor.artifact.icon": "true"
             }
-        ],
-        "skipKeyList": [
-            "metrics"
-        ]
-    }
+        },
+        {
+            "mediaType": "application/tar+gzip",
+            "digest": "sha256:d923b93eadde0af5c639a972710a4d919066aba5d0dfbf4b9385099f70272da0",
+            "size": 166015
+        }
+    ]
 }
 ```
-
-The [JSON schema](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-02) of the configuration is [here](./assets/artifact-processor). Tools like [gojsonschema](https://github.com/xeipuuv/gojsonschema) can be used to validate the harbor-specific configuration.
 
 ### Enhanced Default Processor
 
@@ -299,54 +249,13 @@ func (d *defaultProcessor) GetArtifactType(ctx context.Context, artifact *artifa
 	return ArtifactTypeUnknown
 }
 
-func (d *defaultProcessor) ListAdditionTypes(ctx context.Context, artifact *artifact.Artifact) []string {
-	configLayer := extrateConfigFromArtifact(artifact)
-	if configLayer.XHarborAttributes == nil {
-		return nil
-	}
-	// Traverse configLayer.RegistryHarhor..Additions array to get all addition type
-	return []string{configLayer.XHarborAttributes.Additions.Name...}
-}
-
 func (d *defaultProcessor) AbstractMetadata(ctx context.Context, artifact *artifact.Artifact, manifest []byte) error {
 	configLayer := PullBlob(artifact.RepositoryName, manifest.Config.Digest)
 	// Extract the extra attributes according to the config.
-	// extractAttrsFromConfig will get all keys in user config except keys in skipKeyList
-	extraAttrs := extractAttrsFromConfig(configLayer)
+	// extractAttrsFromManifest will get all keys in manifest except keys in skiplist.
+	extraAttrs := extractAttrsFromManifest(manifest, configLayer)
 	artifact.ExtraAttrs = extraAttrs
 	return nil
-}
-
-func (d *defaultProcessor) AbstractAddition(ctx context.Context, artifact *artifact.Artifact, additionType string) (addition *Addition, err error) {
-	additions := extrateAddtionFromArtifact(artifact)
-
-	/*
-	"additions": [
-		{
-			"contentType": "text/plain; charset=utf-8",
-			"name": "yaml",
-			"digest": "sha256:xxx"
-		},
-		{
-			"contentType": "text/plain; charset=utf-8",
-			"name": "readme",
-			"digest": "sha256:xxx"
-		}
-	]
-
-	Traverse additions to make a map
-	map[name]struct{
-		contentType
-		digest
-	}
-	*/
-
-	additionDigest := map[additionType]struct.digest
-	additionLayer := pullBlob(additionDigest)
-	return &Addition{
-		Content: additionLayer,
-		ContentType: additionType,
-	}, nil
 }
 ```
 
