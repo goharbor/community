@@ -174,12 +174,12 @@ We introduce a harbor-specific configuration in the manifest annotations, which 
 
 The harbor-specific configuration follows the style of [OCI Pre-Defined Annotation Keys](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys). There are two proposed keys in `manifest.config.annotations`:
 
-- **io.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration.
-- **io.goharbor.artifact.schema.version** The schema version.
+- **org.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration.
+- **org.goharbor.artifact.schema.version** The schema version.
 
 There is one key in `manifest.layers[].annotations` which is used to support icons:
 
-- **io.goharbor.artifact.icon** The identifier of artifact icon.
+- **org.goharbor.artifact.icon** The identifier of artifact icon.
 
 Here is an example.
 
@@ -191,8 +191,8 @@ Here is an example.
         "digest": "sha256:be948daf0e22f264ea70b713ea0db35050ae659c185706aa2fad74834455fe8c",
         "size": 187,
         "annotations": {
-            "io.goharbor.artifact.schema.version": "0.1",
-            "io.goharbor.artifact.skiplist": "metrics,git"
+            "org.goharbor.artifact.schema.version": "v1/alpha",
+            "org.goharbor.artifact.skiplist": "metrics,git"
         }
     },
     "layers": [
@@ -201,7 +201,7 @@ Here is an example.
             "digest": "sha256:d923b93eadde0af5c639a972710a4d919066aba5d0dfbf4b9385099f70272da0",
             "size": 166015,
             "annotations": {
-                "io.goharbor.artifact.icon": "true"
+                "org.goharbor.artifact.icon": "true"
             }
         },
         {
