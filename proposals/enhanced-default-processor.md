@@ -174,8 +174,8 @@ We introduce a harbor-specific configuration in the manifest annotations, which 
 
 The harbor-specific configuration follows the style of [OCI Pre-Defined Annotation Keys](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys). There are two proposed keys in `manifest.config.annotations`:
 
-- **org.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration.
-- **org.goharbor.artifact.schema.version** The schema version.
+- **org.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration. The value for this key should be type string separated by comma.
+- **org.goharbor.artifact.schema.version** The schema version. The value for this key should be type string
 
 There is one key in `manifest.layers[].annotations` which is used to support icons:
 
