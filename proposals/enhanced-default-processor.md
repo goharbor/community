@@ -6,11 +6,13 @@
   - [Abstract](#abstract)
   - [Background](#background)
   - [Motivation](#motivation)
+  - [Glossary](#glossary)
   - [Goals](#goals)
   - [Non-Goals](#non-goals)
   - [Implementation](#implementation)
     - [Harbor-specific Configuration](#harbor-specific-configuration)
     - [Enhanced Default Processor](#enhanced-default-processor)
+    - [Annotation Parser](#annotation-parser)
     - [Development Plan](#development-plan)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -19,7 +21,7 @@
 
 Author:
 
-- Yiyang Huang [@hyy0322](https://github.com/hyy0322) \<huangyiyang@caicloud.io\> (Corresponding Author)
+- Yiyang Huang [@hyy0322](https://github.com/hyy0322) \<huangyiyang.huangyy@bytedance.com\> (Corresponding Author)
 - Ce Gao [@gaocegege](https://github.com/gaocegege)
 - Jian Zhu [@zhujian7](https://github.com/zhujian7)
 
@@ -30,7 +32,8 @@ Links:
 
 Status:
 
-- 2020-07-30 Draft v4
+- 2020-08-05 Draft_v5
+- 2020-07-30 [Draft v4](https://github.com/hyy0322/community/blob/0019bba3551132f764271d033fea2d635a11782b/proposals/enhanced-default-processor.md)
 - 2020-06-24 [Draft v3](https://github.com/hyy0322/community/blob/4143b80fe75d737e3442c557655668f80f69f59f/proposals/enhanced-default-processor.md)
 - 2020-06-15 [Draft v2](https://github.com/hyy0322/community/blob/7349e0a4325d021b9d52ed61afbc6118f30c7774/proposals/artifact-processor-extender.md)
 - 2020-05-28 [Draft v1](https://github.com/gaocegege/community-2/blob/enhancement/proposals/artifact-processor-extender.md)
@@ -172,14 +175,16 @@ To address these problems, we propose a new feature **Enhanced default processor
 
 We introduce a harbor-specific configuration in the manifest annotations, which contains information that Harbor core needs to understand the artifact.
 
-The harbor-specific configuration follows the style of [OCI Pre-Defined Annotation Keys](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys). There are two proposed keys in `manifest.config.annotations`:
+The harbor-specific configuration follows the style of [OCI Pre-Defined Annotation Keys](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys).
+The annotation key must follow convention which is defined like this `io.goharbor.artifact.{annotation-version}.{key}`.
 
-- **org.goharbor.artifact.skiplist** The list of skip keys. Harbor will ignore these keys in configuration. The value for this key should be type string separated by comma.
-- **org.goharbor.artifact.schema.version** The schema version. The value for this key should be type string
+There is one proposed key in `manifest.config.annotations`:
+
+- **io.goharbor.artifact.v1alpha1.skip-list** The list of skip keys. Harbor will ignore these keys in configuration. The value for this key should be type string separated by comma.
 
 There is one key in `manifest.layers[].annotations` which is used to support icons:
 
-- **org.goharbor.artifact.icon** The identifier of artifact icon.
+- **io.goharbor.artifact.v1alpha1.icon** The identifier of artifact icon. The value for this key should be empty string. Only key will be processed, the value will not be used.
 
 Here is an example.
 
@@ -191,8 +196,7 @@ Here is an example.
         "digest": "sha256:be948daf0e22f264ea70b713ea0db35050ae659c185706aa2fad74834455fe8c",
         "size": 187,
         "annotations": {
-            "org.goharbor.artifact.schema.version": "v1/alpha",
-            "org.goharbor.artifact.skiplist": "metrics,git"
+            "io.goharbor.artifact.v1alpha1.skip-list": "metrics,git"
         }
     },
     "layers": [
@@ -201,7 +205,7 @@ Here is an example.
             "digest": "sha256:d923b93eadde0af5c639a972710a4d919066aba5d0dfbf4b9385099f70272da0",
             "size": 166015,
             "annotations": {
-                "org.goharbor.artifact.icon": "true"
+                "io.goharbor.artifact.v1alpha1.icon": ""
             }
         },
         {
@@ -215,7 +219,7 @@ Here is an example.
 
 ### Enhanced Default Processor
 
-We propose to have the similar arguments for all methods in Processor interface:
+We propose to unify arguments for all methods in Processor interface:
 ```diff
 // Processor processes specified artifact
 type Processor interface {
@@ -251,13 +255,57 @@ func (d *defaultProcessor) GetArtifactType(ctx context.Context, artifact *artifa
 
 func (d *defaultProcessor) AbstractMetadata(ctx context.Context, artifact *artifact.Artifact, manifest []byte) error {
 	configLayer := PullBlob(artifact.RepositoryName, manifest.Config.Digest)
-	// Extract the extra attributes according to the config.
-	// extractAttrsFromManifest will get all keys in manifest except keys in skiplist.
-	extraAttrs := extractAttrsFromManifest(manifest, configLayer)
-	artifact.ExtraAttrs = extraAttrs
+	// Extract the extra attributes according to the annotation.
+	annotationParser := annotation.NewParser()
+	err = annotationParser.Parse(ctx, artifact, manifest)
+	return
+}
+```
+
+### Annotation Parser
+
+As is described above, the annotation key follow `io.goharbor.artifact.{annotation-version}.{key}` convention will be parsed by Harbor.
+For every annotation key, there is annotation-version bind with it. In order to parse annotation keys for different versions, different annotation parser for different version is needed. So we can abstract an interface for annotation parser.
+
+```go
+// Parser parses annotations in artifact manifest
+type Parser interface {
+	// Parse parses annotations in artifact manifest, abstracts data from artifact config layer into the artifact model
+	Parse(ctx context.Context, artifact *artifact.Artifact, manifest []byte) (err error)
+}
+```
+For different versions of parser, there is a specific annotation parser which implements Parser interface.
+```go
+type v1alpha1Parser struct {
+	regCli reg.Client
+}
+
+func (p *v1alpha1Parser) Parse(ctx context.Context, artifact *artifact.Artifact, manifest []byte) error {
+    // parse annotation in a specific way
+}
+```
+
+All parsers will register to parser registry.
+```go
+// registry for registered annotation parsers
+registry = map[string]Parser{}
+```
+
+With different versions of parsers, there is a wrapper annotation parser which also implements Parse interface, will use parsers in parser registry one by one in order to parser different version of annotations.
+```go
+type parser struct{}
+
+func (p *parser) Parse(ctx context.Context, artifact *artifact.Artifact, manifest []byte) (err error) {
+	for _, annotationVersion := range sortedAnnotationVersionList {
+		err = GetAnnotationParser(annotationVersion).Parse(ctx, artifact, manifest)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 ```
+
 
 <p align="center">
 <img src="images/artifact-processor/in-tree-workflow.png" height="600">
