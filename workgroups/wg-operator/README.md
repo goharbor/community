@@ -54,6 +54,8 @@ Notes: [M] means the member is also harbor maintainer.
 
 | Topic | Datetime | Meeting minutes | Recording |
 |-------|----------|-----------------|-----------|
+|harbor cluster operator|2020/08/06| - |[Recording](https://drive.google.com/file/d/1kvjm8GwJEJxIipkroWvfFM2_U1Dsor3S/view?usp=sharing)(lang:CHN) |
+|harbor cluster operator|2020/07/30| [Minutes](https://docs.google.com/document/d/1ORXCGXQ2q-zl_MO5WZ8PfFWD8DmU4NJsFGHcTuVy0os/edit?usp=sharing) | - |
 |harbor cluster operator|2020/07/23| [Minutes](https://docs.google.com/document/d/1chZDjlh9YO61PgZ6hfsx_WhGhrTcK-HlbG1Jwd4y3X0/edit?usp=sharing) | - |
 |harbor cluster operator|2020/07/16| [Minutes](https://docs.google.com/document/d/10uAmlIYRuRoWW_rmkKIijIneo7iQMssX0tZTgohg6SQ/edit?usp=sharing) | - |
 |harbor cluster operator|2020/07/09| [Minutes](https://docs.google.com/document/d/109uYzFdILZbyez_iQ3cKV2AGihRqOzGE798LWrFFaAI/edit?usp=sharing)| - |
