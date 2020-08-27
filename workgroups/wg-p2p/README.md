@@ -39,6 +39,11 @@ For more details, check the [P2P integration roadmap](https://docs.google.com/do
 
 |  Round | Date | Meeting Notes | Recordnings |
 |--------|------|---------------|-------------|
+| R17 | 2020/07/21 | [Notes](https://docs.google.com/document/d/1pY9VjrrOrp9nMtzdraWAsiPIa3MKzGrVnVfhVFaDZFI/edit?usp=sharing) | - |
+| R16 | 2020/07/14 | [Notes](https://docs.google.com/document/d/1aiWRGNYdvbBw8YhBzwzL9M5yYPnYQLIP4ELm7hhZgZg/edit?usp=sharing) | - |
+| R15 | 2020/07/07 | [Notes](https://docs.google.com/document/d/1lQSqVNiDhontnrwqMsRj4Dk1ZfnJK8ulDKKotbAjZTU/edit?usp=sharing) | - |
+| R14 | 2020/06/30 | [Notes](https://docs.google.com/document/d/1gkgT97O_l-ncso82grUhz_0FNAXH-LFuigI7-mWjZms/edit?usp=sharing) | - |
+| R13 | 2020/06/23 | [Notes](https://docs.google.com/document/d/1Y5vO7gIDgAk7DPo0Ezr-t2DSlFo6EoT6-xdHIFtDZlc/edit?usp=sharing) | - |
 | R12 | 2020/04/15 | [Notes](https://docs.google.com/document/d/1AEapk2CIrfZJDj6p1kH3kV3mUuQWFi452paGNrYRg-g/edit?usp=sharing) | - |
 | R11 | 2020/04/02 | [Notes](https://docs.google.com/document/d/1m6SeRP_zNnWO5Iyqk-4mG_MGjBdP7x58q2Aiks_5SxY/edit?usp=sharing) | - |
 | R10 | 2020/03/12 | [Notes](https://docs.google.com/document/d/1jJqGGqvnDA-SZC2CaHNqQ8caifL6fxl7sGrMGjRN53o/edit?usp=sharing) | _ |

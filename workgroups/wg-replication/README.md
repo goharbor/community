@@ -35,6 +35,7 @@ Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is taking the re
 | ACR(Azure Container Registry) | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
 | Ali-ACR(Alibaba Container Registry) | Fanjian Kong@Tencent | [kofj](https://github.com/kofj) |
 | AWS ECR(Elastic Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
+| GCR(Google Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
 | Helm Hub | MingMing Pei@Netease | [mmpei](https://github.com/mmpei) |
 | Huawei SWR | Javis Zhou@Huawei | [jarvis-zhou](https://github.com/jarvis-zhou) |
 | JFrog Artifactory | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
@@ -48,6 +49,7 @@ The workgroup will sync DEV status and discuss issues every week. You can check 
 
 | Meeting Date |    Attendees    |    Minutes                                       |
 |--------------|-----------------|--------------------------------------------------|
+| 05/08/2020   | De Chen & Javis: Absent | [Recording](https://VMware.zoom.us/rec/share/5ONHN-7y9EJLTLPj4W3_Y_IOJ4Tbaaa81iUd_qFYzkkLzTVICea5OdIHxP3LuSX6)(Password: 9&J=Q=FJ) |
 | 21/05/2020   | in minutes      | [minutes](https://docs.google.com/document/d/1b3ahSYC5ML9adNCRsEAcsYJXFa73i36kRoKBHg1x1eQ/edit?usp=sharing) |
 | 17/04/2020   | in minutes      | [minutes](https://docs.google.com/document/d/1Qu8KvxhJSIFSaeavb-IZ_Gn-B5svLyaJZB6m8xVBFM0/edit?usp=sharing)|
 | 09/04/2019   | All             | [minutes](sync-meetings/2019-04-09/minutes.md)   |
