@@ -49,6 +49,9 @@ Notes: [M] means the member is also harbor maintainer.
 - Xiaoyang Zhu @QingCloud ([soulseen](https://github.com/soulseen))
 - Canfeng Wang @Netease ([wangcanfengxs](https://github.com/wangcanfengxs))
 
+## Demos
+
+- [Harbor cluster operator 0.5.0 preview demo](https://zoom.us/rec/share/_P1fAY3Z0H1LZLP_uQbuQJBxT7zXeaa81CMdrvYPz0hl3dQmMe_iteluPG_ioOLL?startTime=1598446889000) password: mKE*0ebf
 
 ## Meetings
 
