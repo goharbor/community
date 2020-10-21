@@ -22,6 +22,7 @@ This proposal wants to try to introduce a way to enable robot account access sco
 2.  Do not support add a robot account into a project as a member to get the permission suite(Role binding).
 3.  Do not support customize the pre-defined scope.
 4.  Do not support update level of robot account, like from project level to system level.
+5.  Do not support system level operations with robot account.
 
 ## Personas and User Stories
 
@@ -37,16 +38,18 @@ Robot Account is a System Administrator and Project Administrator operation in H
 2.  As a system admin, I can edit a system level robot account to enhance/reduce the access scope.
 3.  As a system admin, I can edit a system level robot account to enhance/reduce the project scope.
 4.  As a system admin, I can extend the expiration data of a system level robot account.
-5.  As a system admin, I can view the token of a system level robot account and refresh the token.
+5.  As a system admin, I can view/edit the secret of a system level robot account and refresh the secret.
 6.  As a system/project admin, I can create a project level robot account with the selected access scope.
 7.  As a system/project admin, I can edit a project level robot account to enhance/reduce the access scope.
 8.  As a system/project admin, I can extend the expiration data of a project level robot account.
-9.  As a system/project admin, I can view the token of a project level robot account and refresh the token.
+9.  As a system/project admin, I can view/edit the secret of a project level robot account and refresh the secret.
+10. As a project admin, I can list all the robots that have the access of this project, include system and project level ones. 
+But only the project level robots can be edit.
 
 ## Main Points
 
 1.  Replace JWT token with the secret.
-2.  Store all things of robot into data base, expiration date, token and permissions.
+2.  Store all things of robot into data base, expiration date, secret and permissions.
 3.  Support both old and new robot mode authenticate.
 
 ## DB Scheme Change
@@ -67,14 +70,10 @@ CREATE TABLE robot (
   */
  project_id int,
  /*
-  token string used as the password of robot account.
+  secret string used as the password of robot account.
   For v2.2, it stores the secret.
   */
- token varchar(255),
- /*
-  permissions string used as the access scope.
-  */
- permissions varchar(1024),
+ secret varchar(2048),
  disabled boolean DEFAULT false NOT NULL,
  creation_time timestamp default CURRENT_TIMESTAMP,
  update_time timestamp default CURRENT_TIMESTAMP,
@@ -83,7 +82,53 @@ CREATE TABLE robot (
 
 ```
 
+```yaml
+
+CREATE TABLE role_permission (
+ id SERIAL PRIMARY KEY NOT NULL,
+ role_type varchar(255),
+ role_id int,
+ securable_id int,
+ /*
+  namespace 
+   system level: /system
+   project level: /project/{id}
+   all project: /project/*
+  */
+ namespace string,
+ creation_time timestamp default CURRENT_TIMESTAMP,
+ update_time timestamp default CURRENT_TIMESTAMP,
+ CONSTRAINT unique_role_permission UNIQUE (role_type, role_id, namespace, securable_id)
+)
+
+```
+
+To be discussed: 
+
+1. whether to insert all the paths in the migration.
+2. insert it when to create an permission.
+
+```yaml
+
+CREATE TABLE securable (
+ id SERIAL PRIMARY KEY NOT NULL,
+ resource varchar(255),
+ action varchar(255),
+ effect varchar(255),
+ creation_time timestamp default CURRENT_TIMESTAMP,
+ update_time timestamp default CURRENT_TIMESTAMP,
+ CONSTRAINT unique_securable UNIQUE (resource, action, effect)
+)
+
+```
+
 ## API
+
+Entries:
+
+1.  For system level:  api/v2.0/robots
+2.  For project level: api/v2.0/projects/{id}/robots
+
 
 * Create a project level robot account (v2.1 or previous), it will be reserved but not used in the v2.2 UI.
 ```
@@ -102,15 +147,15 @@ BODY         :
    "description":"robot account 2",
    "access":[
       {
-         "resource":"/project/1/repository",
+         "resource":"repository",
          "action":"push"
       },
       {
-         "resource":"/project/1/helm-chart",
+         "resource":"helm-chart",
          "action":"read"
       },
       {
-         "resource":"/project/1/helm-chart-version",
+         "resource":"helm-chart-version",
          "action":"create"
       }
    ]
@@ -118,7 +163,8 @@ BODY         :
 
 ```
 
-* Create a project level robot account (v2.2)
+* Create a system level robot account (with multiple projects)
+
 ```
 POST api/v2.0/robots
 
@@ -133,34 +179,34 @@ BODY         :
    "name":"robotaccount",
    "description":"robot account",
    "expires_at":-1,
-   "level": "project",
+   "level":"system",
    "permissions":[
-      {
-         "project_id":1,
-         "access":[
-            {
-               "Resource":"/project/1/repository",
-               "Action":"push",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/1/helm-chart",
-               "Action":"read",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/1/helm-chart-version",
-               "Action":"create",
-               "Effect":""
-            }
-         ]
-      }
-   ]
+        {
+            kind: "project", 
+            namespace: "library",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        },
+        {
+            kind: "project", 
+            namespace: "demo",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        }
+   ]    
 }
 
 ```
 
-* Create a system level robot account
+* Create a system level robot account (with all projects)
 
 ```
 POST api/v2.0/robots
@@ -176,44 +222,62 @@ BODY         :
    "name":"robotaccount",
    "description":"robot account",
    "expires_at":-1,
-   "level": "system",
+   "level":"system",
    "permissions":[
-      {
-         "project_id":1,
-         "access":[
-            {
-               "Resource":"/project/1/repository",
-               "Action":"push",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/1/helm-chart",
-               "Action":"read",
-               "Effect":""
-            }
-         ]
-      },
-      {
-         "project_id":2,
-         "access":[
-            {
-               "Resource":"/project/2/repository",
-               "Action":"push",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/2/helm-chart",
-               "Action":"read",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/2/helm-chart-version",
-               "Action":"create",
-               "Effect":""
-            }
-         ]
-      }
-   ]
+        {
+            kind: "project", 
+            namespace: "*",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        }
+   ]    
+}
+
+```
+
+* Create a system level robot account (with project and system access)
+
+```
+POST api/v2.0/robots
+
+STATUS       : 201 Accepted
+HEADERS      :
+   Connection: keep-alive
+   Content-Length: 0
+   X-Request-Id: 92e7d4be-0291-4c50-92bd-889d71e1ec78
+BODY         :
+
+{
+   "name":"robotaccount",
+   "description":"robot account",
+   "expires_at":-1,
+   "level":"system",
+   "permissions":[
+        {
+            kind: "project", 
+            namespace: "library",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        },
+        {
+            kind: "system", 
+            namespace: "/",
+            access: [
+                  {
+                     "resource":"users",
+                     "action":"create"
+                  }
+            ]
+        }
+   ]    
 }
 
 ```
@@ -231,30 +295,64 @@ HEADERS      :
 BODY         :
 
 {
-   "id": 2,
-   "name":"robotaccount",
-   "description":"robot account",
-   "project_id":1,
-   "disable":false,   
-   "expires_at":-1,
-   "level": "project",
    "permissions":[
-      {
-         "project_id":1,
-         "access":[
-            {
-               "Resource":"/project/1/repository",
-               "Action":"push",
-               "Effect":""
-            },
-            {
-               "Resource":"/project/1/helm-chart",
-               "Action":"read",
-               "Effect":""
-            }
-         ]
-      }
-   ]
+        {
+            kind: "project", 
+            namespace: "library",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        },
+        {
+            kind: "project", 
+            namespace: "demo",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        }
+   ]  
+}
+
+```
+
+* Update secret of a system level robot account (with a different secret)
+
+```
+PUT api/v2.0/robots/{id}
+
+STATUS       : 200 OK
+HEADERS      :
+   Connection: keep-alive
+   Content-Length: 0
+   X-Request-Id: 92e7d4be-0291-4c50-92bd-889d71e1ec78
+BODY         :
+
+{
+   "secret":"2bd889d71e1ec78"
+}
+
+```
+
+* Refresh secret of a robot account (with the secret of robot account)
+
+```
+PUT api/v2.0/robots/{id}
+
+STATUS       : 200 OK
+HEADERS      :
+   Connection: keep-alive
+   Content-Length: 0
+   X-Request-Id: 92e7d4be-0291-4c50-92bd-889d71e1ec78
+BODY         :
+
+{
+   "secret":"2bd889d71e1ec78"
 }
 
 ```
@@ -262,36 +360,21 @@ BODY         :
 * Get all system level robot accounts
 
 ```
-GET api/v2.0/robots?level=system
+GET api/v2.0/robots
 ```
 
 * Get all robot accounts of a specific project
 
 ```
-GET api/v2.0/robots?level=project&project_id=1
+GET api/v2.0/projects/{id}/robots
 ```
 
 For the old mode robot account, the permissions and expiration date are not editable.
 
 ![robot_control](../images/robot-account-2/robot_ctr.png)
 
-* Refresh token of a robot account.
 
-```
-POST api/v2.0/robots/{id}/refresh
-
-STATUS       : 201 Accepted
-HEADERS      :
-   Connection: keep-alive
-   Content-Length: 0
-   X-Request-Id: 92e7d4be-0291-4c50-92bd-889d71e1ec78
-BODY         :
-
-{}
-
-```
-
-## Auth
+## Authentication flow
 
 Add a robot2 authenticator after robot. For the multiple projects handling on robot2, just merge all accesses into one security context.
 
@@ -311,6 +394,8 @@ Tow options:
 1.  Reserve the prefix, but with another different character, like "@", "+" or ":", these are not need to be escaped in shell script.
 2.  Remove the prefix (robot$), and set the password of robot as all lower case, as harbor cannot set all lower case as the password of user.
 
+Choose the option 1, but gives the ability that use can configurate it.
+
 ## Mock up UI
 
 The UI of creating a system level robot
@@ -320,8 +405,8 @@ The UI of creating a system level robot
 ### To Be Discussed 
 
 * The pre-defined access scope for robot creation, no Spec so far.
-* Whether to provide Kubernetes pull secret for the robot account.
-* Whether to provide Docker credentials config for the robot account.
+* (P1)Whether to provide Kubernetes pull secret for the robot account.
+* (P1)Whether to provide Docker credentials config for the robot account.
 
 
 
