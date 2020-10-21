@@ -15,6 +15,7 @@ Currently, we have the following members:
 - Canfeng Wang @Netease ([wangcanfengxs](https://github.com/wangcanfengxs))
 - ZiMing Zhang @VMware ([bitsf](https://github.com/bitsf))
 - Weiwei He @VMware ([heww](https://github.com/heww))
+- Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
 - =============================================
 - [M]Fanjian Kong @Qihoo360 ([kofj](https://github.com/kofj))
 - [M]Wenkai Yin @VMware ([ywk253100](https://github.com/ywk253100))
@@ -37,17 +38,17 @@ Notes: [M] means the member is also harbor maintainer.
 - Steven Zou @VMware ([steven-zou](https://github.com/steven-zou))
 - Pierre @OVH ([holyhope](https://github.com/holyhope))
 
-## Harbor core operator contributors
+## Operator contributors
 
 - Pierre @OVH ([holyhope](https://github.com/holyhope))
 - Jeremie @OVH ([jMonsinjon](https://github.com/jMonsinjon))
 - Maxie @OVH ([mhurtrel](https://github.com/mhurtrel))
-
-## Harbor cluster operator contributors
-
 - Herman Zhu @Yunmanman ([Ghostbaby](https://github.com/Ghostbaby))
 - Xiaoyang Zhu @QingCloud ([soulseen](https://github.com/soulseen))
 - Canfeng Wang @Netease ([wangcanfengxs](https://github.com/wangcanfengxs))
+- ZiMing Zhang @VMware ([bitsf](https://github.com/bitsf))
+- Weiwei He @VMware ([heww](https://github.com/heww))
+- Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
 
 ## Demos
 
@@ -57,6 +58,8 @@ Notes: [M] means the member is also harbor maintainer.
 
 | Topic | Datetime | Meeting minutes | Recording |
 |-------|----------|-----------------|-----------|
+|operator CHN team weekly sync| 2020/10/20 | [Minutes](https://docs.google.com/document/d/1LKrhPP6gdODlF7fW5DB_Pqc0D7vCieHXE4JM3fyOGVk/edit?usp=sharing) | - |
+|harbor cluster operaotr|2020/10/15| [Minutes](https://docs.google.com/document/d/1n5_L0c4Maw2f-FzYUyAnYhQWsRuDZbS3xDgIUJD_iok/edit?usp=sharing) | - |
 |harbor cluster operator|2020/09/24| [Minutes](https://docs.google.com/document/d/1SinlgC6DZFHvZQvd0TJz46CdAjHiGbNxeznZSrnU-tI/edit?usp=sharing) | - |
 |harbor cluster operator|2020/09/17| [Minutes](https://docs.google.com/document/d/17BlZeG-GkWMGuYGOL84gNiD1SdkjDQC0ZBjK2G_UEng/edit?usp=sharing) | - |
 |harbor cluster operator|2020/09/10| [Minutes](https://docs.google.com/document/d/1TrkoLpzlLZ45vyfn8oZpd2LzermXRaTQP5wLAZrnf8E/edit?usp=sharing) | - |
