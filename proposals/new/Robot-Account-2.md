@@ -43,8 +43,6 @@ Robot Account is a System Administrator and Project Administrator operation in H
 7.  As a system/project admin, I can edit a project level robot account to enhance/reduce the access scope.
 8.  As a system/project admin, I can extend the expiration data of a project level robot account.
 9.  As a system/project admin, I can view/edit the secret of a project level robot account and refresh the secret.
-10. As a project admin, I can list all the robots that have the access of this project, include system and project level ones. 
-But only the project level robots can be edit.
 
 ## Main Points
 
@@ -88,36 +86,31 @@ CREATE TABLE role_permission (
  id SERIAL PRIMARY KEY NOT NULL,
  role_type varchar(255),
  role_id int,
- securable_id int,
- /*
-  namespace 
-   system level: /system
-   project level: /project/{id}
-   all project: /project/*
-  */
- namespace string,
+ rbac_policy_id int,
  creation_time timestamp default CURRENT_TIMESTAMP,
  update_time timestamp default CURRENT_TIMESTAMP,
- CONSTRAINT unique_role_permission UNIQUE (role_type, role_id, namespace, securable_id)
+ CONSTRAINT unique_role_permission UNIQUE (role_type, role_id, rbac_policy_id)
 )
 
 ```
 
-To be discussed: 
-
-1. whether to insert all the paths in the migration.
-2. insert it when to create an permission.
-
 ```yaml
 
-CREATE TABLE securable (
+CREATE TABLE rbac_policy (
  id SERIAL PRIMARY KEY NOT NULL,
+ /*
+  scope 
+   system level: /system
+   project level: /project/{id}
+   all project: /project/*
+  */
+ scope string,
  resource varchar(255),
  action varchar(255),
  effect varchar(255),
  creation_time timestamp default CURRENT_TIMESTAMP,
  update_time timestamp default CURRENT_TIMESTAMP,
- CONSTRAINT unique_securable UNIQUE (resource, action, effect)
+ CONSTRAINT unique_securable UNIQUE (scope, resource, action, effect)
 )
 
 ```
@@ -126,8 +119,8 @@ CREATE TABLE securable (
 
 Entries:
 
-1.  For system level:  api/v2.0/robots
-2.  For project level: api/v2.0/projects/{id}/robots
+1.  For system level:  api/v2.0/robots (for 2.2+)
+2.  For project level: api/v2.0/projects/{id}/robots (only reserve for the backward compatible)
 
 
 * Create a project level robot account (v2.1 or previous), it will be reserved but not used in the v2.2 UI.
@@ -295,6 +288,13 @@ HEADERS      :
 BODY         :
 
 {
+   "id": 2,
+   "name":"robotaccount",
+   "description":"robot account",
+   "project_id":1,
+   "disable":false,   
+   "expires_at":-1,
+   "level": "project",
    "permissions":[
         {
             kind: "project", 
@@ -321,7 +321,8 @@ BODY         :
 
 ```
 
-* Update secret of a system level robot account (with a different secret)
+* Update secret of a system level robot account (with a different secret), to refresh the secret, the secret in body
+must match the one in DB.
 
 ```
 PUT api/v2.0/robots/{id}
@@ -334,25 +335,36 @@ HEADERS      :
 BODY         :
 
 {
-   "secret":"2bd889d71e1ec78"
-}
-
-```
-
-* Refresh secret of a robot account (with the secret of robot account)
-
-```
-PUT api/v2.0/robots/{id}
-
-STATUS       : 200 OK
-HEADERS      :
-   Connection: keep-alive
-   Content-Length: 0
-   X-Request-Id: 92e7d4be-0291-4c50-92bd-889d71e1ec78
-BODY         :
-
-{
-   "secret":"2bd889d71e1ec78"
+   "id": 2,
+   "name":"robotaccount",
+   "description":"robot account",
+   "project_id":1,
+   "disable":false,   
+   "expires_at":-1,
+   "level": "project",
+   "secret":"2bd889d71e1ec78",
+   "permissions":[
+        {
+            kind: "project", 
+            namespace: "library",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        },
+        {
+            kind: "project", 
+            namespace: "demo",
+            access: [
+                  {
+                     "resource":"repository",
+                     "action":"push"
+                  }
+            ]
+        }
+   ]
 }
 
 ```
@@ -366,7 +378,7 @@ GET api/v2.0/robots
 * Get all robot accounts of a specific project
 
 ```
-GET api/v2.0/projects/{id}/robots
+GET GET api/v2.0/robots?level=project&project_id=1
 ```
 
 For the old mode robot account, the permissions and expiration date are not editable.
@@ -394,7 +406,7 @@ Tow options:
 1.  Reserve the prefix, but with another different character, like "@", "+" or ":", these are not need to be escaped in shell script.
 2.  Remove the prefix (robot$), and set the password of robot as all lower case, as harbor cannot set all lower case as the password of user.
 
-Choose the option 1, but gives the ability that use can configurate it.
+Choose the option 1, but gives the ability that use can configurate it, do not save prefix in the DB, but the docker login must with the prefix.
 
 ## Mock up UI
 
@@ -408,5 +420,11 @@ The UI of creating a system level robot
 * (P1)Whether to provide Kubernetes pull secret for the robot account.
 * (P1)Whether to provide Docker credentials config for the robot account.
 
+## Security Concern
+
+* As the robot accounts in different projects may have same name and password, from the current RBAC model, after docker login with the conflict robot, 
+Harbor will grant the robot with all the projects(has the robot) access.
+
+* If let the project admin can list the system level robots that has the access of the current project,  it needs the project admin can access system resource.
 
 
