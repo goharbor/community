@@ -56,6 +56,14 @@ Notes: [M] means the member is also harbor maintainer.
 
 ## Meetings
 
+### Minutes
+
+Check [meeting minutes](https://docs.google.com/document/d/1d5tRtt7-NABdbk4pbLuK0rr7ZHUCKtYxiDCMSHlhfZE/edit?usp=sharing) on google doc.
+
+### Archived Minutes
+
+Meeting minutes before 2020/10/20.
+
 | Topic | Datetime | Meeting minutes | Recording |
 |-------|----------|-----------------|-----------|
 |operator CHN team weekly sync| 2020/10/20 | [Minutes](https://docs.google.com/document/d/1LKrhPP6gdODlF7fW5DB_Pqc0D7vCieHXE4JM3fyOGVk/edit?usp=sharing) | - |
