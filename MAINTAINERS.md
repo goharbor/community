@@ -7,7 +7,6 @@ describes governance guidelines and maintainer responsibilities.
 
 | Maintainer | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
-| De Chen | [cd1989](https://github.com/cd1989) | [Tencent](https://github.com/Tencent) |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
 | Fanjian Kong | [kofj](https://github.com/kofj) | [Tencent](https://github.com/Tencent) |
 | Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
