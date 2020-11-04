@@ -1,6 +1,6 @@
 # Community Meeting Schedule
 
-We have two recurring Harbor community meetings. One bi-weekly meeting will cater to the Asia and European members `9pm UTC+8 Timezone`, and a second meeting every four weeks will cater to Americas members `1pm Pacific Timezone`. We will use these meetings to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meetings to your calendar.
+We have one bi-weekly recurring Harbor community meeting, at `9pm UTC+8 Timezone`. We use this meeting to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meeting to your calendar.
 
 **Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
