@@ -58,11 +58,14 @@ Notes: [M] means the member is also harbor maintainer.
 
 ### Minutes
 
-Check [meeting minutes](https://docs.google.com/document/d/1d5tRtt7-NABdbk4pbLuK0rr7ZHUCKtYxiDCMSHlhfZE/edit?usp=sharing) on google doc.
+Check [meeting minutes](https://docs.google.com/document/d/1nh5kWmRA5dFW1Wdf2RaVhMT3cbCxytVtiIynlN6l_5c/edit?usp=sharing) on google doc.
+
 
 ### Archived Minutes
 
-Meeting minutes before 2020/10/20.
+2020 meeting minutes after 2020/10/20: [Notes](https://docs.google.com/document/d/1d5tRtt7-NABdbk4pbLuK0rr7ZHUCKtYxiDCMSHlhfZE/edit?usp=sharing)
+
+2020 meeting minutes before 2020/10/20.
 
 | Topic | Datetime | Meeting minutes | Recording |
 |-------|----------|-----------------|-----------|
