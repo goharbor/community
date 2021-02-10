@@ -1,14 +1,19 @@
 # Community Meeting Schedule
 
-We have one bi-weekly recurring Harbor community meeting, at `9pm UTC+8 Timezone`. We use this meeting to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meeting to your calendar.
+We have one bi-weekly recurring Harbor maintainers community meeting, at `9pm UTC+8 Timezone`. We use this meeting to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meeting to your calendar.
 
-**Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
+**Harbor Maintainers Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
 **Meeting Agenda**: Read, comment, or add agenda items on the [meeting notes](https://github.com/goharbor/community/wiki/Harbor-Community-Meetings)
 
 **Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 
 **Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
+
+
+**Office Hours**: Come join us for Harbor Office Hours every 2nd Wednesday at 1pm ET / 10am PT. The Harbor Office Hours is a place where you can ask questions like "how does Harbor work?", "how do I do this in Harbor?", and "how do I get started contributing to Harbor?”.
+
+**Office Hours Zoom**: [https://zoom.us/j/98160556477?pwd=ZzhUa3VteFJQK2VXbWJxMHRQY0JmUT09](https://zoom.us/j/98160556477?pwd=ZzhUa3VteFJQK2VXbWJxMHRQY0JmUT09)
 
 **Harbor YouTube Channel**: [Project Harbor on YouTube](https://www.youtube.com/channel/UCSxaozHKrX3F0UnZeYe5Itg)
 
