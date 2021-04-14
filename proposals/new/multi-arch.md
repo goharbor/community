@@ -44,17 +44,9 @@ Provides the ability to compile binary and image of a specific architecture base
 
 1. Increase the environment variable ARCH, the default is amd64, which can be overwritten during execution
 
-2. When executing make compile to generate binary, it can generate binary of different architectures according to the environment variable ARCH, and place the generated binary in a directory named after the architecture, such as /make/photon/core/binary/amd64/core
+2. When executing make compile to generate binary, it can generate binary of different architectures according to the environment variable ARCH
 
-3. When the COPY instruction is executed in the Dockerfile, the binary address can be obtained according to the ARCH variable name, which can be /make/photon/core/binary/amd64/core
-
-4. Use docker buildx instead of docker build to build all the images, and determine the target architecture according to the specified parameter ARCH
-
-5. Determine the generated version name according to the environment variable ARCH name, if it is not amd64, we need to add the architecture name after the generated version number. For example v2.0.1-arm64
-
-6. Add [Docker Buildx Action](https://github.com/marketplace/actions/docker-buildx) to the github aciton workflow to build a multi-architecture image.
-
-7. Add a file named adapter.sh, the content of the file is empty. Before executing the compile and build commands, please call adapter.sh scripts. This shell script file can be overwritten by downstream users, and downstream users can write their own modifications in this file, such as overriding the addresses of third-party dependencies or replacing Dockerfile.
+3. Add a file named adapter.sh, the content of the file is empty. Before executing  compile and build commands, please call adapter.sh scripts. This shell script file can be overwritten by downstream users, and downstream users can write their own modifications in this file, such as overriding the addresses of third-party dependencies or replacing Dockerfile.
 
 ### Downstream changes 
 
@@ -70,7 +62,9 @@ Maintain the build and test of an architecture images
 
 3. Add a Makefile (which can be called when performing github actions) to achieve such as overwriting adapter.sh or other functions
 
-4. Add github action files to maintain the build and test in them. The content of the github action should be modified based on the upstream github action, but it should be kept in sync at all times
+4. Add Dockerfile if necessary
+
+5. Add github action files to maintain the build and test in them. The content of the github action should be modified based on the upstream github action, but it should be kept in sync at all times
 
 ### Test
 
@@ -78,7 +72,7 @@ We want to use the upstream test method to test, use docker-compose to deploy Ha
 
 However, there are currently the following issues that need to be resolved
 
-1. During testing, docker-compose will be used to deploy Harbor and test, but it seems that docker-compose [only provides x86 binary files](https://github.com/docker/compose/releases), and we need to compile other versions by ourselves.
+1. During testing, docker-compose will be used to deploy Harbor and test, but it seems that docker-compose [only provides x86 binary files](https://github.com/docker/compose/releases), and we need to compile other versions by ourselves. We can try to install docker-compose with pip
 
 2. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
 
@@ -122,3 +116,8 @@ Readme.md or release notes needs to be updated in different branches to inform t
 ## Notify Users
 
 We provide repository addresses that support other architectures in goharbor/harbor release notes. Users can directly find repository addresses of different architectures according to the link.
+
+
+## Block Item
+
+1. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
