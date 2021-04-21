@@ -18,6 +18,8 @@ The purpose of this working group is to enable Harbor to support multiple archit
 
 - ZhiPeng Yu @Alauda ([yuzp1996](https://github.com/yuzp1996))
 
+- Bo Zhu @Alauda ([Jeremy-boo](https://github.com/Jeremy-boo))
+
 - WenLong Zhang@Loongson ([zhangwenlong8911](https://github.com/zhangwenlong8911))
 
 - JingYun Hua@Loongson ([huajingyun01](https://github.com/huajingyun01))

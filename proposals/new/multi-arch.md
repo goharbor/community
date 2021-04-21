@@ -42,9 +42,9 @@ Provides the ability to compile binary and image of a specific architecture base
 
 #### Changes
 
-1. Increase the environment variable ARCH, the default is amd64, which can be overwritten during execution
+1. Increase the environment variable GOARCH, the default is amd64, which can be overwritten during execution
 
-2. When executing make compile to generate binary, it can generate binary of different architectures according to the environment variable ARCH
+2. When executing make compile to generate binary, it can generate binary of different architectures according to the environment variable GOARCH
 
 3. Add a file named adapter.sh, the content of the file is empty. Before executing  compile and build commands, please call adapter.sh scripts. This shell script file can be overwritten by downstream users, and downstream users can write their own modifications in this file, such as overriding the addresses of third-party dependencies or replacing Dockerfile.
 
