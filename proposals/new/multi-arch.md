@@ -1,74 +1,116 @@
-# Proposal: `Multi Arch Support`
+# Proposal: `Harbor Build Supports Multiple Architectures`
 
-Author: `Zhipeng Yu / yuzp1996`
+Author: `Zhipeng Yu / yuzp1996` and `bo zhu / Jeremy-boo`
 
 Discussion: `none`
 
 ## Background
 
-More and more companies need to support multi-architecture solutions, some of the more mainstream x86 and arm64 architectures, this proposal is to provide a solution to produce multi-architecture images
+At present, more and more companies need harbor to support multi-architecture construction. Some of the more mainstream ones are x86 and arm64 architectures. This proposal is to provide a solution for generating multi-architecture mirroring.
 
 ## Plan
 
-When the release 2.3 of Harbor is released, the arm64 Harbor can be issued at the same time
+When Habor releases version 2.3, support for arm64 Harbor image construction can be released at the same time
 
-Release 2.3 of Harbor is tentatively scheduled to be released in mid-June 2021
+Harbor version 2.3 is tentatively scheduled to be released in mid-June 2021, so we must complete the development and testing of Harbor's multi-architecture construction before the end of May.
 
-## Target
+## Architecture Maturity Model
 
-### Short Term Target
+In order to provider a **short-term** and **long-term** process to introduce and iterate a new architecture into Harbor ecosystem a maturity model is proposed below
 
-We can provide support for different architectures in a different Harbor sub-projects. 
+### Overview
 
-For example, in the harbor-arm repo, we can maintain the build logic and other related information for arm64 images
+#### Glossary
 
-### Long Term Target
+Upstream: github repository go-harbor/harbor
 
-When the harbor is released, images of different architectures can be directly generated and push to registry. When deploying harbor, users do not need to distinguish the difference in architecture
+Downstream: github repository like harbor-arm harbor-loongson and so on.
 
-## Implementation
+Short-term: We can provide support for different architectures in different Harbor sub-projects.
+For example, in harbor-arm, we can maintain the construction logic of arm64 mirroring and other related information
 
-### Glossary
+Long-term: Harbor-arm keeps the synchronization update with goharbor/harbor. When goharbor/harbor updates a version, harbor-arm follows the update and then pushes the mirror image to the mirror warehouse to provide users with multi-architecture support.
 
-Upstream: github repository goharbor/harbor
+#### Jobs For Upstream
 
-Downstream: github repository like harbor-arm harbor-loongson and so on
+1. Increase the environment variable GOARCH, the default is amd64, which can be overridden by specifying a specific value during execution, like arm64 and so on.
 
-### Upstream changes
+2. When executing make compile to generate binary files, it can generate binary files of different architectures according to the environment variable GOARCH
 
-#### Goal
+3. Upstream version update and downstream synchronization issues.
 
-Provides the ability to compile binary and image of a specific architecture based on environment variable parameters. (In the initial stage, the upstream only guarantees that the image of the amd64 architecture can be successfully built, and other versions are guaranteed by the corresponding downstream repository)
+   Scheme selection:
 
-#### Changes
+    1. Change the upstream github action workflow and add an action: After the upstream master branch merges with pr, a message is sent to notify the downstream that a build update needs to be performed.
 
-1. Increase the environment variable GOARCH, the default is amd64, which can be overwritten during execution
+    2. The downstream actively pulls the version through timed tasks, and judges whether it needs to be built and updated by comparing with its own version (currently the downstream adopts this kind of plan to update and build).
 
-2. When executing make compile to generate binary, it can generate binary of different architectures according to the environment variable GOARCH
+#### Jobs For Downstream
 
-3. Add a file named adapter.sh, the content of the file is empty. Before executing  compile and build commands, please call adapter.sh scripts. This shell script file can be overwritten by downstream users, and downstream users can write their own modifications in this file, such as overriding the addresses of third-party dependencies or replacing Dockerfile.
+1. Add a github action, responsible for building and testing related matters (in theory, it is consistent with the upstream github action process, just modify specific environment variables and dependent parameters, such as building an arm64 image through docker buildx).
 
-### Downstream changes 
+2. Add a file named adapter.sh, which is mainly responsible for covering the basic parameters and dependency related matters that need to build a multi-arch mirroring.
 
-#### Goal
-
-Maintain the build and test of an architecture images
-
-#### Change
-
-1. Introduce the harbor repository into the downstream repository through git Submodules
-
-2. Add a file named adapter.sh, responsible for making changes to areas that cannot be covered by upstream changes
-
-3. Add a Makefile (which can be called when performing github actions) to achieve such as overwriting adapter.sh or other functions
+3. Add a Makefile (which can be called when performing github actions) to achieve, such as overwriting adapter.sh or other functions.
 
 4. Add Dockerfile if necessary
 
-5. Add github action files to maintain the build and test in them. The content of the github action should be modified based on the upstream github action, but it should be kept in sync at all times
+#### Risk
+Upstream modifications may affect downstream construction
+
+1. Upstream changed the Dockerfile.
+
+2. Upstream changed the build dependency package.
+
+3. There are other situations...
+
+### Dev
+
+#### Requisites
+The new architecture uses a dedicated repository to maintain all the necessary files and scripts to build Harbor in its target architecture.
+
+It should be able to build Harbor's master branch and push the resulting docker images to Harbor's org in `DockerHub` using the target architecture as suffix: `goharbor/harbor-core-arm64`
+
+#### Suggested Implementation
+
+**Repository structure:**
+
+- `Makefile`: Maintain its own list of commands to be used during the build process
+
+- `.github`: Maintain project workflow
+
+- `make`: Maintain scripts required for the project construction phase
+
+- `src`: Pull goharbor/harbor's master branch code logic, if necessary
+
+- `VERSION`: harbor-arm version number
+
+- `README.md`: harbor-arm readme
+
+- `CHANGELOG.md`: harbor-arm changelog
+
+
+**Block Item:**
+- 1. confirm harbor-arm image address.
+
+- 2. goharbor/harbor Developer guide.
+
+- 3. Harbor upgrade and pg compatibility issues.
+
+- 4. Can it be merged into the master branch in version 2.3? About goharbor/harbor increase the GOARCH parameter to support multi-architecture mirror construction pr.
+
+- 5. Harbor upgrade pg incompatibility problem.
+
 
 ### Test
 
-We want to use the upstream test method to test, use docker-compose to deploy Harbor and then use the shell script to execute the test
+#### Requisites
+
+It is necessary to develop an arm image test plan and an arm architecture test machine to determine whether the built harbor-arm image can run normally on the arm machine.
+
+#### Suggested Implementation
+
+We hope to be able to use the goharbor/harbor official test plan for test verification, provided that the official can provide a multi-architecture unified test plan.
 
 However, there are currently the following issues that need to be resolved
 
@@ -76,17 +118,42 @@ However, there are currently the following issues that need to be resolved
 
 2. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
 
+**Block Item:**
+- 1. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
 
-### Image strategy
+- 2. Can harbor officials provide official test solutions and support different architecture modes?
 
-#### Repository
+- 3. arm test machine problem.
 
-The image will be hosted under the goharbor project of Docker Hub
 
-#### Tag
+### Alpha release
 
-Add the architecture name after the generated image version. For example： goharbor/harbor-core:v2.2.1-arm64
+#### Requisites
 
+Requires upstream goharbor/harbor to support GOARCH parameters to build harbor binary files and downstream harbor-arm to replace GOARCH parameters to build harbor-arm images and push them to Harbor's org in `DockerHub`.
+
+#### Suggested Implementation
+
+- 1. harbor-arm repo executes local build tasks regularly, pulls goharbor/harbor's master branch code, if there is an update, executes local build logic to update the image version.
+
+
+- 2. After the successful build, the harbor-arm repo will update the documents such as `changelog.md` and `readme.md`.
+
+
+
+### Beta release
+
+#### Requisites
+
+After the harbor-arm architecture image has been running stably for a period of time (for example, 2 months), the harbor-arm can consider upgrading the image to the beta version based on the modified version
+
+#### Suggested Implementation
+
+...
+
+### Ultimate goal
+
+The harbor-arm sub-project is accompanied by the iteration of the goharbor/harbor, and finally hopes to be able to support the support of harbor multi-architecture image in the goharbor/harbor project, thus discarding the harbor-arm sub-project.
 
 ### Related Implementation
 
@@ -94,8 +161,7 @@ There are already some PRs and repository that have implemented this function, w
 
 Changes provided by this [PR](https://github.com/goharbor/harbor/pull/13788) can build amd64 and arm64 image simultaneously
 
-This repository  https://github.com/querycap/harbor have created arm64 and amd64 image successfully 
-
+This repository  https://github.com/querycap/harbor have created arm64 and amd64 image successfully
 
 
 ## Development Iteration
@@ -105,19 +171,7 @@ After several iterations, we need to ensure that the content in adapter.sh and g
 After the adapter.sh and github actions files of the downstream code disappear, we can no longer maintain the downstream repository.
 
 
-
-## Release
-
-When the goharbor/harbor is released, check out the same release branch under the downstream repository, and check the corresponding commit in git Submodules, execute the pipeline to generate the corresponding image and push it to the docker hub
-
-Readme.md or release notes needs to be updated in different branches to inform the images related information, such as location and corresponding tags
-
-
 ## Notify Users
 
 We provide repository addresses that support other architectures in goharbor/harbor release notes. Users can directly find repository addresses of different architectures according to the link.
 
-
-## Block Item
-
-1. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
