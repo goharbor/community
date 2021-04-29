@@ -20,6 +20,13 @@ In order to provider a **short-term** and **long-term** process to introduce and
 
 ### Overview
 
+| **Level** | **Description** | **Goals** | **Challenges** |
+| :----: | :----: | :----: | :-----: |
+| Dev | Introduce a new architecture into the ecosystem as independent repo and images	 | - Build the upstream's master branch code <br> - Introduce development practices	| - Build platform and code  <br> - Upstream changes trigger downstream build |
+| Test | Uses Harbor's standard testing procedures to test the new architectures version	 | - Validate the new architecture's artifacts making sure it conforms to Harbor's standard test suite <br> - Ensure upstream master code have at least a daily build and test	|  - Infrastructure to deploy and run tests |
+| Release | - Infrastructure to deploy and run tests | - Make sure release candidates and other release builds on upstream can execute successfully on downstream <br> - Run release tests in the new architecture	|- Sync with Harbor release timing|
+
+
 #### Glossary
 
 Upstream: github repository go-harbor/harbor
@@ -30,6 +37,31 @@ Short-term: We can provide support for different architectures in different Harb
 For example, in harbor-arm, we can maintain the construction logic of arm64 mirroring and other related information
 
 Long-term: Harbor-arm keeps the synchronization update with goharbor/harbor. When goharbor/harbor updates a version, harbor-arm follows the update and then pushes the mirror image to the mirror warehouse to provide users with multi-architecture support.
+
+
+
+#### Risk
+
+Upstream modifications may affect downstream construction
+
+1. Upstream changed the Dockerfile.
+
+2. Upstream changed the build dependency package.
+
+3. Changes in architecture: Removing or adding new components?
+
+4. Any compatibility braking changes
+
+5. other situations
+
+### Dev
+
+#### Requisites
+The new architecture uses a dedicated repository to maintain all the necessary files and scripts to build Harbor in its target architecture.
+
+It should be able to build Harbor's master branch and push the resulting docker images to Harbor's org in `DockerHub` using the target architecture as suffix: `goharbor/harbor-core-arm64`
+
+#### Suggested Implementation
 
 #### Jobs For Upstream
 
@@ -55,24 +87,6 @@ Long-term: Harbor-arm keeps the synchronization update with goharbor/harbor. Whe
 
 4. Add Dockerfile if necessary
 
-#### Risk
-Upstream modifications may affect downstream construction
-
-1. Upstream changed the Dockerfile.
-
-2. Upstream changed the build dependency package.
-
-3. There are other situations...
-
-### Dev
-
-#### Requisites
-The new architecture uses a dedicated repository to maintain all the necessary files and scripts to build Harbor in its target architecture.
-
-It should be able to build Harbor's master branch and push the resulting docker images to Harbor's org in `DockerHub` using the target architecture as suffix: `goharbor/harbor-core-arm64`
-
-#### Suggested Implementation
-
 **Repository structure:**
 
 - `Makefile`: Maintain its own list of commands to be used during the build process
@@ -89,24 +103,31 @@ It should be able to build Harbor's master branch and push the resulting docker 
 
 - `CHANGELOG.md`: harbor-arm changelog
 
+**Harbor-SubProject Image Tag:**
 
-**Block Item:**
-- 1. confirm harbor-arm image address.
+The harbor sub-project will use the same Harbor's org address as goharbor/harbor, and distinguish them by different tags
 
-- 2. goharbor/harbor Developer guide.
+like harbor-arm: `goharbor/harbor-core:v2.1.3-arm`
 
-- 3. Harbor upgrade and pg compatibility issues.
+tips: Wang Yan will provide credentials inside Goharbor's DockerHub org
 
-- 4. Can it be merged into the master branch in version 2.3? About goharbor/harbor increase the GOARCH parameter to support multi-architecture mirror construction pr.
 
-- 5. Harbor upgrade pg incompatibility problem.
+**Dev possible blocking Item:**
+
+- 1. Harbor components compatibility issues. Postgres database compatbiility when changing version making an upgrade rollout impossible.
+
+- 2. Build process for new architecture.
+
+- 3. Possible necessary upstream Makefile changes.
 
 
 ### Test
 
 #### Requisites
 
-It is necessary to develop an arm image test plan and an arm architecture test machine to determine whether the built harbor-arm image can run normally on the arm machine.
+1. Harbor standard conformance testing in the new architecture.
+
+2. Different harbor images need to provide machine support of different architectures.
 
 #### Suggested Implementation
 
@@ -118,42 +139,33 @@ However, there are currently the following issues that need to be resolved
 
 2. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
 
-**Block Item:**
+**Test possible blocking items:**
 - 1. Images of different architectures may not be able to run using the runner provided by github action. [Self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) should be used to ensure that images of different architectures can run tests.
 
-- 2. Can harbor officials provide official test solutions and support different architecture modes?
+- 2. Test machine problem.
 
-- 3. arm test machine problem.
-
-
-### Alpha release
-
-#### Requisites
-
-Requires upstream goharbor/harbor to support GOARCH parameters to build harbor binary files and downstream harbor-arm to replace GOARCH parameters to build harbor-arm images and push them to Harbor's org in `DockerHub`.
-
-#### Suggested Implementation
-
-- 1. harbor-arm repo executes local build tasks regularly, pulls goharbor/harbor's master branch code, if there is an update, executes local build logic to update the image version.
+- 3. Executing deployment and testing automatically either daily or with each upstream master commit
 
 
-- 2. After the successful build, the harbor-arm repo will update the documents such as `changelog.md` and `readme.md`.
-
-
-
-### Beta release
+### Release
 
 #### Requisites
 
-After the harbor-arm architecture image has been running stably for a period of time (for example, 2 months), the harbor-arm can consider upgrading the image to the beta version based on the modified version
+Requires upstream goharbor/harbor to support GOARCH parameters to build harbor binary files and downstream harbor-multi sub-project to replace GOARCH parameters to build harbor-multi-Architecture images and push them to Harbor's org in `DockerHub`.
 
 #### Suggested Implementation
 
-...
+- 1. harbor-multi sub-project repo executes local build tasks regularly, pulls goharbor/harbor's master branch code, if there is an update, executes local build logic to update the image version.
+
+
+- 2. After the successful build, the harbor sub-project repo will update the documents such as `changelog.md` and `readme.md`.
+
+- 3.  Sync with Harbor release timing.
+
 
 ### Ultimate goal
 
-The harbor-arm sub-project is accompanied by the iteration of the goharbor/harbor, and finally hopes to be able to support the support of harbor multi-architecture image in the goharbor/harbor project, thus discarding the harbor-arm sub-project.
+The harbor-multi sub-project is accompanied by the iteration of the goharbor/harbor, and finally hopes to be able to support the support of harbor multi-architecture image in the goharbor/harbor project, thus discarding the harbor-multi sub-project.
 
 ### Related Implementation
 
