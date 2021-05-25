@@ -1,19 +1,33 @@
 # Community Meeting Schedule
 
-We have two recurring bi-weekly Harbor community conference calls. One meeting will cater to the Asia members `9pm UTC+8 Timezone`, and a second meeting will cater to Europe and Americas members `1pm Pacific Timezone`. We will use these meetings to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meetings to your calendar.
+We have one bi-weekly recurring Harbor community meeting, at `9pm UTC+8 Timezone`. We use this meeting to communicate updates to the project, listen to feedback from the Harbor community, and also collect requirements/use cases for new features. Sometimes, we may also host adhoc meetings with a specific agenda. Use the calendar link below to add the recurring meeting to your calendar.
 
 **Meeting Link**: [https://zoom.us/j/734959521](https://zoom.us/j/734959521)
 
+**Meeting Agenda**: Read, comment, or add agenda items on the [meeting notes](https://github.com/goharbor/community/wiki/Harbor-Community-Meetings)
+
 **Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 
-**Meeting Slides**: [Conf Call Slides](/conf-calls)
+**Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
+
+**Harbor YouTube Channel**: [Project Harbor on YouTube](https://www.youtube.com/channel/UCSxaozHKrX3F0UnZeYe5Itg)
+
+**************************************************************************************************************************************
+## OLD CONTENT NO LONGER UPDATED BUT KEPT FOR HISTORICAL REFERENCE
+The old community meeting slides are located [here](/conf-calls) for historical reasons.
 
 |      Scheduled Time    |   Speakers   |  Attendees   |     Conf Recording   |                 Main Topic              |  Followup  |
 |------------------------|--------------|--------------|----------------------|-----------------------------------------|-----------|
+| 2019/09/25 |  @stevenr || [Recording] | community update, Harbor security process udpate, 1.10 feature demo - pluggable scanner, talk by Josh Dolitsky about "From ChartMuseum to Harbor" ||
+| 2019/08/28 |  @xaleeks || [Recording](https://zoom.us/recording/share/pG6Xyc2TyEZqmytWKRkjC2fnX9EHcuSkZU5OQplvhwmwIumekTziMw?startTime=1566996466000)  | community update (Gitlab, Datadog), 1.9 release update, 1.10 release feature preview, Demo by Martin Juhl of Aperta ||
+| 2019/08/14 |  @bitsf || [China Recording](https://zoom.us/recording/share/w6UhpfQ5BwFNqAmsWfK_0PFd_8I8jxB7LZjN0y8aMWKwIumekTziMw)  | upcoming community events, 1.9 planning, tag retention, quota per project, User case sharing from SongGe, User case share from Maxime  ||
+| 2019/07/31 |  @heww || [China Recording](https://zoom.us/recording/share/WdOlft5X4lzXu9nTSwzlK3Zrl22g2vOCXLvqt-AWV-qwIumekTziMw?startTime=1564578451000)  | upcoming community events, 1.9 planning, tag retention, quota per project ||
+| 2019/07/17 |  @bitsf || [China Recording](https://zoom.us/recording/share/j4tRARdxPnln2MUiTu9dMI2UD3KnPqQ4FIibNBhVBO-wIumekTziMw)  | upcoming community events, 1.9 planning, quota per project, webhook support, azure replication, User case sharing from caicloud  ||
+| 2019/07/03 |  @heww || [China Recording](https://zoom.us/recording/share/RquB6Q5Pl_fSl6TSwPynRlUKRJ4gFysvRiSGJ-FXvNWwIumekTziMw)  | upcoming community events, 1.9 planning, System level CVE whitelist, External syslog driver, User case sharing from qihoo360 ||
 | 2019/04/24 |  @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/cOzI-WGqIO7bJb3upT1cwxAnko59icH-PVEXFBbV97GwIumekTziMw)  | upcoming community events, 1.9 planning, replication to non-harbor registry demo  ||
 | 2019/04/10 | @steven-zou and @michmike || [China Recording](https://zoom.us/recording/share/Km_X9jlouC_NzXTy_x2BFNoaPMtlZUVBAX2mGqBaz9qwIumekTziMw), [US Recording](https://zoom.us/recording/share/r0NGQBWAsRlq1dDMuVVu2CIzqDPX5rYKlePjuxpUBTiwIumekTziMw) | 1.8 updates, community survey updates, 1.8 features preview ||
-| -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis| |
-| -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network||
+| -- | [@mushixun](https://github.com/mushixun)| | | Introduction of feature: Registry operation analysis | |
+| -- | [@yangjunsss](https://github.com/yangjunsss) |||Distribute images via decentralized P2P network ||
 | 2019/03/27 | Host: @michmike || `short meeting with no recording` |v1.9 proposal collection & introduction of proposal submission process ||
 | 2019/03/27 | Host: @renmaosheng | 13 |[Recording](https://zoom.us/recording/share/q3XXCv2VuPhmiyH8-sX2KVHWT4TmuaG3uhqE9cFCZAuwIumekTziMw)|v1.9 proposal collection & introduction of proposal submission process ||
 | 2019/03/13 | Host: @michmike ||[Recording](https://zoom.us/recording/share/7aELbP8mDdRxOMnsH8BEKuauQx8XE_5iiUyiZOjD8KmwIumekTziMw)|Prepare script updates, Survey, 2 new maintainers, Replication Updates||
