@@ -9,7 +9,6 @@ describes governance guidelines and maintainer responsibilities.
 | --------------- | --------- | ----------- |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
 | Fanjian Kong | [kofj](https://github.com/kofj) | [Tencent](https://github.com/Tencent) |
-| Michael Michael |[michmike](https://github.com/michmike)| [VMware](https://www.github.com/vmware/) |
 | Daniel Pacak | [danielpacak](https://github.com/danielpacak) | [Aqua Security](https://www.github.com/aquasecurity/) |
 | Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
 | Steven Ren | [renmaosheng](https://github.com/renmaosheng) | [VMware](https://www.github.com/vmware/) |
@@ -22,7 +21,8 @@ describes governance guidelines and maintainer responsibilities.
 | Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
 
 ## Emeritus Maintainers
-* Nathan Lowe, [nlowe](https://github.com/nlowe), [Hyland Software](https://github.com/HylandSoftware)
+* Michael Michael, [michmike](https://github.com/michmike)
+* Nathan Lowe, [nlowe](https://github.com/nlowe)
 
 ## Harbor Core Contributors & Stakeholders
 
@@ -39,11 +39,11 @@ describes governance guidelines and maintainer responsibilities.
 | Policy Engine | Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
 | Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
-| Security | Daniel Pacak (danielpacak), Michael Michael (michmike) |
+| Security | Daniel Pacak (danielpacak), Alex Xu (xaleeks) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
-| Documentation | Stuart Clements (stuclem) |
+| Documentation | Abigail McCarthy (a-mccarthy) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
-| Community Management | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
-| Product Management | Michael Michael (michmike), Alex Xu (xaleeks) |
+| Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
+| Product Management | Alex Xu (xaleeks) |
