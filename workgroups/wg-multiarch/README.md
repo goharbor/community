@@ -12,11 +12,13 @@ The purpose of this working group is to enable Harbor to support multiple archit
 
 - ChenYu Zhang @Alauda ([chlins](https://github.com/chlins))
 
-- Daniel @Alauda ([danielfbm](https://github.com/danielfbm))
+- Daniel Filipe Bruehmueller Morinigo @Alauda ([danielfbm](https://github.com/danielfbm))
 
 - JingTao Cheng @Alauda ([jtcheng](https://github.com/chengjingtao))
 
 - ZhiPeng Yu @Alauda ([yuzp1996](https://github.com/yuzp1996))
+
+- Bo Zhu @Alauda ([Jeremy-boo](https://github.com/Jeremy-boo))
 
 - WenLong Zhang@Loongson ([zhangwenlong8911](https://github.com/zhangwenlong8911))
 
