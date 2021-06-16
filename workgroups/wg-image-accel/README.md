@@ -15,6 +15,7 @@ The short-term mission is to:
 ## Coordinators
 * Bo Liu@AlibabaCloud ([liubogithub](https://github.com/liubogithub))
 * [M] Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) (co-coordinator)
+* [M] Wang Yan@VMWare ([wy65701436](https://github.com/wy65701436)) (co-coordinator)
 
 ## Members
 * [M] Steven Zou@VMware ([steven-zou](https://github.com/steven-zou))
