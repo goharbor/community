@@ -6,7 +6,10 @@ We have one bi-weekly recurring Harbor community meeting, at `9pm UTC+8 Timezone
 
 **Meeting Agenda**: Read, comment, or add agenda items on the [meeting notes](https://github.com/goharbor/community/wiki/Harbor-Community-Meetings)
 
-**Calendar Link**: [https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ](https://calendar.google.com/calendar?cid=NjdjNWRlMXNxdDRkNXQzNzlvaTByMXJ1YzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
+**Calendar invite**: Get calendar invites to the community meetings, office hours, and other events by joining our distribution lists:
+
+* [harbor-users](https://lists.cncf.io/g/harbor-users/topics)
+* [harbor-dev](https://lists.cncf.io/g/harbor-dev/topics)
 
 **Recordings**: [YouTube Playlist for Harbor Community Meetings](https://www.youtube.com/playlist?list=PLgInP-D86bCwTC0DYAa1pgupsQIAWPomv)
 

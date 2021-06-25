@@ -42,8 +42,8 @@ describes governance guidelines and maintainer responsibilities.
 | Security | Daniel Pacak (danielpacak), Alex Xu (xaleeks) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
-| Documentation | Stuart Clements (stuclem) |
+| Documentation | Abigail McCarthy (a-mccarthy) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
-| Community Management | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
+| Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
 | Product Management | Alex Xu (xaleeks) |
