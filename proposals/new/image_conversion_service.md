@@ -22,46 +22,11 @@ Pulling image is one of the time-consuming steps in the container lifecycle. Res
 
 ### Overview
 
-Introducing a standalone image conversion service (ICS for short) designed to provide Harbor with the ability to automatically convert user images to accelerated images. When a user does something such as artifact push, Harbor will use the webhook to notify the ICS daemon based on the rules configured by the user, and the Nydus, eStargz, etc. drivers integrated into the ICS will convert the respective image formats.
-
-### Workflow
-
-As a project admin user:
-
-- Create a system robot account and configure robot name and secret to the ICS to grant the permission to pull and push images.
-- Configure ICS to give robot permission and select a image conversion driver, such as Nydus or eStargz, then deploy as a webhook handle service.
-- Create a new http type webhook, set the endpoint url provided by ICS, allows to configure when to trigger image conversion based on event types (such as artifact push) and filter conditions (such as repository name).
-
-![Workflow](../images/image-conversion-service/workflow1.jpeg)
-
-As a user:
-
-- Push an image that meets the webhook rules for conversion, wait a while and will see the converted image in the web console, it may be the original image that was overwritten or a new one, depends on the ICS configuration.
-
-![Workflow](../images/image-conversion-service/workflow2.jpeg)
+Introducing a standalone image conversion service (ICS for short) designed to provide Harbor with the ability to automatically convert user images to accelerated images. When a user does something such as artifact push, Harbor will request ICS to complete the corresponding image conversion through its integrated Nydus, eStargz, etc. drivers.
 
 ### Harbor Side
 
-#### Webhook
-
-The design principle of this proposal is to decouple the ICS component from the harbor core as much as possible to keep it independent, with ICS acting as a webhook server and harbor using webhook request to notify the ICS service to trigger image conversion action. For example, an accelerated image conversion can be triggered when an artifact push event occurs, involving the following webhook configuration:
-
-- Notify Type: ICS acts as an http server to listen for webhook request, so select to http;
-- Event Type: Usually the artifact push is chosen, but other options can also be considered;
-- Endpoint URL: The endpoint address of ICS http server listens;
-- Auth Header: The http auth header checks configured on the ICS side are used by the ICS to verify the webhook request source;
-- Verify Remote Certificate：Determine whether the webhook should verify the certificate of ICS endpoint;
-
-The following features is not yet supported in the current version of harbor and should be proposed and implemented:
-
-- Webhook Filter: Harbor should provide some filtering rules to allow users to decide which images can be converted by ICS, such as limiting to a specified repository or tag;
-- Webhook Re-schedule：The ability to automatically re-trigger a webhook request or allow the user to manually trigger it if the webhook request fails to be sent (e.g. ICS endpoint is unreachable), or if the image conversion fails on ICS;
-
-#### Image Icon
-
-In order for users to be able to distinguish converted images on the web console, harbor needs to recognize image formats and put corresponding icons on the web console, such as like this:
-
-![Harbor Web Console](../images/image-conversion-service/harbor_web_console.jpeg)
+Harbor can use a built-in webhook to notify the ICS, or use job service to schedule a job to request the ICS to complete the image conversion. There are pros and cons to both of these trigger methods, and both are still being discussed by this [work group](https://github.com/goharbor/community/tree/master/workgroups/wg-image-accel).
 
 ### ICS Side
 
@@ -115,9 +80,35 @@ ICS implements a simple work pool to support concurrent execution of image conve
 
 ![Conversion Queue](../images/image-conversion-service/conversion_queue.jpeg)
 
-#### Conversion Notification
+#### Associate Converted Image With Original Image
 
-In order to keep the components decoupled, ICS and Harbor do not provide a separate notification mechanism for conversion completion events. User can use webhook and filter to get these events in a timely manner, for example by creating a webhook with event type `artifact push` and filter tag `nydus`.
+ICS will add the following annotation to the manifest of converted image to associate it with the original image:
+
+```
+{
+  "schemaVersion": 2,
+  "config": {
+    "mediaType": "application/vnd.oci.image.config.v1+json",
+    "digest": "sha256:563fad1f51cec2ee4c972af4bfd7275914061e2f73770585cfb04309cb5e0d6b",
+    "size": 523
+  },
+  "layers": [
+    {
+      "mediaType": "...",
+      "digest": "sha256:b413839e4ee5248697ef30fe9a84b659fa744d69bbc9b7754113adc2b2b6bc90",
+      "size": 40712206
+    },
+    {
+      "mediaType": "...",
+      "digest": "sha256:b6a85be8248b0d3c2f0565ef71d549f404f8edcee1ab666c9871a8e6d9384860",
+      "size": 441
+    }
+  ],
+  annotation：{
+    "io.goharbor.artifact.v1alpha1.origin.digest": "sha256:dbad66bcfe29ef383157a3e122acbd08cd2ebd40f5658afa2ae62c52ffe26e9f"
+  }
+}
+```
 
 #### Configuration
 
@@ -319,10 +310,6 @@ http {
     }
 }
 ```
-
-## Rationale
-
-An alternative approach is to integrate the ICS into harbor like vulnerability scanner, but the problem with this is that it's more invasive and the harbor service becomes bloated, whereas the webhook interaction makes the components lighter and the ICS can be deployed and maintained separately.
 
 ## Implementation
 
