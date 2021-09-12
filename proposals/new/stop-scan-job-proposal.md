@@ -66,7 +66,7 @@ The handler for dealing with "stop scan all job" will be implemented like this, 
 ```go
 // StopScanAll stops the execution of scan all artifacts.
 func (s *scanAllAPI) StopScanAll(ctx context.Context, params operation.StopScanAllParams) middleware.Responder {
-	if err := s.requireAccess(ctx, rbac.ActionDelete); err != nil {
+	if err := s.requireAccess(ctx, rbac.ActionStop); err != nil {
 		return s.SendError(ctx, err)
 	}
 
@@ -89,9 +89,11 @@ func (s *scanAllAPI) StopScanAll(ctx context.Context, params operation.StopScanA
 
 #### Robot account permission
 
+A new action type `ActionStop = Action("stop")` will be added to the rbac definition list for `scan-all` resource to stop a scan-all job.
+
 |     API     | Resource | Action |
 | :---------: | :------: | :----: |
-| StopScanAll | scan-all | delete |
+| StopScanAll | scan-all |  stop  |
 
 ### Stop scan job of a particular artifact
 
@@ -143,7 +145,7 @@ The handler for "stop single scan job" is implemented as following in `src/serve
 
 ```go
 func (s *scanAPI) StopScanArtifact(ctx context.Context, params operation.StopScanArtifactParams) middleware.Responder {
-	if err := s.RequireProjectAccess(ctx, params.ProjectName, rbac.ActionDelete, rbac.ResourceScan); err != nil {
+	if err := s.RequireProjectAccess(ctx, params.ProjectName, rbac.ActionStop, rbac.ResourceScan); err != nil {
 		return s.SendError(ctx, err)
 	}
 
@@ -203,9 +205,11 @@ func (bc *basicController) Stop(ctx context.Context, artifact * ar.Artifact) err
 
 #### Robot account permission
 
+The new action type `ActionStop = Action("stop")` will also be enabled for `scan` resource as well to stop a single scan job of a given artifact.
+
 |       API        | Resource | Action |
 | :--------------: | :------: | :----: |
-| StopScanArtifact |   scan   | delete |
+| StopScanArtifact |   scan   |  stop  |
 
 ### ShouldStop() check
 
