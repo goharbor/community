@@ -19,6 +19,7 @@ describes governance guidelines and maintainer responsibilities.
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
 | Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
+| Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
 
 ## Emeritus Maintainers
 * Michael Michael, [michmike](https://github.com/michmike)
@@ -42,8 +43,8 @@ describes governance guidelines and maintainer responsibilities.
 | Security | Daniel Pacak (danielpacak), Alex Xu (xaleeks) |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
-| Documentation | Stuart Clements (stuclem) |
+| Documentation | Abigail McCarthy (a-mccarthy) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
-| Community Management | Jonas Rosland (jonasrosland), Henry Zhang (hainingzhang) |
+| Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
 | Product Management | Alex Xu (xaleeks) |
