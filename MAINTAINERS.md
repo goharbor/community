@@ -19,6 +19,8 @@ describes governance guidelines and maintainer responsibilities.
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
 | Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
+| Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
+| Vadim Bauer| [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
 
 ## Emeritus Maintainers
 * Michael Michael, [michmike](https://github.com/michmike)

@@ -27,7 +27,7 @@ maintained under the `goharbor` namespace.
 
 ### Maintainers
 
-New maintainers must be nominated by an existing maintainer and must be elected by a supermajority of existing maintainers. Likewise, maintainers can be removed by a supermajority of the existing maintainers or can resign by notifying one of the maintainers.
+New maintainers must be nominated by an existing maintainer(via [PR](https://github.com/goharbor/community/pulls?q=is%3Apr+is%3Aclosed+nomination+label%3Aarea%2Fmaintainer-nomination)) and must be elected by a supermajority of existing maintainers. Likewise, maintainers can be removed by a supermajority of the existing maintainers or can resign by notifying one of the maintainers.
 
 ### Supermajority
 
