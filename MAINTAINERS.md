@@ -22,7 +22,7 @@ describes governance guidelines and maintainer responsibilities.
 | Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
 | Vadim Bauer| [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
 
-## SIG Community Engagement
+## SIG Community
 
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
