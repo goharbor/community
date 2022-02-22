@@ -20,7 +20,7 @@ describes governance guidelines and maintainer responsibilities.
 | Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
 | Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
 | Tianon Gravi | [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
-| Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
+| Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 
 ## SIG Community
 
