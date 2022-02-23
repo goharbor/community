@@ -22,9 +22,18 @@ describes governance guidelines and maintainer responsibilities.
 | Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
 | Vadim Bauer| [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
 
-## Emeritus Maintainers
-* Michael Michael, [michmike](https://github.com/michmike)
-* Nathan Lowe, [nlowe](https://github.com/nlowe)
+## SIG Community
+
+| Owner | GitHub ID | Affiliation |
+| --------------- | --------- | ----------- |
+| Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [VMware](https://www.github.com/vmware/) |
+| Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [VMware](https://www.github.com/vmware/) |
+
+## SIG Docs
+
+| Owner | GitHub ID | Affiliation |
+| --------------- | --------- | ----------- |
+| Abigail McCarthy | [a-mccarthy](https://github.com/a-mccarthy) | [VMware](https://www.github.com/vmware/) |
 
 ## Harbor Core Contributors & Stakeholders
 
@@ -49,3 +58,7 @@ describes governance guidelines and maintainer responsibilities.
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
 | Product Management | Alex Xu (xaleeks) |
+
+## Emeritus Maintainers
+* Michael Michael, [michmike](https://github.com/michmike)
+* Nathan Lowe, [nlowe](https://github.com/nlowe)
