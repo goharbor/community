@@ -18,7 +18,6 @@ describes governance guidelines and maintainer responsibilities.
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
-| Alex Xu | [xaleeks](https://github.com/xaleeks) | [VMware](https://www.github.com/vmware/) |
 | Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
 | Vadim Bauer| [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
 
@@ -50,15 +49,16 @@ describes governance guidelines and maintainer responsibilities.
 | Policy Engine | Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
 | Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
-| Security | Daniel Pacak (danielpacak), Alex Xu (xaleeks) |
+| Security | Daniel Pacak (danielpacak)
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
 | Documentation | Abigail McCarthy (a-mccarthy) |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
-| Product Management | Alex Xu (xaleeks) |
+| Product Management | Roger Klorese (qnetter) |
 
 ## Emeritus Maintainers
 * Michael Michael, [michmike](https://github.com/michmike)
 * Nathan Lowe, [nlowe](https://github.com/nlowe)
+* Alex Xu, [xaleeks](https://github.com/xaleeks)
