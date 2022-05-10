@@ -25,7 +25,7 @@ Any contributor may introduce a request to deprecate a feature or an option of a
 
 Once the issue is filed, a discussion period begins which ends at the beginning of the second community meeting after the opening of the issue, and is held at the community meeting and on the issue itself; the person who opens the issue or a maintainer should add that date and time in a comment in the issue as soon after the issue is opened as possible.
 
-The feature will be deprecated by a supermajority vote of two-thirds of the project maintainers at the time of the vote tallying, which is 72 hours after the end of the community meeting that is the end of the comment period. (Maintainers are permitted to vote in advance of the deadline, but should hold their votes until as close as possible to hear all possible discussion.) Votes will be tallied in comments on the issue. 
+The feature will be deprecated by a supermajority vote of 50% plus one of the project maintainers at the time of the vote tallying, which is 72 hours after the end of the community meeting that is the end of the comment period. (Maintainers are permitted to vote in advance of the deadline, but should hold their votes until as close as possible to hear all possible discussion.) Votes will be tallied in comments on the issue. 
 
 Non-maintainers may add non-binding votes in comments to the issue as well; these are opinions to be taken into consideration by maintainers, but they do not  count as votes. They should follow the K8s/CNCF convention of +1/0/-1 to approve/abstain/disapprove, and it is courteous for non-maintainers to mark their votes as “nb” (for non-binding).
 
