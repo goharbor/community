@@ -18,7 +18,6 @@ describes governance guidelines and maintainer responsibilities.
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
-| Tianon Gravi| [tianon](https://github.com/tianon) | [InfoSiftr](https://github.com/infosiftr) |
 | Vadim Bauer| [Vad1mo](https://github.com/Vad1mo) | [56K.Cloud](https://container-registry.com) |
 
 ## SIG Community
@@ -62,3 +61,4 @@ describes governance guidelines and maintainer responsibilities.
 * Michael Michael, [michmike](https://github.com/michmike)
 * Nathan Lowe, [nlowe](https://github.com/nlowe)
 * Alex Xu, [xaleeks](https://github.com/xaleeks)
+* Tianon Gravi, [tianon](https://github.com/tianon)
