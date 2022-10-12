@@ -28,3 +28,9 @@ Workgroup is a virtual team of aggregating the efforts of all the interested par
 * **proposals**: Keeps the feature request proposals from community
   * Start one from the [TEMPLATE](./proposals/TEMPLATE.md)
 * **workgroups**: keeps the related materials for the workgroups which always are organized by the interested parties who have the similar focus on some topics.
+
+
+## Additinal info
+For full details about community please check our [community page](https://goharbor.io/community)
+
+For any questions feel free to ask in our Slack channels [#harbor](https://cloud-native.slack.com/archives/CC1E09J6S) and [#harbor-dev](https://cloud-native.slack.com/archives/CC1E0J0MC) for development related questions!
