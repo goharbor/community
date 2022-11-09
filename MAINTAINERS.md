@@ -16,7 +16,7 @@ describes governance guidelines and maintainer responsibilities.
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) | 
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
-| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
+| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 
 ## SIG Community
