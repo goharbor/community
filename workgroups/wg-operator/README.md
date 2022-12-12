@@ -49,6 +49,9 @@ Notes: [M] means the member is also harbor maintainer.
 - ZiMing Zhang @VMware ([bitsf](https://github.com/bitsf))
 - Weiwei He @VMware ([heww](https://github.com/heww))
 - Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
+- Yinan Li@360Tech ([cndoit18](https://github.com/cndoit18))
+- Henry Kang@360Tech ([HenryKamg](https://github.com/HenryKamg))
+- Xiongxiong Yuan@qunacorp([yxxhero](https://github.com/yxxhero))
 
 ## Demos
 
