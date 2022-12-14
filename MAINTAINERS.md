@@ -46,7 +46,7 @@ describes governance guidelines and maintainer responsibilities.
 | Helm Chart & HA | Wenkai Yin (ywk253100), Daniel Jiang (reasonerjt) |
 | Policy Engine | Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
-| Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
+| Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou), Marcel Müller (MarcelMue) |
 | Security | TBD |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
