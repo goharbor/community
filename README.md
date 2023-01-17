@@ -4,7 +4,7 @@ A place for Harbor community related material.
 
 ## Community Meetings
 
-The Harbor Project holds bi-weekly community calls. To join or watch previous meeting notes and recordings, please see [meeting schedule](MEETING_SCHEDULE.md).
+The Harbor Project holds bi-weekly community calls. To join or watch previous meeting notes and recordings, please see [meeting schedule](https://github.com/goharbor/community/wiki/Harbor-Community-Meetings).
 
 ## Workgroups
 
