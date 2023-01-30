@@ -18,9 +18,30 @@ Currently, we have the following members:
 * De Chen ([cd1989](https://github.com/cd1989))
 * Fanjian Kong@Qihoo360 ([kofj](https://github.com/kofj))
 * Mingming Pei@Netease ([mmpei](https://github.com/mmpei))
-* Lei Yuan@HuaWei ([yuanshuhan](https://github.com/yuanshuhan))
+* ZiMing Zhang@VMware ([bitsf](https://github.com/bitsf))
+* Javis Zhou@Huawei ([jarvis-zhou](https://github.com/jarvis-zhou))
+* Chenyu Zhang@AlaudaCloud ([chlins](https://github.com/chlins))
+
 
 Steven Zou@VMware ([steven-zou](https://github.com/steven-zou)) is taking the responsibilities of being coordinator of this group to call and host related activities.
+
+## Adapter Contributors
+
+| Registry Adapter |     Contributor      |      GitHub ID     |
+|------------------|---------------|--------------------|
+| Harbor           | Wenkai Yin@VMware    | [ywk253100](https://github.com/ywk253100) |
+| Docker Distribution | Wenkai Yin@VMware    | [ywk253100](https://github.com/ywk253100) |
+| Docker Hub           | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
+| ACR(Azure Container Registry) | De Chen@Tencent    | [cd1989](https://github.com/cd1989) |
+| Ali-ACR(Alibaba Container Registry) | Fanjian Kong@Tencent | [kofj](https://github.com/kofj) |
+| AWS ECR(Elastic Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
+| GCR(Google Container Registry) | ZiMing Zhang@VMware | [bitsf](https://github.com/bitsf) |
+| Helm Hub | MingMing Pei@Netease | [mmpei](https://github.com/mmpei) |
+| Huawei SWR | Javis Zhou@Huawei | [jarvis-zhou](https://github.com/jarvis-zhou) |
+| JFrog Artifactory | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
+| Quay | Chenyu Zhang@AlaudaCloud | [chlins](https://github.com/chlins) |
+| Gitlab Registry | Vikto | [lxShaDoWxl](https://github.com/lxShaDoWxl) |
+
 
 ## Meetings
 
@@ -28,6 +49,9 @@ The workgroup will sync DEV status and discuss issues every week. You can check 
 
 | Meeting Date |    Attendees    |    Minutes                                       |
 |--------------|-----------------|--------------------------------------------------|
+| 05/08/2020   | De Chen & Javis: Absent | [Recording](https://VMware.zoom.us/rec/share/5ONHN-7y9EJLTLPj4W3_Y_IOJ4Tbaaa81iUd_qFYzkkLzTVICea5OdIHxP3LuSX6)(Password: 9&J=Q=FJ) |
+| 21/05/2020   | in minutes      | [minutes](https://docs.google.com/document/d/1b3ahSYC5ML9adNCRsEAcsYJXFa73i36kRoKBHg1x1eQ/edit?usp=sharing) |
+| 17/04/2020   | in minutes      | [minutes](https://docs.google.com/document/d/1Qu8KvxhJSIFSaeavb-IZ_Gn-B5svLyaJZB6m8xVBFM0/edit?usp=sharing)|
 | 09/04/2019   | All             | [minutes](sync-meetings/2019-04-09/minutes.md)   |
 | 03/04/2019   | All             | [minutes](sync-meetings/2019-04-03/minutes.md)   |
 | 28/03/2019   | All             | [minutes](sync-meetings/2019-03-28/minutes.md)   |
