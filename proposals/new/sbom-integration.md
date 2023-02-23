@@ -22,8 +22,10 @@ Create a generic SBOM generation plugin system in Harbor for Software Bill of Ma
 
 * Create a generic SBOM generation plugin system
 * Support any SBOM generation tool
-* Create signed SBOM attestations
+* Support SPDX and CycloneDX formats
+* Create and [attach](https://github.com/sigstore/cosign/issues/1742) signed SBOM attestations
 * Each time we push a new container image we need to generate an SBOM
+* Display SBOM content on the Harbor
 
 ## Not Goal
 
