@@ -1,4 +1,6 @@
 # Community
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgoharbor%2Fcommunity.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgoharbor%2Fcommunity?ref=badge_shield)
+
 
 A place for Harbor community related material.
 
@@ -34,3 +36,7 @@ Workgroup is a virtual team of aggregating the efforts of all the interested par
 For full details about community please check our [community page](https://goharbor.io/community)
 
 For any questions feel free to ask in our Slack channels [#harbor](https://cloud-native.slack.com/archives/CC1E09J6S) and [#harbor-dev](https://cloud-native.slack.com/archives/CC1E0J0MC) for development related questions!
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fgoharbor%2Fcommunity.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fgoharbor%2Fcommunity?ref=badge_large)
