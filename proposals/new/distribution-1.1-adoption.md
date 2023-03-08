@@ -37,13 +37,13 @@ Authorized users in Harbor with image push scope.
 
 * User Stories
 
-    As a project admin and user, I want to be able to push and pull a manifest with a specific subject.
-    As a project admin and user, I want to be able to delete a manifest with a specific subject.
-    As a project admin and user, I want to be able to delete an artifact and the manifests that reference it via garbage collection.
-    As a project admin and user, I want to be unable to garbage collect an artifact's cosign signature individually.
-    As a system admin, I want to be able to copy an artifact and the manifests that reference it.
-    As a system and project admin, I want to be able to reserve an artifact and the manifests that reference it via a retention policy.
-    As a system admin, I want to be able to set up a replication rule to replicate an artifact and the manifests that reference it.
+1. As a project admin and user, I want to be able to push and pull a manifest with a specific subject. 
+2. As a project admin and user, I want to be able to delete a manifest with a specific subject. 
+3. As a project admin and user, I want to be able to delete an artifact and the manifests that reference it via garbage collection. 
+4. As a project admin and user, I want to be unable to garbage collect an artifact's cosign signature individually. 
+5. As a system admin, I want to be able to copy an artifact and the manifests that reference it. 
+6. As a system and project admin, I want to be able to reserve an artifact and the manifests that reference it via a retention policy. 
+7. As a system admin, I want to be able to set up a replication rule to replicate an artifact and the manifests that reference it.
 
 
 ## News in distribution spec 1.1.0
