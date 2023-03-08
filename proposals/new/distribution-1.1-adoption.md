@@ -46,7 +46,7 @@ Authorized users in Harbor with image push scope.
 7. As a system admin, I want to be able to set up a replication rule to replicate an artifact and the manifests that reference it.
 
 
-## News in distribution spec 1.1.0
+## What's New
 
 ***Subject***
 An association between two manifests, often used to link an artifact with an image. The "subject" field is present in both the image and artifact manifests.
