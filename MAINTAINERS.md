@@ -54,7 +54,7 @@ describes governance guidelines and maintainer responsibilities.
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
-| Product Management | Roger Klorese (qnetter) |
+| Product Management | Anmol Kaul (KaulAnmol) |
 
 ## Emeritus Maintainers
 
