@@ -14,7 +14,7 @@ As discussed in [issue 8614](https://github.com/goharbor/harbor/issues/8614), th
 
 ## Goals
 
-* Add regex-based filtering for the semantic version tags.
+* Add regex-based filtering for the artifact tags.
     
 * Changes made should not break existing installations upon upgrade.
     
@@ -241,3 +241,17 @@ A migration script can be provided to migrate existing glob rules to regex
 * Might break if upgrade versions
     
 * Conversion of glob pattern to regex must have 100% coverage, any unidentified edge cases might break the working.
+
+
+---
+
+
+Approach 3 finalized after community & maintainer reviews
+
+
+---
+
+
+Checkout the following links to understand code decisions:
+
+1. [Slack Converation: Whether or not to modify database schema](https://cloud-native.slack.com/archives/CC1E0J0MC/p1684043550667889)
