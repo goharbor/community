@@ -54,7 +54,7 @@ describes governance guidelines and maintainer responsibilities.
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
-| Product Management | Meenu Sharma [msha01](https://github.com/msha01) |
+| Product Management | Meenu Sharma ([msha01](https://github.com/msha01)) |
 
 ## Emeritus Maintainers
 
