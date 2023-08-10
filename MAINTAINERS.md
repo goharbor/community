@@ -16,7 +16,7 @@ describes governance guidelines and maintainer responsibilities.
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) | 
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
-| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [OVH Cloud](https://www.ovh.com/world/) |
+| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 
 ## SIG Community
@@ -46,7 +46,7 @@ describes governance guidelines and maintainer responsibilities.
 | Helm Chart & HA | Wenkai Yin (ywk253100), Daniel Jiang (reasonerjt) |
 | Policy Engine | Yan Wang (wy65701436), Steven Zou (steven-zou) |
 | Scheduling Engine | Steven Zou (steven-zou) |
-| Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou) |
+| Operator & Day 2 Operations | Jérémie MONSINJON (jMonsinjon), Pierre PÉRONNET (holyhope), Steven Zou (steven-zou), Marcel Müller (MarcelMue) |
 | Security | TBD |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
@@ -54,7 +54,7 @@ describes governance guidelines and maintainer responsibilities.
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
-| Product Management | Roger Klorese (qnetter) |
+| Product Management | Anmol Kaul (KaulAnmol) |
 
 ## Emeritus Maintainers
 
