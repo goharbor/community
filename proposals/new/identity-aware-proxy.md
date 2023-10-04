@@ -1,6 +1,8 @@
 Harbor Proposal: Identity Aware proxy authentication mode
 
-Author: Sheng Jiang/shengjiang3, Eric Liu/ Date: Oct 3, 2023
+Author: Sheng Jiang/shengjiang3, Eric Liu/LiuShuaiyi
+
+Date: Oct 10, 2023
 
 ## Abstract
 
@@ -58,6 +60,10 @@ the following OIDC attributes are needed:
 - Certificate authority data: base64 encoded PEM encoded certificate for the
   identity proxy.
 - Header name: HTTP header to get the ID token.
+- `enable_session_cookie` [Optional]: When set to `true`, after successful
+  identity aware proxy authentication, Harbor will assign the user a cookie. As
+  a result, the identity aware proxy will only have to provide the header to the
+  login endpoint. The cookie will be used for authenticating all other routes.
 
 The identity aware proxy should be able to be configured using the portal and/or
 the API.
