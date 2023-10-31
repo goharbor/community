@@ -1,8 +1,8 @@
-Harbor Proposal: Identity Aware proxy authentication mode
+# Harbor Proposal: Identity Aware proxy authentication mode
 
 Author: Sheng Jiang/shengjiang3, Eric Liu/LiuShuaiyi
 
-Date: Oct 10, 2023
+Date: Oct 30, 2023
 
 ## Abstract
 
@@ -11,17 +11,33 @@ authentication authority in Harbor.
 
 ## Background
 
-Currently, Harbor supports the OIDC protocol, however this means that Harbor
-cannot be seamlessly integrated into Single Sign-On (SSO) within an organization
-because Harbor must perform the code exchange for an identity token.
+Currently, Harbor supports the OIDC protocol for authentication. An organization
+can configure Harbor to use an OIDC identity provider to provider
+authentication. However, there are some scenarios where additional support is
+needed, for example:
+
+- If SAML or LDAP is used for the identity provider.
+- If more than one OIDC provider needs to be used.
+- Integrating Harbor with Single Sign-On (SSO) within an organization. For
+  example, if the organization runs Harbor behind a reverse proxy (e.g- Istio)
+  that federates identity providers (e.g- Dex).
 
 ## Proposal
 
 Add another authentication option, letting the identity provider authenticate
 and issue an identity token while Harbor assumes the role of an application that
 consumes the identity token. Harbor would act as an OIDC token verifier. The
-goal is to allow Harbor to plug in to any upstream OIDC identity provider
-allowing an SSO credential to authenticate with Harbor.
+goal is to allow Harbor to plug in to an upstream OIDC identity proxy allowing
+an SSO credential to authenticate with Harbor.
+
+This opens up the use case where an identity proxy (such as Dex) can be
+configured to support multiple identity providers and pass on an identity token
+that is used by Harbor.
+
+Alternatively, Harbor could be integrated as a proxied application running
+behind NGINX. NGINX can be configured to provide SSO by acting as the relying
+party to an OIDC identity provider. As a result, the identity token passed by
+NGINX could also be used as the identity of the user inside of Harbor.
 
 ### Key terms
 
