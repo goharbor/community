@@ -60,7 +60,7 @@ Harbor Satellite will run in a single container and will be divided in the follo
 - **Satellite Core** : pulling/pushing images from/to Harbor (using go-libp2p?) and pulling/pushing images from/to the local registry (using Skopeo and/or Crane?).
 - **Registry Proxy** : storing required OCI artifacts locally (using zotregistry or docker registry?).
 
-![Harbor Satellite Diagram](./images/harbor-satellite-diagram.svg)
+![Harbor Satellite Diagram](../images/harbor-satellite/harbor-satellite-diagram.svg)
 
 <p align="center"><em>Harbor Satellite Diagram</em></p>
 
