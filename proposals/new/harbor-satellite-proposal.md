@@ -1,6 +1,6 @@
 # Proposal: `Harbor Satellite`
 
-Authors: Vadim Bauer / [Vad1mo](https://github.com/Vad1mo), Csaba Almasi, Philip Laine, David Huseby / [dhuseby](https://github.com/dhuseby),  Roald Brunell / [OneFlyingBanana](https://github.com/OneFlyingBanana)
+Authors: Vadim Bauer / [Vad1mo](https://github.com/Vad1mo), Csaba Almasi, Philip Laine, David Huseby / [dhuseby](https://github.com/dhuseby),  Roald Brunell / [OneFlyingBanana](https://github.com/OneFlyingBanana), Prasanth / [bupd](https://github.com/bupd) 
 
 ## Abstract
 
@@ -38,6 +38,9 @@ Harbor Satellite aims to be resilient, lightweight and will be able to keep func
 Compatibility with all container registries or edge devices can't be guaranteed.
 
 ## Implementation
+![Basic Harbor Satellite Diagram](../images/harbor-satellite/harbor-satellite-diagram.svg)
+
+<p align="center"><em>Basic Harbor Satellite Diagram</em></p>
 
 ### Overall Architecture
 
@@ -45,11 +48,32 @@ Harbor Satellite, at its most basic, will run in a single container and will be 
 
 - **Satellite** : Is responsible for moving artifacts from upstream (using Skopeo/Crane/Other), identifying the source and reading the list of images that needs to be replicated. Satellite will also be able to modify and manage the container runtimes. configuration in sync so that container runtime does not fetch images from remote.
 - **OCI Registry** : Is responsible for storing required OCI artifacts locally (using zotregistry or docker registry).
-- **Ground Control** : Is a component of Harbor and is responsible for serving a Harbor Satellite with the list of images it needs.
+- **Ground Control** : Is responsible for the artifact synchronization with edge locations and function as a service endpoint for satellites. Ground control will register and authenticate satellites, provide a list of images that should be present on the satellite, and facilitate seamless replication of container images to edge locations. Ground Control includes adapters for different central registries, enabling seamless synchronization of image lists across various sources.
 
-![Basic Harbor Satellite Diagram](../images/harbor-satellite/harbor-satellite-diagram.svg)
 
-<p align="center"><em>Basic Harbor Satellite Diagram</em></p>
+### Ground Control Responsibilities
+![Ground Control](../images/harbor-satellite/ground-control.svg)
+
+<p align="center"><em>Ground Control</em></p>
+
+1. **Authentication and Registration:**
+    - **Satellite Authentication:** Ground Control authenticates each satellite to ensure that only authorized devices can request and receive image updates. This prevents unauthorized access and ensures that image distribution is controlled and secure.
+    - **Satellite Registration:** Each satellite must register with Ground Control before it can request image lists. This registration process involves validating the satellite’s credentials and recording its details in Ground Control, establishing a trusted relationship between the satellite and Ground Control.
+
+2. **Image List Management:**
+    
+    - **Maintaining Image Lists:** Ground Control maintains a detailed list of container images, including their tags and digests, that are required by the satellites. These lists are kept up-to-date and are readily available for distribution to registered satellites.
+    - **List Provisioning:** Satellites periodically request the image list from Ground Control. Ground Control responds with the most recent list, ensuring that the satellite always has the latest images required for its operations.
+
+3. **Adaptability with Central Registries:**
+    
+    - **Adapters for Multiple Registries:** Ground Control includes adapters that allow it to interface with various central container registries. This capability ensures that it can synchronize image lists with multiple sources, regardless of the registry's specific implementation or API.
+    - **Synchronization of Image Lists:** Using these adapters, Ground Control can pull image updates from different central registries and update its managed image list accordingly. This enables the seamless integration of images from various sources, providing a comprehensive and updated list to satellites.
+
+4. **Independent Satellite Operation:**
+    
+    - **Decentralized Functioning:** Ground Control enables satellites to operate independently by providing them with the necessary image lists. Satellites fetch and manage their own images based on the lists provided, reducing their dependency on real-time connectivity to a central registry.
+    - **Offline Resilience:** In the event of connectivity issues with Ground Control, satellites can continue to serve the required images from their local storage, ensuring uninterrupted operations in edge environments.
 
 ### Specific Use Cases
 

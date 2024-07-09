@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1918" height="1059.3">
+  <defs>
+    <style>
+      @font-face{font-family:&quot;Virgil&quot;;src:url(https://excalidraw.com/Virgil.woff2)}@font-face{font-family:&quot;Cascadia&quot;;src:url(https://excalidraw.com/Cascadia.woff2)}@font-face{font-family:&quot;Assistant&quot;;src:url(https://excalidraw.com/Assistant-Regular.woff2)}
+    </style>
+  </defs>
+  <g stroke-linecap="round">
+    <path d="M10 38h488v661H10" stroke-width="0" fill="#fab005"/>
+    <path d="M10 38h488M10 38h488m0 0v661m0-661v661m0 0H10m488 0H10m0 0V38m0 661V38" stroke="#000" stroke-width="2" fill="none"/>
+  </g>
+  <text y="15" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">Ground Control Capabilities</text>
+  <text y="36" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Fleet Management</text>
+  <text y="57" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">  - Satellite Registration</text>
+  <text y="78" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">  - Authentication</text>
+  <text y="99" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Logical mapping of image sets to satellite groups (1:n) </text>
+  <text y="120" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- State Monitoring of replications</text>
+  <text y="162" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">Information Stored in Ground Control</text>
+  <text y="183" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- List of Images that need to be present on Satellite</text>
+  <text y="204" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Remote State of Satellite (What oci artifacts are on </text>
+  <text y="225" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">remote)</text>
+  <text y="246" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Hearbeat of Satellites</text>
+  <text y="267" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Satellite Configuration</text>
+  <text y="309" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">Interfaces of Ground Control</text>
+  <text y="330" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Interface for Satellites </text>
+  <text y="351" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Adapter Interface</text>
+  <text y="372" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Management Interface</text>
+  <text y="393" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">  - accept list images</text>
+  <text y="414" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">  - manage Satellite groups</text>
+  <text y="456" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">Line of Sight</text>
+  <text y="477" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Satellite to Ground Control</text>
+  <text y="498" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">  - Satellite Core can run on its own</text>
+  <text y="519" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Ground Control to Registry</text>
+  <text y="540" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Registry (none)</text>
+  <text y="561" font-family="Virgil, Segoe UI Emoji" font-size="16" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(15 43)">- Registry Adapter to Ground Control</text>
+  <path d="M1618 515c60-3 122 1 252 0m-252 0h252m0 0c10-1 9 6 11 11m-11-11c5 3 9 5 11 11m0 0c-2 9-1 18 0 22m0-22c2 6 1 8 0 22m0 0c2 8-2 9-11 11m11-11c3 8-1 12-11 11m0 0h-252m252 0c-87-3-176-4-252 0m0 0c-7-4-10-5-11-11m11 11c-7-1-8-2-11-11m0 0v-22m0 22c2-8 2-17 0-22m0 0c-3-6 6-13 11-11m-11 11c4-6 4-13 11-11" stroke="#5f3dc4" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <text x="59.4" y="23.1" font-family="Virgil, Segoe UI Emoji" font-size="28" fill="#5f3dc4" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1685 520)">Satellite</text>
+  <path d="M777 622c112-5 220-6 406 0m-406 0c101 4 199 6 406 0m0 0c27 3 41 16 43 43m-43-43c30 1 47 12 43 43m0 0c-4 28-3 62 0 85m0-85v85m0 0c2 30-12 44-43 43m43-43c-2 29-16 45-43 43m0 0c-158 2-320 2-406 0m406 0c-87-6-173-5-406 0m0 0c-28-1-40-13-42-43m42 43c-31 0-43-13-42-43m0 0c3-31-2-58 0-85m0 85c-3-29 0-60 0-85m0 0c3-27 14-44 42-43m-42 43c2-26 15-46 42-43" stroke="#1864ab" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="143.6" y="29.7" font-family="Virgil, Segoe UI Emoji" font-size="36" fill="#1864ab" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(837 686)">Remote Registry</text>
+  <g mask="url(#mask-qYCmgiytnJMS_2DSyD8uw)" stroke-linecap="round">
+    <path d="m1600 546-367 120" stroke="#1e1e1e" stroke-width="2.5" fill="none" stroke-dasharray="1.5 8"/>
+    <path d="m1253 650-20 16m25 1-25-1" stroke="#1e1e1e" stroke-width="2.5" fill="none" stroke-dasharray="1.5 6"/>
+  </g>
+  <mask id="mask-qYCmgiytnJMS_2DSyD8uw">
+    <path fill="#fff" d="M0 0h2069v767H0z"/>
+    <path d="M1356 557h122v100h-122z"/>
+  </mask>
+  <text x="61.3" y="17.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1356 557)">Pull</text>
+  <text x="61.3" y="42.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1356 557)">Images</text>
+  <text x="61.3" y="67.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1356 557)">from Remote</text>
+  <text x="61.3" y="92.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1356 557)">Registry</text>
+  <path d="M1631 710c66-2 134-2 227 0m-227 0h227m0 0c17 0 27 7 25 25m-25-25c16-1 27 10 25 25m0 0c0 18-2 37 0 49m0-49v49m0 0c1 16-8 26-25 25m25-25c1 16-7 23-25 25m0 0h-227m227 0h-227m0 0c-15-1-24-7-24-25m24 25c-17-1-23-8-24-25m0 0v-49m0 49v-49m0 0c-2-16 10-23 24-25m-24 25c-1-16 8-23 24-25" stroke="#9c36b5" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <text x="106.7" y="17.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#9c36b5" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1638 734)">OCI Registry</text>
+  <text x="106.7" y="42.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#9c36b5" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1638 734)">Pull &amp;&amp; Push Support</text>
+  <path d="M1691 862h113m0 0c13 1 18 7 19 19m0 0c0 9 2 22 0 37m0 0c1 12-6 20-19 19m0 0c-38 2-76 1-113 0m0 0c-13 0-18-4-19-19m0 0v-37m0 0c0-15 6-21 19-19" stroke="#1971c2" stroke-width="2.5" fill="none" stroke-dasharray="8 10" stroke-linecap="round"/>
+  <text x="30.8" y="17.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1971c2" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1716 887)">Volume</text>
+  <path d="m1742 824-3 36m2-37-2 37" stroke="#1971c2" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <g mask="url(#mask-WQnwOarw4fJB3OCyQ-BM4)" stroke-linecap="round">
+    <path d="m1744 562-2 144" stroke="#1971c2" stroke-width="2.5" fill="none" stroke-dasharray="8 10"/>
+    <path d="m1734 682 8 24m9-23-9 23" stroke="#1971c2" stroke-width="2.5" fill="none"/>
+  </g>
+  <mask id="mask-WQnwOarw4fJB3OCyQ-BM4">
+    <path fill="#fff" d="M0 0h1844v806H0z"/>
+    <path d="M1668 622h148v25h-148z"/>
+  </mask>
+  <text x="73.9" y="17.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#1971c2" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1668 622)">Pushing Images</text>
+  <g stroke-linecap="round">
+    <path d="m1547 281 244 4-2 73-241 4" stroke-width="0" fill="#ffc9c9"/>
+    <path d="M1543 282c84-1 173-2 244 2m5 0c0 26-3 52-4 79m3-1c-99 1-197 0-249-2m3-1c2-13-2-32 0-76" stroke="#e03131" stroke-width="1.5" fill="none" stroke-dasharray="8 9"/>
+  </g>
+  <text x="97" y="15.4" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#e03131" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1570 300)">Hirarchy of Options</text>
+  <text x="97" y="36.8" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#e03131" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1570 300)">Interface can be a file </text>
+  <path d="M970 347h216m-216 0h216m0 0c16 0 24 9 25 25m-25-25c19-1 26 9 25 25m0 0c-2 17-2 35 0 50m0-50v50m0 0c-1 17-8 25-25 25m25-25c2 15-7 26-25 25m0 0c-59 2-121-1-216 0m216 0H970m0 0c-16 1-25-10-25-25m25 25c-19 0-23-6-25-25m0 0v-50m0 50v-50m0 0c1-17 6-26 25-25m-25 25c1-19 7-27 25-25" stroke="#099268" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="73.5" y="17.5" font-family="Virgil, Segoe UI Emoji" font-size="20" fill="#099268" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1004 384)">Ground Control</text>
+  <g mask="url(#mask-cE0WMcjlIuy75ClBUXILo)" stroke-linecap="round">
+    <path d="m1604 521-373-128" stroke="#1e1e1e" stroke-width="2.5" fill="none" stroke-dasharray="8 10"/>
+    <path d="M1256 393c-8 1-19 2-25 0m20 16c-7-5-15-10-20-16" stroke="#1e1e1e" stroke-width="2.5" fill="none"/>
+  </g>
+  <mask id="mask-cE0WMcjlIuy75ClBUXILo">
+    <path fill="#fff" d="M0 0h2076v747H0z"/>
+    <path d="M1312 417h211v80h-211z"/>
+  </mask>
+  <text x="105.7" y="34" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1311 417)">Fetch a list of images to </text>
+  <text x="105.7" y="54" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1311 417)">replicate</text>
+  <text x="105.7" y="74" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#1e1e1e" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1311 417)">(Optional)</text>
+  <path d="m1534 367-66 59" stroke="#868e96" stroke-width="1.5" fill="none" stroke-dasharray="1.5 7" stroke-linecap="round"/>
+  <g mask="url(#mask-bTwjGCTjy4EMrzrZk6LGx)" stroke-linecap="round">
+    <path d="M1079 456v148" stroke="#1971c2" stroke-width="2.5" fill="none" stroke-dasharray="8 10"/>
+    <path d="m1087 479-8-23m-9 23 9-23" stroke="#1971c2" stroke-width="2.5" fill="none"/>
+  </g>
+  <mask id="mask-bTwjGCTjy4EMrzrZk6LGx">
+    <path fill="#fff" d="M0 0h1179v704H0z"/>
+    <path d="M1012 520h134v20h-134z"/>
+  </mask>
+  <text x="67" y="14" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#4dabf7" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1012 520)">Registry Adapter</text>
+  <path d="m761 1049 707-1m86-3 354-1" stroke="#1971c2" stroke-width="4.5" fill="none" stroke-dasharray="8 12" stroke-linecap="round"/>
+  <path d="m1510 261 2 775" stroke="#846358" stroke-width="4.5" fill="none" stroke-dasharray="1.5 10" stroke-linecap="round"/>
+  <text y="31.5" font-family="Virgil, Segoe UI Emoji" font-size="36" fill="#846358" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1362 210)">Network Bounderies</text>
+  <g fill-rule="evenodd" stroke-linecap="round">
+    <path d="m882 489 2 53c0 10-2 4-1 6 0 2 1 5 3 6s4 2 9 2l18-2c6 0 13 3 18 2 4 0 7-4 8-5 2-2 0-3 1-4 0-1 2 7 2-2l-2-51c-1-10-2-8-2-9 0-2 3 1 1 0l-12-4-16 1-13-2-14 5-3 2h4" stroke-width="0" fill="#ced4da"/>
+    <path d="m882 486 2 57c0 10-2 4-2 6 0 1 0 2 3 3l12 4h17l17-2 8-1c2-1 3-1 3-3 0-1-2 4-2-6l1-53c0-10 0-4-1-5l-3-2-9-2a192 192 0 0 0-31 0l-11 2c-2 1-1 2-2 3l-2 1m2 0v62c1 1-1 1 1 3l10 4 21-1 16-3h6l3-4c0-1-1 4-1-6l2-52v-5l-4-2c-2-1-3-2-8-2l-19-1-13 2-13 2c-2 0-2 2-2 2l1-2" stroke="#000" fill="none"/>
+  </g>
+  <g stroke-linecap="round">
+    <path d="M917 480c6 0 12 2 16 3l8 2c0 2-3 4-7 5l-16 2-20-1-13-3c-2-1-2-2 0-3s7-3 12-3l20-2c3 0 0 1 0 1m-9 0h19l12 4c2 1 2 1 0 2-3 2-8 4-13 4a114 114 0 0 1-37-1c-4-1-5-3-5-4l6-3 17-3c3-1 0 0 0 1" stroke-width="0" fill="#fff"/>
+    <path d="m906 480 20 1 13 3c2 1 2 3 0 4s-6 3-12 3h-19l-18-1c-4-1-7-3-7-4l6-3 19-3c3-1 0 0 0 0m4 0 18 2 10 2c2 1 0 3-4 4-3 2-9 4-14 4a116 116 0 0 1-35-4c-3-1-4-1-3-3l9-3 18-2c4 0 1 1 1 1" stroke="#000" fill="none"/>
+  </g>
+  <g stroke-linecap="round">
+    <path d="M958 448c-8 12-13 18-17 30m17-30-17 30" stroke="#4dabf7" fill="none"/>
+    <path d="M943 461c-2 7-2 10-1 17m1-17-2 18" stroke="#4dabf7" fill="none"/>
+    <path d="M954 467c-6 5-10 6-12 11m12-11c-5 3-9 8-13 12" stroke="#4dabf7" fill="none"/>
+  </g>
+  <path d="M499 68c96 64 194 129 446 284M499 68l447 285" stroke="#4dabf7" fill="none" stroke-linecap="round"/>
+  <text y="14" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#4dabf7" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(901 513)">DB</text>
+  <g mask="url(#mask-s6JV1ueBO-cRyBsa_JCqR)" stroke-linecap="round">
+    <path d="m1067 193 1 148" stroke="#1971c2" stroke-width="2.5" fill="none" stroke-dasharray="8 10"/>
+    <path d="m1059 317 9 24m8-24-8 24" stroke="#1971c2" stroke-width="2.5" fill="none"/>
+  </g>
+  <mask id="mask-s6JV1ueBO-cRyBsa_JCqR">
+    <path fill="#fff" d="M0 0h1168v441H0z"/>
+    <path d="M1017 247h101v40h-101z"/>
+  </mask>
+  <text x="50.6" y="14" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#4dabf7" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1017 247)">Management </text>
+  <text x="50.6" y="34" font-family="Virgil, Segoe UI Emoji" font-size="16" fill="#4dabf7" text-anchor="middle" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(1017 247)">Interfaace</text>
+  <path d="M1059 50c4-1 11 0 15 2s8 6 10 10 3 10 1 14a23 23 0 0 1-23 15c-5-1-11-3-14-6-4-4-6-8-7-13 0-4 2-10 5-14 3-3 11-6 13-7l1-1m6 1c4 0 10 1 14 4 3 3 5 9 6 13 0 5-2 11-5 14-2 4-7 7-11 8h-16c-4-2-8-7-10-11s-4-9-3-13c2-5 6-10 10-13 4-2 11-3 13-3h2m-5 40-2 50m3-50-2 49m-2 3 20 31m-18-32 20 30m-22-29-19 25m21-25-19 23m0-64 21 18m-19-19 18 18m2 2 27-16m-28 15 26-17m-54-48 63 14m-61-14 64 12" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <g stroke-linecap="round">
+    <path d="m1060 11 31 6-9 44-32-5" stroke-width="0" fill="#fff"/>
+    <path d="m1059 10 32 6m-32-6 32 6m0 0c-1 10-5 22-8 45m8-45-8 45m0 0-32-6m32 6-32-6m0 0 8-45m-8 45 8-45" stroke="#000" stroke-width="2" fill="none"/>
+  </g>
+  <g fill-rule="evenodd" stroke-linecap="round">
+    <path d="m1062 82 19 3h3l8-6-6 10c-2 1-1 0-5-1l-17-2c-6 0-15 5-19 3-4-1-6-11-6-12 1-1 5 6 9 6 4 1 11-3 14-3" stroke-width="0"/>
+    <path d="m1064 79 16 6 7 1 4-5c1 1 0 7-2 9h-10l-16-4c-5 0-12 2-16 1s-8-8-8-9c0 0 5 4 9 4l16-3m-2-1c3 2 13 8 17 8 4 1 6-2 8-2l5-1c0 1-2 6-4 7s-4 0-8-1-11-4-17-4c-5-1-10 2-14 1s-10-8-11-8c0-1 4 6 8 7l18-4" stroke="#000" fill="none"/>
+  </g>
+  <path d="m1055 63 4 1 2 4-2 4-5 2h-4l-4-4 1-4 4-3 4-1 1 1m-3-1 6 1 2 4-2 5-3 2h-5l-4-3v-3l1-4 6-1h-1" stroke="#000" fill="none" stroke-linecap="round"/>
+  <path d="M1053 67h1s0 0 0 0l-1 1h1-1s0 0 0 0v-1s0 0 0 0h1-1m1 0s0 0 0 0l-1 1h1s0 0 0 0h-1s0 1 0 0c0 0 0 0 0 0 0-1 0 0 0 0s0 0 0 0v-1m20 2h1l-1 1h1-1s0 0 0 0 0 0 0 0v-1s0 0 0 0 0 0 0 0c0-1 0 0 0 0m0 0s0 0 0 0h1v1h-1v1-1c-1 0 0 0 0 0v-1s0 0 0 0 0 0 0 0" stroke="#000" fill="none" stroke-linecap="round"/>
+  <g stroke-linecap="round">
+    <path d="m375 506 260-1-2 266-257-1" stroke-width="0" fill="#40c057"/>
+    <path d="M376 506c78 3 158 1 258 0m-258 0h258m0 0v263m0-263v263m0 0c-85-2-173 1-258 0m258 0H376m0 0c-1-56-3-109 0-263m0 263V506" stroke="#000" fill="none"/>
+  </g>
+  <text y="15.8" font-family="Virgil, Segoe UI Emoji" font-size="16.4" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(381 511)">Artifact List</text>
+  <text y="59.8" font-family="Virgil, Segoe UI Emoji" font-size="16.4" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(381 511)">repo/tag</text>
+  <text y="81.8" font-family="Virgil, Segoe UI Emoji" font-size="16.4" style="white-space:pre" dominant-baseline="alphabetic" transform="translate(381 511)">repo/tag:@digest </text>
+  <path d="M948 365c-116 56-231 108-316 142m317-142L632 507" stroke="#2f9e44" fill="none" stroke-linecap="round"/>
+</svg>
