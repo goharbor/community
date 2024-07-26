@@ -23,14 +23,14 @@ describes governance guidelines and maintainer responsibilities.
 
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
-| Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [VMware](https://www.github.com/vmware/) |
+| Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SUSE](https://github.com/suse) |
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [VMware](https://www.github.com/vmware/) |
 
 ## SIG Docs
 
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
-| Abigail McCarthy | [a-mccarthy](https://github.com/a-mccarthy) | [VMware](https://www.github.com/vmware/) |
+| ? | [?](https://github.com/?) | [?](https://www.github.com/?) |
 
 ## Harbor Core Contributors & Stakeholders
 
@@ -50,11 +50,10 @@ describes governance guidelines and maintainer responsibilities.
 | Security | TBD |
 | User Interface/Usability/User Experience | Meina Zhou (zhoumeina) |
 | Scale & Performance | Weiwei He (heww), Ziming Zhang (bitsf) |
-| Documentation | Abigail McCarthy (a-mccarthy) |
+| Documentation | need-a-documentarian |
 | Releases | Yan Wang (wy65701436), Steven Ren (renmaosheng) |
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
-| Product Management | Meenu Sharma ([msha01](https://github.com/msha01)) |
 
 ## Emeritus Maintainers
 
