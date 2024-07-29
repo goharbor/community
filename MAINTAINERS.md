@@ -7,6 +7,7 @@ describes governance guidelines and maintainer responsibilities.
 
 | Maintainer | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
+| Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
 | Yan Wang | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
@@ -58,7 +59,6 @@ describes governance guidelines and maintainer responsibilities.
 * Tianon Gravi, [tianon](https://github.com/tianon)
 * Daniel Pacak, [danielpacak](https://github.com/danielpacak)
 * Fanjian Kong, [kofj](https://github.com/kofj)
-* Daniel Jiang, [reasonerjt](https://github.com/reasonerjt)
 * Mingming Pei, [mmpei](https://github.com/mmpei)
 * Steven Ren, [renmaosheng](https://github.com/renmaosheng)
 * Henry Zhang, [hainingzhang](https://github.com/hainingzhang)
