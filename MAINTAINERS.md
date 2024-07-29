@@ -32,9 +32,9 @@ describes governance guidelines and maintainer responsibilities.
 
 | Harbor Feature Area | Lead |
 | ----------------------------- | :---------------------: |
-| Technical Lead |  |
-| Chief Architects | , Steven Zou (steven-zou) |
-| Harbor Core |  |
+| Technical Lead | Daniel Jiang (reasonerjt) |
+| Chief Architects | Daniel Jiang (reasonerjt), Steven Zou (steven-zou) |
+| Harbor Core | Daniel Jiang (reasonerjt) |
 | Replication Working Group | Steven Zou (steven-zou), Wenkai Yin (ywk253100) |
 | Webhooks | MingMing Pei (mmpei), Yan Wang (wy65701436) |
 | Interrogation Service/Pluggable Scanners | Zach Hill (zhill), Steven Zou (steven-zou) |
