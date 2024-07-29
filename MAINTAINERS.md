@@ -51,6 +51,11 @@ describes governance guidelines and maintainer responsibilities.
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
 
+
+## Emeritus Founder
+
+* Henry Zhang, [hainingzhang](https://github.com/hainingzhang)
+
 ## Emeritus Maintainers
 
 * Michael Michael, [michmike](https://github.com/michmike)
@@ -61,4 +66,4 @@ describes governance guidelines and maintainer responsibilities.
 * Fanjian Kong, [kofj](https://github.com/kofj)
 * Mingming Pei, [mmpei](https://github.com/mmpei)
 * Steven Ren, [renmaosheng](https://github.com/renmaosheng)
-* Henry Zhang, [hainingzhang](https://github.com/hainingzhang)
+
