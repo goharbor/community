@@ -13,7 +13,7 @@ describes governance guidelines and maintainer responsibilities.
 | Steven Ren | [renmaosheng](https://github.com/renmaosheng) | [VMware](https://www.github.com/vmware/) |
 | Yan Wang | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
-| Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [VMware](https://www.github.com/vmware/) | 
+| Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [GRG Banking](https://global.grgbanking.com/en/) | 
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
@@ -24,7 +24,7 @@ describes governance guidelines and maintainer responsibilities.
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SUSE](https://github.com/suse) |
-| Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [VMware](https://www.github.com/vmware/) |
+| Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [GRG Banking](https://global.grgbanking.com/en/) |
 
 ## SIG Docs
 
