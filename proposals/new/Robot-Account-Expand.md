@@ -19,7 +19,7 @@ Additionally, by recording the creator of each robot account in the database and
 
 ## Non Goal
 
-1. No support for configuring the prohibited permissions
+1. No support for configuring the banned permissions in the harbor v2.10.0
 2. No support for granting system configuration permission for a robot
 
 ## Personas and User Stories
@@ -32,12 +32,42 @@ Robot Account is a System Administrator and Project Administrator operation in H
 
 * User Stories
 
-1. As a system administrator, I can enable or disable the prohibited scope set via a configuration option.
-2. As a system/project administrator, I can create a project-level robot account with the selected access scope, including the prohibited scope set.
-3. The creation and deletion of robot accounts will be recorded in the audit log.
-4. As a system administrator, I can identify the creator of each robot account by performing an SQL query in the database.
-5. A robot account can create another robot account, but the new account’s scope must be less than or equal to that of the creator.
-6. A robot account created by another robot can only be updated or deleted by either the human with the relevant permissions, the creator of the robot account, or the robot account itself.
+1. As a system/project administrator, I can create a project-level robot account with the selected access scope, including the banned scope set in the harbor v2.10.0.
+2. The creation and deletion of robot accounts will be recorded in the audit log.
+3. As a system administrator, I can identify the creator of each robot account by performing an SQL query in the database.
+4. A robot account can create another robot account, but the new account’s scope must be less than or equal to that of the creator.
+5. A robot account created by another robot can only be updated or deleted by either the human with the relevant permissions, the creator of the robot account, or the robot account itself.
+
+## Keep track of robot accounts
+
+Over time, as you create more and more robot accounts, and you may lose track of who creates the robot account and which robot account is used for.
+
+1. the creator name of a robot account is a good way to capture the contact person for the account. For new robots that created after this proposal be introduced, Harbor will populate the name
+of the creator when creating the robot account. 
+2. The new audit logs for robot account creation and deletion are good way for you to track the lifecycle of the created robots.
+
+![audit_log](../images/robot-expand-permission/robot2.png)
+
+## Robot accounts that are created and managed by another robot accounts
+
+Robot accounts are principals, it means that you can grant service account to Harbor resources. However, from the perspective of preventing privilege escalation, generally, a service account 
+cannot grant roles that are higher or more powerful than the roles it possesses. When a robot account creates a new service account, the new service account doesn't automatically inherit any roles
+or permissions.
+
+Creation: If a robot account has been given the role of robot account creation, it can create or manage other service accounts but only within the permissions of its own roles.
+1. any project level robot account can be created by a system or project level robot account who with the robot creation permission.
+2. any system level robot account can be created by a system level robot account who with the robot creation permission.
+
+Deletion/Update: A service account cannot assign permissions to another service account that exceed its own permissions.
+1. any robot account that created by another robot can be updated by the creator robot or the itself.
+2. any robot account that created by another robot can be deleted by the creator robot or the itself.
+
+When a robot account is removed, the robot accounts that were created by that removed account will not be automatically removed. The robot account that were created by the now-deleted robot continue 
+to exist and function independently, provide they have the necessary permissions.
+
+Open questions:
+1. Is there any limitation for the number of robot accounts that can be created by an existing robot account?
+2. Is there any limitation for the number of robot accounts you can create within a single project?
 
 ## Scheme Change
 
@@ -48,55 +78,60 @@ ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator varchar(255);
 UPDATE robot SET creator = 'unknown' WHERE creator IS NULL;
 ```
 
+Examples:
+
+```
+6 | test1 |             |          0 | 1727520672 | f        | 2024-08-29 10:51:12.911411 | 2024-08-29 10:51:12.911419 | t       | c3be511635281d7874
+8b4204539c8a13 | 4N66mfxj8bsM0BJ0cHYjGJMhvIsCkjbR |       30 | robot$test
+7 | test2 |             |          0 | 1727933810 | f        | 2024-09-03 05:36:50.102285 | 2024-09-03 05:36:50.102298 | t       | 423b24f57a0b2e0770
+9e206b7eb2c287 | xx7sHhegkZ7N2nvx063pRzk9irbN0ddR |       30 | admin
+```
+
 ## Prohibited Permissions
 
 1.  System Level
 
-|   Resource    |    Action     | Enable |
-|:-------------:|:-------------:|:------:|
-| Configuration |     Read      |   N    |
-| Configuration |    Update     |   N    |
-|   ExportCVE   |     Read      |   Y    |
-|   ExportCVE   |    Create     |   Y    |
-|   LdapUser    |     List      |   Y    |
-|   LdapUser    |    Create     |   Y    |
-|  User-Group   |     List      |   Y    |
-|  User-Group   |    Create     |   Y    |
-|  User-Group   |     Read      |   Y    |
-|  User-Group   |    Update     |   Y    |
-|  User-Group   |    Delete     |   Y    |
-|     Robot     |     Read      |   Y    |
-|     Robot     | Update(self)  |   Y    |
-|     Robot     |     List      |   Y    |
-|     Robot     |    Create     |   Y    |
-|     Robot     | Delete(self)  |   Y    |
-|     User      |     Read      |   Y    |
-|     User      |    Update     |   Y    |
-|     User      |     List      |   Y    |
-|     User      |    Create     |   Y    |
-|     User      |    Delete     |   Y    |
-|     Quota     |    Update     |   Y    |
+|   Resource    | Action  | Enable |
+|:-------------:|:-------:|:------:|
+| Configuration |  Read   |   N    |
+| Configuration | Update  |   N    |
+|   ExportCVE   |  Read   |   Y    |
+|   ExportCVE   | Create  |   Y    |
+|   LdapUser    |  List   |   Y    |
+|   LdapUser    | Create  |   Y    |
+|  User-Group   |  List   |   Y    |
+|  User-Group   | Create  |   Y    |
+|  User-Group   |  Read   |   Y    |
+|  User-Group   | Update  |   Y    |
+|  User-Group   | Delete  |   Y    |
+|     Robot     |  Read   |   Y    |
+|     Robot     | Update  |   Y    |
+|     Robot     |  List   |   Y    |
+|     Robot     | Create  |   Y    |
+|     Robot     | Delete  |   Y    |
+|     User      |  Read   |   Y    |
+|     User      | Update  |   Y    |
+|     User      |  List   |   Y    |
+|     User      | Create  |   Y    |
+|     User      | Delete  |   Y    |
+|     Quota     | Update  |   Y    |
 
 2.  Project Level
 
-| Resource  |    Action    | Enable |
-|:---------:|:------------:|:------:|
-|  Member   |     List     |   Y    |
-|  Member   |    Create    |   Y    |
-|  Member   |     Read     |   Y    |
-|  Member   |    Update    |   Y    |
-|  Member   |    Delete    |   Y    |
-|   Robot   |     Read     |   Y    |
-|   Robot   | Update(self) |   Y    |
-|   Robot   |     List     |   Y    |
-|   Robot   |    Create    |   Y    |
-|   Robot   | Delete(self) |   Y    |
-
-## UI
+| Resource  | Action  | Enable |
+|:---------:|:-------:|:------:|
+|  Member   |  List   |   Y    |
+|  Member   | Create  |   Y    |
+|  Member   |  Read   |   Y    |
+|  Member   | Update  |   Y    |
+|  Member   | Delete  |   Y    |
+|   Robot   |  Read   |   Y    |
+|   Robot   | Update  |   Y    |
+|   Robot   |  List   |   Y    |
+|   Robot   | Create  |   Y    |
+|   Robot   | Delete  |   Y    |
 
 ![expenaded_permissons](../images/robot-expand-permission/robot1.png)
-
-![audit_log](../images/robot-expand-permission/robot2.png)
 
 ## Data provider
 
