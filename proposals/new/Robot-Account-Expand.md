@@ -36,7 +36,7 @@ Robot Account is a System Administrator and Project Administrator operation in H
 2. The creation and deletion of robot accounts will be recorded in the audit log.
 3. As a system administrator, I can identify the creator of each robot account by performing an SQL query in the database.
 4. A robot account can create another robot account, but the new account’s scope must be less than or equal to that of the creator.
-5. A robot account created by another robot can only be updated or deleted by either the human with the relevant permissions, the creator of the robot account, or the robot account itself.
+5. A robot account created by another robot can only be updated or deleted by either the human/system level robot account with the relevant permissions, the creator of the robot account, or the robot account itself.
 
 ## Keep track of robot accounts
 
@@ -50,17 +50,17 @@ of the creator when creating the robot account.
 
 ## Robot accounts that are created and managed by another robot accounts
 
-Robot accounts are principals, it means that you can grant service account to Harbor resources. However, from the perspective of preventing privilege escalation, generally, a service account 
-cannot grant roles that are higher or more powerful than the roles it possesses. When a robot account creates a new service account, the new service account doesn't automatically inherit any roles
+Robot accounts are principals, it means that you can grant robot account to Harbor resources. However, from the perspective of preventing privilege escalation, generally, a robot account 
+cannot grant roles that are higher or more powerful than the roles it possesses. When a robot account creates a new robot account, the new robot account doesn't automatically inherit any roles
 or permissions.
 
-Creation: If a robot account has been given the role of robot account creation, it can create or manage other service accounts but only within the permissions of its own roles.
+Creation: If a robot account has been given the role of robot account creation, it can create or manage other robot accounts but only within the permissions of its own roles.
 1. any project level robot account can be created by a system or project level robot account who with the robot creation permission.
 2. any system level robot account can be created by a system level robot account who with the robot creation permission.
 
-Deletion/Update: A service account cannot assign permissions to another service account that exceed its own permissions.
-1. any robot account that created by another robot can be updated by the creator robot or the itself.
-2. any robot account that created by another robot can be deleted by the creator robot or the itself.
+Deletion/Update: A robot account cannot assign permissions to another robot account that exceed its own permissions.
+1. any robot account that created by another robot can be updated by the creator robot or the itself, provided that the update permission has been granted to the creator or the robot itself.
+2. any robot account that created by another robot can be deleted by the creator robot or the itself, provided that the delete permission has been granted to the creator or the robot itself.
 
 When a robot account is removed, the robot accounts that were created by that removed account will not be automatically removed. The robot account that were created by the now-deleted robot continue 
 to exist and function independently, provide they have the necessary permissions.
@@ -74,8 +74,11 @@ Open questions:
 Add a new column of creator for table robot.
 
 ```
-ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator varchar(255);
-UPDATE robot SET creator = 'unknown' WHERE creator IS NULL;
+ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator_ref integer;
+ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator_type varchar(255);
+
+UPDATE robot SET creator_ref = 0 WHERE creator IS NULL;
+
 ```
 
 Examples:
