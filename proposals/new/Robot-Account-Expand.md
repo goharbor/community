@@ -85,9 +85,9 @@ Examples:
 
 ```
 6 | test1 |             |          0 | 1727520672 | f        | 2024-08-29 10:51:12.911411 | 2024-08-29 10:51:12.911419 | t       | c3be511635281d7874
-8b4204539c8a13 | 4N66mfxj8bsM0BJ0cHYjGJMhvIsCkjbR |       30 | robot$test
+8b4204539c8a13 | 4N66mfxj8bsM0BJ0cHYjGJMhvIsCkjbR |       30 | robot | 12
 7 | test2 |             |          0 | 1727933810 | f        | 2024-09-03 05:36:50.102285 | 2024-09-03 05:36:50.102298 | t       | 423b24f57a0b2e0770
-9e206b7eb2c287 | xx7sHhegkZ7N2nvx063pRzk9irbN0ddR |       30 | admin
+9e206b7eb2c287 | xx7sHhegkZ7N2nvx063pRzk9irbN0ddR |       30 | local | 10
 ```
 
 ## Prohibited Permissions
