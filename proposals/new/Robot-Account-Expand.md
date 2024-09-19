@@ -22,6 +22,10 @@ Additionally, by recording the creator of each robot account in the database and
 1. No support for configuring the banned permissions in the harbor v2.10.0
 2. No support for granting system configuration permission for a robot
 
+## Terms
+Creator robot account: a robot account that has the permission to create other robot accounts. It can initiate the creation of new robot accounts.
+Nested robot account： a robot account that is created by a creator robot account.
+
 ## Personas and User Stories
 
 This section lists the user stories for the different personas interacting with robot account.
@@ -32,17 +36,16 @@ Robot Account is a System Administrator and Project Administrator operation in H
 
 * User Stories
 
-1. As a system/project administrator, I can create a project-level robot account with the selected access scope, including the banned scope set in the harbor v2.10.0.
+1. As a system/project administrator, I can create a system-level/project-level robot account with the selected access scope, including the banned scope set in the harbor v2.10.0.
 2. The creation and deletion of robot accounts will be recorded in the audit log.
-3. As a system administrator, I can identify the creator of each robot account by performing an SQL query in the database.
-4. A robot account can create another robot account, but the new account’s scope must be less than or equal to that of the creator.
-5. A robot account created by another robot can only be updated or deleted by either the human/system level robot account with the relevant permissions, the creator of the robot account, or the robot account itself.
+3. As a system administrator, I can identify the creator of each robot account by performing an SQL query in the database(There is no API to directly handle this).
+4. A robot account can create another robot account, but the nested robot account’s scope must be less than or equal to that of the creator robot.
 
 ## Keep track of robot accounts
 
 Over time, as you create more and more robot accounts, and you may lose track of who creates the robot account and which robot account is used for.
 
-1. the creator name of a robot account is a good way to capture the contact person for the account. For new robots that created after this proposal be introduced, Harbor will populate the name
+1. the creator information of a robot account is a good way to capture the contact person for the account. For new robots that created after this proposal be introduced, Harbor will populate the type and reference
 of the creator when creating the robot account. 
 2. The new audit logs for robot account creation and deletion are good way for you to track the lifecycle of the created robots.
 
@@ -51,23 +54,29 @@ of the creator when creating the robot account.
 ## Robot accounts that are created and managed by another robot accounts
 
 Robot accounts are principals, it means that you can grant robot account to Harbor resources. However, from the perspective of preventing privilege escalation, generally, a robot account 
-cannot grant roles that are higher or more powerful than the roles it possesses. When a robot account creates a new robot account, the new robot account doesn't automatically inherit any roles
-or permissions.
+cannot grant permissions that are higher or more powerful than the roles it possesses. When a creator robot account creates a nested robot account, the nested robot account doesn't automatically inherit any permissions.
 
-Creation: If a robot account has been given the role of robot account creation, it can create or manage other robot accounts but only within the permissions of its own roles.
+Creation: If a robot account has the permission to create robot accounts, it can create or manage nested robot accounts, but **only within the scope of its own permissions**. A robot account cannot assign permissions to another robot account that exceed its own.
 1. any project level robot account can be created by a system or project level robot account who with the robot creation permission.
 2. any system level robot account can be created by a system level robot account who with the robot creation permission.
 
-Deletion/Update: A robot account cannot assign permissions to another robot account that exceed its own permissions.
-1. any robot account that created by another robot can be updated by the creator robot or the itself, provided that the update permission has been granted to the creator or the robot itself.
-2. any robot account that created by another robot can be deleted by the creator robot or the itself, provided that the delete permission has been granted to the creator or the robot itself.
+Update: A nested robot account cannot be assigned the permissions that exceed those of its creator.
+1. any nested robot account can be updated by someone who has the robot update permission.
+   A human user with the relevant robot update permission.
+   The creator robot account of the nested robot.
+   The nested robot account itself (if granted the necessary permissions).
+2. if the **creator robot account is removed**, the nested robot account will be **escalated** to an individual robot account. At that point, **anyone** with the appropriate robot update permission can manage it without any limitation.
 
-When a robot account is removed, the robot accounts that were created by that removed account will not be automatically removed. The robot account that were created by the now-deleted robot continue 
-to exist and function independently, provide they have the necessary permissions.
+**Note**: Since the creator robot account’s permissions can be updated without impacting its nested accounts, this can lead to situations where the **nested robot account has more powerful permissions** than its creator.
+
+Deletion: 
+1. any nested robot account can be deleted by a robot with the appropriate robot deletion permissions.
+
+When a creator robot account is removed, the nested robot accounts it created are **not automatically removed**. These nested accounts will continue to exist and function independently, as long as they retain the necessary permissions.
 
 Open questions:
-1. Is there any limitation for the number of robot accounts that can be created by an existing robot account?
-2. Is there any limitation for the number of robot accounts you can create within a single project?
+1. Is there a limitation on the number of robot accounts that can be created by a creator robot account?
+2. Is there a limitation on the number of robot accounts that can be created within a single project?
 
 ## Scheme Change
 
@@ -76,9 +85,6 @@ Add a new column of creator for table robot.
 ```
 ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator_ref integer;
 ALTER TABLE robot ADD COLUMN IF NOT EXISTS creator_type varchar(255);
-
-UPDATE robot SET creator_ref = 0 WHERE creator IS NULL;
-
 ```
 
 Examples:
