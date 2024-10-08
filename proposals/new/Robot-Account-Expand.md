@@ -46,7 +46,9 @@ Robot Account is a System Administrator and Project Administrator operation in H
 Over time, as you create more and more robot accounts, and you may lose track of who creates the robot account and which robot account is used for.
 
 1. the creator information of a robot account is a good way to capture the contact person for the account. For new robots that created after this proposal be introduced, Harbor will populate the type and reference
-of the creator when creating the robot account. 
+of the creator when creating the robot account.
+   1. The creator of a robot account can be a human or another robot account. 
+   2. The type and reference of the creator must serve as the unique identifier for an account, whether it is a human or a robot account. This identifier will be a combination of the account type (human or robot) and the account ID.
 2. The new audit logs for robot account creation and deletion are good way for you to track the lifecycle of the created robots.
 
 ![audit_log](../images/robot-expand-permission/robot2.png)
