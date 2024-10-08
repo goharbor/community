@@ -64,9 +64,9 @@ Creation: If a robot account has the permission to create robot accounts, it can
 
 Update: A nested robot account cannot be assigned the permissions that exceed those of its creator.
 1. any nested robot account can be updated by someone who has the robot update permission.
-   A human user with the relevant robot update permission.
-   The creator robot account of the nested robot.
-   The nested robot account itself (if granted the necessary permissions).
+   1. A human user with the relevant robot update permission.
+   2. The creator robot account of the nested robot.
+   3. The nested robot account itself (if granted the necessary permissions).
 2. if the **creator robot account is removed**, the nested robot account will be **escalated** to an individual robot account. At that point, **anyone** with the appropriate robot update permission can manage it without any limitation.
 
 **Note**: Since the creator robot account’s permissions can be updated without impacting its nested accounts, this can lead to situations where the **nested robot account has more powerful permissions** than its creator.

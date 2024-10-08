@@ -89,7 +89,6 @@ CREATE TABLE artifact_accessory (
 ### Accessory Interface
 
 ```go
-
 type Reference string
 type HardRef Reference
 type SoftRef Reference
