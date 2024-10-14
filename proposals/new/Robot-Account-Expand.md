@@ -20,7 +20,8 @@ Additionally, by recording the creator of each robot account in the database and
 ## Non Goal
 
 1. No support for configuring the banned permissions in the harbor v2.10.0
-2. No support for granting system configuration permission for a robot
+2. No support for granting system configuration permission for a robot account
+3. No support for updating a robot account using another robot account
 
 ## Terms
 Creator robot account: a robot account that has the permission to create other robot accounts. It can initiate the creation of new robot accounts.
@@ -62,12 +63,7 @@ Creation: If a robot account has the permission to create robot accounts, it can
 1. any project level robot account can be created by a system or project level robot account who with the robot creation permission.
 2. any system level robot account can be created by a system level robot account who with the robot creation permission.
 
-Update: A nested robot account cannot be assigned the permissions that exceed those of its creator.
-1. any nested robot account can be updated by someone who has the robot update permission.
-   1. A human user with the relevant robot update permission.
-   2. The creator robot account of the nested robot.
-   3. The nested robot account itself (if granted the necessary permissions).
-2. if the **creator robot account is removed**, the nested robot account will be **escalated** to an individual robot account. At that point, **anyone** with the appropriate robot update permission can manage it without any limitation.
+Update: **Anyone** with the appropriate robot update permission can manage the robot account without any limitation.
 
 **Note**: Since the creator robot account’s permissions can be updated without impacting its nested accounts, this can lead to situations where the **nested robot account has more powerful permissions** than its creator.
 
@@ -116,7 +112,6 @@ Examples:
 |  User-Group   | Update  |   Y    |
 |  User-Group   | Delete  |   Y    |
 |     Robot     |  Read   |   Y    |
-|     Robot     | Update  |   Y    |
 |     Robot     |  List   |   Y    |
 |     Robot     | Create  |   Y    |
 |     Robot     | Delete  |   Y    |
