@@ -286,7 +286,7 @@ CommonEvent : ResolveToAuditLog()
 
 CommonEvent --|> AuditLog : ResolveToAuditLog
 
-AuditLog --|> AuditLogV2Table : default
+AuditLog --|> Database : default
 AuditLog --|> LogStash : forward
 AuditLog --|> LogInsight : forward
 ```
