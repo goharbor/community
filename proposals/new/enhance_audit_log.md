@@ -112,6 +112,25 @@ type Metadata struct {
 ## Log Middleware
 
 There is an existing log middleware to add the 'X-Request-ID' to the request context, we can update the log middleware to capture the audit log event.
+The following is the diagram of the log middleware, notification middleware and the request event queue.
+
+```mermaid
+sequenceDiagram
+    participant LogMiddleware
+    participant RequestEventQueue
+    participant NotificationMiddleware
+
+    LogMiddleware->>LogMiddleware: createMetadata()
+    LogMiddleware->>RequestEventQueue: addEvent(event)
+    loop Iterate events in queue
+        NotificationMiddleware->>RequestEventQueue: Iterate
+        alt event.isSuccess or event.mustNotify
+            NotificationMiddleware-->>NotificationMiddleware: BuildAndPublish(event)
+        end
+    end
+```
+
+The following is the code snippet of the log middleware to capture the audit log event.
 
 ```go
 
@@ -212,7 +231,61 @@ func (c *Metadata) Resolve(event *event.Event) error {
 
 ```
 For each basic event type, we can create a resolver to resolve the common event to the specific event type, such as userResolver, projectResolver, robotResolver, etc.
-For other event type, which can not be resolved by the current resolver, we can add a new resolver to resolve the common event to the specific event type. such as the projectMemberResolver, loginEventResolver, purgeAuditResolver, etc. these resolver also implements the Resolver interface.
+For other event type, which can not be resolved by the current resolver, we can add a new resolver to resolve the common event to the specific event type. such as the projectMemberResolver, loginEventResolver, purgeAuditResolver, etc. these resolver also implements the Resolver interface. the following chart shows the relationship between the Resolver and the specific event type resolver.
+
+```mermaid
+Resolver <|-- BasicResolver : implement 
+<<interface>> Resolver
+Resolver <|-- ConfigureResolver : implement
+Resolver <|-- LoginResolver : implement
+Resolver <|-- ProjectmemberResolver : implement
+Resolver <|-- PurgeAuditResolver : implement
+Resolver <|-- ImmutableResolver : implement
+Resolver : Reslove()
+
+BasicResolver <|-- UserEventResolver : initiate
+BasicResolver <|-- RobotEventResolver : initiate
+BasicResolver <|-- ProjectEventResolver : initiate
+BasicResolver <|-- TagRetentionEventResolver : initiate
+
+BasicResolver : BaseURLPattern
+BasicResolver : ResourceType
+BasicResolver : SucceedCodes
+BasicResolver : SensitiveAttributes
+BasicResolver : Resolve()
+
+```
+
+The following chart shows how the common event metadata is resolved to the specific event type, and the specific event is resolved to common event and then to the audit log.
+
+```mermaid
+classDiagram
+
+Metadata : Username
+Metadata : RequestPayload
+Metadata : RequestMethod
+Metadata : ResponseCode
+Metadata : RequestURL
+Metadata : ResponseLocation
+
+Metadata : Resolve(event *event.Event)
+
+Metadata --|>  CommonEvent : Reslove
+
+CommonEvent : Operator
+CommonEvent : ProjectID
+CommonEvent : OcurrAt
+CommonEvent : ResourceName
+CommonEvent : OperationDescription
+CommonEvent : OperationResult
+CommonEvent : ResolveToAuditLog()
+
+CommonEvent --|> AuditLog : ResolveToAuditLog
+
+AuditLog --|> AuditLogV2Table : default
+AuditLog --|> LogStash : forward
+AuditLog --|> LogInsight : forward
+```
 
 ## Disable Specific Audit Log Event 
 Because there are lots of event types add to the audit log, some user might need to skip some unwanted event type. to disable it, the user need to configure audit_log_disable like that
@@ -319,18 +392,7 @@ The current audit log is based on the http middleware, it means it can only capt
 
 ## Terms
 
-```mermaid
-sequenceDiagram
-    participant LogMiddleware
-    participant RequestEventQueue
-    participant NotificationMiddleware
 
-    LogMiddleware->>LogMiddleware: createMetadata()
-    LogMiddleware->>RequestEventQueue: addEvent(event)
-    loop Iterate events in queue
-        NotificationMiddleware->>RequestEventQueue: Iterate
-        alt event.isSuccess or event.mustNotify
-            NotificationMiddleware-->>NotificationMiddleware: BuildAndPublish(event)
-        end
-    end
-```
+
+
+
