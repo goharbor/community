@@ -234,6 +234,8 @@ For each basic event type, we can create a resolver to resolve the common event 
 For other event type, which can not be resolved by the current resolver, we can add a new resolver to resolve the common event to the specific event type. such as the projectMemberResolver, loginEventResolver, purgeAuditResolver, etc. these resolver also implements the Resolver interface. the following chart shows the relationship between the Resolver and the specific event type resolver.
 
 ```mermaid
+classDiagram
+
 Resolver <|-- BasicResolver : implement 
 <<interface>> Resolver
 Resolver <|-- ConfigureResolver : implement
