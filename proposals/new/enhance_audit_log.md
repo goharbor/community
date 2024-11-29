@@ -322,18 +322,15 @@ The current audit log is based on the http middleware, it means it can only capt
 ```mermaid
 sequenceDiagram
     participant LogMiddleware
-    participant EventQueue
+    participant RequestEventQueue
     participant NotificationMiddleware
 
-    LogModule->>LogModule: createMetadata()
-    LogModule->>EventQueue: addEvent(event)
+    LogMiddleware->>LogMiddleware: createMetadata()
+    LogMiddleware->>RequestEventQueue: addEvent(event)
     loop Iterate events in queue
-        NotificationModule->>EventQueue: GetNextEvent()
+        NotificationMiddleware->>RequestEventQueue: Iterate
         alt event.isSuccess or event.mustNotify
-            NotificationModule->>NotificationModule: Start Goroutine
-            NotificationModule-->>NotificationModule: BuildAndPublish(event)
-        else Event does not require notification
-            NotificationModule->>NotificationModule: Skip
+            NotificationMiddleware-->>NotificationMiddleware: BuildAndPublish(event)
         end
     end
 ```
