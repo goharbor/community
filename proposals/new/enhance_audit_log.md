@@ -245,10 +245,10 @@ Resolver <|-- PurgeAuditResolver : implement
 Resolver <|-- ImmutableResolver : implement
 Resolver : Reslove()
 
-BasicResolver <|-- UserEventResolver : initiate
-BasicResolver <|-- RobotEventResolver : initiate
-BasicResolver <|-- ProjectEventResolver : initiate
-BasicResolver <|-- TagRetentionEventResolver : initiate
+BasicResolver <|-- UserEventResolver : instance
+BasicResolver <|-- RobotEventResolver : instance
+BasicResolver <|-- ProjectEventResolver : instance
+BasicResolver <|-- TagRetentionEventResolver : instance
 
 BasicResolver : BaseURLPattern
 BasicResolver : ResourceType
