@@ -263,6 +263,8 @@ The following chart shows how the common event metadata is resolved to the speci
 ```mermaid
 classDiagram
 
+direction LR
+
 Metadata : Username
 Metadata : RequestPayload
 Metadata : RequestMethod
