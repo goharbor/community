@@ -22,7 +22,6 @@ With the above event type, the Harbor administrator can trace the user's behavio
 # Related requirement issues
 
 - https://github.com/goharbor/harbor/issues/21148
-- https://github.com/goharbor/harbor/issues/20367
 - https://github.com/goharbor/harbor/issues/20295
 - https://github.com/goharbor/harbor/issues/20293
 - https://github.com/goharbor/harbor/issues/20292
@@ -58,11 +57,10 @@ type AuditLog struct {
     Username     string    `orm:"column(username)"  json:"username"`
     OpTime       time.Time `orm:"column(op_time)" json:"op_time" sort:"default:desc"`
     RequestPayload string
-    IPAddress    string  
 }
 ```
 
-Add OperationDescription, OperationResult, RequestPayload, IPAddress to field to the audit log.
+Add OperationDescription, OperationResult, RequestPayload to the audit log.
 
 ## Middleware to capture the audit log event
 
@@ -106,8 +104,6 @@ type Metadata struct {
 	ResponseCode int
 	// RequestURL request URL
 	RequestURL string
-	// IPAddress IP address of the request
-	IPAddress string
 	// ResponseLocation response location
 	ResponseLocation string
 }
@@ -157,7 +153,6 @@ func Middleware() func(http.Handler) http.Handler {
 				RequestPayload:   requestContent,
 				RequestURL:       urlStr,
 				ResponseCode:     rw.statusCode,
-				IPAddress:        utils.GetClientIP(r),
 				ResponseLocation: rw.header.Get("Location"),
 			}
 			notification.AddEvent(ctx, event, true)
@@ -258,7 +253,7 @@ Add the `audit_log_disable` configuration item in the Configuration -> System Se
 
 ### Audit Log Page
 
-Update audit log page to display the audit log event, the user can filter the audit log event by the operation, resource_type, resource, the operation description, operation_result, payload and IP address is visible to users.
+Update audit log page to display the audit log event, the user can filter the audit log event by the operation, resource_type, resource, the operation description and operation_result is visible to users.
 
 ![List Audit Log Event Type](../images/enhance_auditlog/audit_log.png)
 
@@ -272,28 +267,73 @@ In the previous implementation, only image related event types could be selected
 
 ## Schema Change
 
-The audit_log table schema should be changed to adapt the new audit log format.
+Because previous audit_log table maybe contains large amount of old record, it might cause the update to this table very slow, so we need to create a new table to store the new audit log event, and the old audit log table will be deprecated.
+
+The audit_log_v2 table schema should be changed to adapt the new audit log format. 
 
 ```sql
-    ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS op_desc varchar(500);
-    ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS op_result varchar(50);
-    ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS source_ip varchar(50);
-    ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS payload text;
+create table audit_log_v2
+(
+	id bigint auto_increment
+		primary key,
+	username varchar(50) null,
+	project_id bigint,
+	operation varchar(50) null,
+	op_desc varchar(500) null,
+	op_result varchar(50) null,
+	resource_type varchar(50) null,
+	resource varchar(50) null,
+	payload text null,
+	op_time datetime null,
+);
+
 ```
 
 Because the audit log can be forworad to log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc, if add the `op_desc` operation description makes the information more readable to the end user.
 
-For some event type, such as configuration change, the change includes a variaty of configuration items, the `payload` field can be used to store the configuration change detail for audit.
-
-The `source_ip` field is used to store the IP address of the request, it is useful for tracing the user's behavior and location to pinpoint mallacious attacks. sometimes the source_ip is inaccurate because of the proxy, but it is still useful to trace the user's behavior.
-
 The `op_result` field is used to store the operation result, it is useful to know if the operation is success or failure.
+`payload` is a reserved column.
 
 ## Security
 
-All passwords in the payload field will be masked before storing in the audit log.
+All passwords in the payload field will be masked before storing in the audit log. 
+In previous implementation, the audit log is visible to all users, because there are lot of sensitive information might be store in the audit log, in this release, the audit log is only visible to the project admin role and system admin role.
+
+## Compatibility
+
+The new audit log event type is compatible with the previous audit log event type, the previous audit log event type is still supported, and the new audit log event type is added to the audit log v2 table. 
+After enable Audit Log Forward Syslog Endpoint option, it can be forward to the log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc.
+
+
+## Failure Cases
+
+Because the audit log is handled asynchronously in the harbor-core container, if the harbor-core crashes before the audit log is recorded, the audit log event in the queue will be lost. it is a known issue in the current implementation, and it is out of the scope of this proposal.
+
+## Breaking Changes
+
+The audit log is only visible to the project admin role and system admin role. for a normal user not in project admin neither sys admin, the audit log should be invisible in the UI.
 
 ## Non-Goals
 
+The current audit log is based on the http middleware, it means it can only capture the event has http request and http response, and it is initiated by the user, usually it is a user action. for system level background job, such as the job service, the event is not captured by the audit log. it is out of the scope of this proposal.
+
 ## Terms
 
+```mermaid
+sequenceDiagram
+    participant LogMiddleware
+    participant EventQueue
+    participant NotificationMiddleware
+
+    LogModule->>LogModule: createMetadata()
+    LogModule->>EventQueue: addEvent(event)
+    loop Iterate events in queue
+        NotificationModule->>EventQueue: GetNextEvent()
+        alt event.isSuccess or event.mustNotify
+            NotificationModule->>NotificationModule: Start Goroutine
+            NotificationModule-->>NotificationModule: BuildAndPublish(event)
+        else Event does not require notification
+            NotificationModule->>NotificationModule: Skip
+        end
+    end
+```
