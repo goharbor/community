@@ -349,20 +349,24 @@ Because previous audit_log table maybe contains large amount of old record, it m
 The audit_log_v2 table schema should be changed to adapt the new audit log format. 
 
 ```sql
-create table audit_log_v2
+create table if not exists audit_log_v2 
 (
-	id bigint auto_increment
-		primary key,
-	username varchar(50) null,
+	id BIGSERIAL PRIMARY KEY NOT NULL,
 	project_id bigint,
 	operation varchar(50) null,
-	op_desc varchar(500) null,
-	op_result varchar(50) null,
 	resource_type varchar(50) null,
 	resource varchar(50) null,
+	username varchar(50) null,
+	op_desc varchar(500) null,
+	op_result varchar(50) null,
 	payload text null,
-	op_time datetime null,
+	op_time timestamp default CURRENT_TIMESTAMP
 );
+
+-- add index to the audit_log_v2 table
+CREATE INDEX IF NOT EXISTS idx_audit_log_v2_op_time ON audit_log_v2 (op_time);
+CREATE INDEX IF NOT EXISTS idx_audit_log_v2_project_id_optime ON audit_log_v2 (project_id, op_time);
+
 
 ```
 
