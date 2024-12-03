@@ -116,12 +116,19 @@ The following is the diagram of the log middleware, notification middleware and 
 
 ```mermaid
 sequenceDiagram
+    participant User
+    participant Harbor-core
     participant LogMiddleware
     participant RequestEventQueue
     participant NotificationMiddleware
 
+    User ->> Harbor-core: http request
+    Harbor-core ->> LogMiddleware: Handler request
     LogMiddleware->>LogMiddleware: createMetadata()
-    LogMiddleware->>RequestEventQueue: addEvent(event)
+    LogMiddleware->>RequestEventQueue: AddEvent(event)
+    LogMiddleware ->> Harbor-core: Handler response
+    Harbor-core ->> User: http response
+
     loop Iterate events in queue
         NotificationMiddleware->>RequestEventQueue: Iterate
         alt event.isSuccess or event.mustNotify
