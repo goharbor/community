@@ -1,5 +1,4 @@
 Proposal: Enhance Audit Log
-
 Author: Stone Zhang
 
 # Abstract
@@ -337,13 +336,13 @@ Add the `audit_log_disable` configuration item in the Configuration -> System Se
 
 ### Audit Log Page
 
-Update audit log page to display the audit log event, the user can filter the audit log event by the operation, resource_type, resource, the operation description and operation_result is visible to users.
+Update audit log page to display the audit log v2 event and the previous audit log, the user can filter the audit log event by the operation, resource_type, resource, the operation description and operation_result are visible to users.
 
 ![List Audit Log Event Type](../images/enhance_auditlog/audit_log.png)
 
 ### Cleanup Audit Log
 
-In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log.
+In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. The cleanup operation will also apply to the legacy audit log table.
 
 
 ![Cleanup Audit Log Event Type](../images/enhance_auditlog/cleanup_audit_log.png)
@@ -365,7 +364,7 @@ create table if not exists audit_log_v2
 	resource varchar(50) null,
 	username varchar(50) null,
 	op_desc varchar(500) null,
-	op_result varchar(50) null,
+	success boolean default true,
 	payload text null,
 	op_time timestamp default CURRENT_TIMESTAMP
 );
@@ -373,13 +372,14 @@ create table if not exists audit_log_v2
 -- add index to the audit_log_v2 table
 CREATE INDEX IF NOT EXISTS idx_audit_log_v2_op_time ON audit_log_v2 (op_time);
 CREATE INDEX IF NOT EXISTS idx_audit_log_v2_project_id_optime ON audit_log_v2 (project_id, op_time);
-
+CREATE INDEX IF NOT EXISTS idx_audit_log_v2_project_id_resource_type ON audit_log_v2 (project_id, resource_type);
+CREATE INDEX IF NOT EXISTS idx_audit_log_v2_project_id_operation ON audit_log_v2 (project_id, operation);
 
 ```
 
 Because the audit log can be forworad to log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc, if add the `op_desc` operation description makes the information more readable to the end user.
 
-The `op_result` field is used to store the operation result, it is useful to know if the operation is success or failure.
+The `success` field is true when it is success, otherwise it is false.
 `payload` is a reserved column.
 
 ## Security
@@ -389,7 +389,7 @@ In previous implementation, the audit log is visible to all users, because there
 
 ## Compatibility
 
-The new audit log event type is compatible with the previous audit log event type, the previous audit log event type is still supported, and the new audit log event type is added to the audit log v2 table. 
+The new audit log event type is compatible with the previous audit log event type, the previous audit log event type is still supported, all audit log event will be logged in the audit log v2 table.
 After enable Audit Log Forward Syslog Endpoint option, it can be forward to the log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc.
 
 
@@ -403,7 +403,9 @@ The audit log is only visible to the project admin role and system admin role. f
 
 ## Non-Goals
 
-The current audit log is based on the http middleware, it means it can only capture the event has http request and http response, and it is initiated by the user, usually it is a user action. for system level background job, such as the job service, the event is not captured by the audit log. it is out of the scope of this proposal.
+1. The current audit log is based on the http middleware, it means it can only capture the event has http request and http response, and it is initiated by the user, usually it is a user action. for system level background job, such as the job service, the event is not captured by the audit log. it is out of the scope of this proposal.
+
+1. User login event only includes logins through browser, it does not include basic authentication by Docker CLI such as `docker login`, nor does it include basic authentication when calling  RESTful APIs. 
 
 ## Terms
 
