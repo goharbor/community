@@ -340,6 +340,8 @@ Update audit log page to display the audit log v2 event and the previous audit l
 
 ![List Audit Log Event Type](../images/enhance_auditlog/audit_log.png)
 
+Under each project's audit log page, the UI should be updated to display the audit log v2 event and the previous audit log. 
+
 ### Cleanup Audit Log
 
 In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. The cleanup operation will also apply to the legacy audit log table.
