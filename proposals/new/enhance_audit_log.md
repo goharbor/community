@@ -304,6 +304,29 @@ create_user, delete_user, update_user
 ```
 It skip to log the user create, user delete, user update event to audit log table.
 
+In the log middleware, check if the current Metadata should be captured
+
+```go
+			// If this event is not captured, we don't need to add it to the notification
+			if !event.Capture(ctx) {
+				return
+			}
+```
+
+The Metadata's Capture method will match the url pattern and event resolver to check if current event is disabled. if it is disabled, it will skip calling SendEvent() method to save the subsequent overhead.
+
+```go
+func (c *Metadata) Capture(ctx context.Context) bool {
+	for urlPattern, r := range urlResolvers {
+		p := regexp.MustCompile(urlPattern)
+		if p.MatchString(c.RequestURL) && r.Capture(ctx, c.RequestMethod) {
+			return true
+		}
+	}
+	return false
+}
+```
+
 In the handler of audit log, add condition to check if the current <operation>_<resourcetype> is enabled, default value is enabled for all event type.
 ```go
 func (h *Handler) Handle(ctx context.Context, value interface{}) error {
