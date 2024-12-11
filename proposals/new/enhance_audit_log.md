@@ -313,17 +313,17 @@ In the log middleware, check if the current Metadata should be captured
 			}
 ```
 
-The Metadata's Capture method will match the url pattern and event resolver to check if current event is disabled. if it is disabled, it will skip calling SendEvent() method to save the subsequent overhead.
+The Metadata's PreCheck method will match the url pattern and event resolver to check if current event is disabled. if it is disabled, it will skip calling SendEvent() method to save the subsequent overhead. the following is the code snippet of the PreCheck method.
 
 ```go
-func (c *Metadata) Capture(ctx context.Context) bool {
+func (c *Metadata) PreCheck(ctx context.Context) (bool, string) {
 	for urlPattern, r := range urlResolvers {
 		p := regexp.MustCompile(urlPattern)
-		if p.MatchString(c.RequestURL) && r.Capture(ctx, c.RequestMethod) {
-			return true
+		if p.MatchString(c.RequestURL) {
+			return r.PreCheck(ctx, c.RequestURL, c.RequestMethod)
 		}
 	}
-	return false
+	return false, ""
 }
 ```
 
