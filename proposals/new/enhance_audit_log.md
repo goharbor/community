@@ -42,10 +42,10 @@ With the above event type, the Harbor administrator can trace the user's behavio
 # Solution
 
 ## Event Format
-The audit log format should be changed as follow
+The audit log v2 format is defined as follow:
 
 ```go
-type AuditLog struct {
+type AuditLogV2 struct {
     ID           int64     `orm:"pk;auto;column(id)" json:"id"`
     ProjectID    int64     `orm:"column(project_id)" json:"project_id"`
     Operation    string    `orm:"column(operation)" json:"operation"`
@@ -308,7 +308,7 @@ In the log middleware, check if the current Metadata should be captured
 
 ```go
 			// If this event is not captured, we don't need to add it to the notification
-			if !event.Capture(ctx) {
+			if !event.PreCheck(ctx) {
 				return
 			}
 ```
@@ -489,9 +489,9 @@ In the previous implementation, only image related event types could be selected
 
 ## Schema Change
 
-Because previous audit_log table maybe contains large amount of old record, it might cause the update to this table very slow, so we need to create a new table to store the new audit log event, and the old audit log table will be deprecated.
+Because previous audit_log table maybe contains large amount of old records, it might cause the update to this table very slow during the schema migration when upgrade, so we need to create a new table to store the new audit log event, and the old audit log table will be deprecated in future.
 
-The audit_log_v2 table schema should be changed to adapt the new audit log format. 
+The audit_log_v2 table schema: 
 
 ```sql
 create table if not exists audit_log_v2 
@@ -520,11 +520,10 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_v2_project_id_operation ON audit_log_v2
 Because the audit log can be forworad to log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc, if add the `op_desc` operation description makes the information more readable to the end user.
 
 The `success` field is true when it is success, otherwise it is false.
-`payload` is a reserved column.
+`payload` and `source_ip` are reserved columns.
 
 ## Security
 
-All passwords in the payload field will be masked before storing in the audit log. 
 In previous implementation, the audit log is visible to all users, because there are lot of sensitive information might be store in the audit log, in this release, the audit log is only visible to the project admin role and system admin role.
 
 ## Compatibility
