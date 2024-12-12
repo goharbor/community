@@ -347,6 +347,120 @@ With this feature, the previous configure option `pull_audit_log_disable` can be
 Because purge audit log will delete the audit log periodically,  and it allow user to select the event to purge, the new type of event should be added to the selection, such as user login/logout, user create/delete, project member add/remove, configuration change, project policy change. it involves too many event type, so we can categorize the event type to the following:
 common api event type by the resource name, such as user, project, robot, tag retention, immutable tag rule, purge audit, etc. previous event type is removed from option, and just add new resource types to the selection.
 
+## API change
+
+Add a new API to query the audit log v2 event. the API is `/api/v2.0/audit-logs-v2/`, the user can filter the audit log event by the operation, resource_type, resource, the operation description and operation result are visible to users.
+
+```
+  /audit-logs-v2:
+    get:
+      summary: Get recent logs of the projects which the user is a member of
+      description: |
+        This endpoint let user see the recent operation logs of the projects which he is member of
+      tags:
+        - auditlog
+      operationId: listAuditLogsV2
+      parameters:
+        - $ref: '#/parameters/requestId'
+        - $ref: '#/parameters/query'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of auditlogs
+              type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              type: string
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AuditLogV2'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '500':
+          $ref: '#/responses/500'
+```
+
+The audit log v2 is avaible at project level, the API is  `/api/v2.0/projects/{project_name}/logsv2`, the user can filter the audit log event by the operation, resource_type, resource. and only the project level admin can view the audit log event. and only display the event of current project.
+
+```
+  /projects/{project_name}/logsv2:
+    get:
+      summary: Get recent logs of the projects
+      description: Get recent logs of the projects
+      tags:
+        - project
+      operationId: getLogsV2
+      parameters:
+        - $ref: '#/parameters/projectName'
+        - $ref: '#/parameters/requestId'
+        - $ref: '#/parameters/query'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Total-Count:
+              description: The total count of auditlogs
+              type: integer
+            Link:
+              description: Link refers to the previous page and next page
+              type: string
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AuditLogV2'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '500':
+          $ref: '#/responses/500'
+```
+
+The AuditLogV2 struct is defined as follow
+
+```
+  AuditLogV2:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: The ID of the audit log entry.
+      username:
+        type: string
+        description: Username of the user in this log entry.
+      resource:
+        type: string
+        description: Name of the resource in this log entry.
+      resource_type:
+        type: string
+        description: Type of the resource in this log entry.
+      operation:
+        type: string
+        description: The operation in this log entry.
+      operation_description:
+        type: string
+        description: The operation's detail description
+      operation_result:
+        type: boolean
+        description: the operation's result, true for success, false for fail
+      op_time:
+        type: string
+        format: date-time
+        example: '2006-01-02T15:04:05Z'
+        description: The time when this operation is triggered.
+```
+
 ## Related UI changes
 
 ### Disable Audit Log Event Type
