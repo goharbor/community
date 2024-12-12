@@ -427,7 +427,7 @@ The audit log v2 is avaible at project level, the API is  `/api/v2.0/projects/{p
           $ref: '#/responses/500'
 ```
 
-The AuditLogV2 struct is defined as follow
+The AuditLogV2 is defined as follow
 
 ```
   AuditLogV2:
