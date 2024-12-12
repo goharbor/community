@@ -504,7 +504,8 @@ create table if not exists audit_log_v2
 	username varchar(50) null,
 	op_desc varchar(500) null,
 	success boolean default true,
-	payload text null,
+	payload text null,   --reserved column
+	source_ip inet null, --reserved column
 	op_time timestamp default CURRENT_TIMESTAMP
 );
 
