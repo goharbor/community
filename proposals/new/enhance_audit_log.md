@@ -242,7 +242,9 @@ For other event type, which can not be resolved by the current resolver, we can 
 ```mermaid
 classDiagram
 
-Resolver <|-- BasicResolver : implement 
+Resolver <|-- UserEventResolver : implement
+Resolver <|-- ProjectEventResolver : implement 
+Resolver <|-- TagRetentionEventResolver : implement 
 <<interface>> Resolver
 Resolver <|-- ConfigureResolver : implement
 Resolver <|-- LoginResolver : implement
@@ -250,16 +252,6 @@ Resolver <|-- ProjectmemberResolver : implement
 Resolver <|-- PurgeAuditResolver : implement
 Resolver <|-- ImmutableResolver : implement
 Resolver : Reslove()
-
-BasicResolver <|-- UserEventResolver : instance
-BasicResolver <|-- ProjectEventResolver : instance
-BasicResolver <|-- TagRetentionEventResolver : instance
-
-BasicResolver : BaseURLPattern
-BasicResolver : ResourceType
-BasicResolver : SucceedCodes
-BasicResolver : SensitiveAttributes
-BasicResolver : Resolve()
 
 ```
 
