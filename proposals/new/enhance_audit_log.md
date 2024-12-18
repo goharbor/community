@@ -64,8 +64,7 @@ Add OperationDescription, OperationResult, RequestPayload to the audit log.
 
 ## Middleware to capture the audit log event
 
-Create an audit log middleware which capture the http request and response v2.0 related API
-If the request is a POST method, it indicate a create operation , user login also use POST method.
+Create an audit log middleware which capture the http request and response of v2.0 related APIs
 If the request is a PUT method, it indicate an update operation 
 If the request is a DELETE method, it indicate a delete operation
 Use a ResponseWriter to get response code and the response header,  
@@ -136,6 +135,8 @@ sequenceDiagram
         end
     end
 ```
+
+In the BuildAndPublish(event) method call, it will resolve the Metadata into an event and send it to different topics, for each topic, there are different handlers to handle it, such as audit log handler. it will resolve the event to audit log and save it in database or forward to logger aggregator.
 
 The following is the code snippet of the log middleware to capture the audit log event.
 
@@ -220,8 +221,6 @@ var urlResolvers = map[string]Resolver{
 	`^/api/v2.0/projects/\d+/immutabletagrules$`:     immutableTagEventResolver,
 	`^/api/v2.0/projects/\d+/immutabletagrules/\d+$`: immutableTagEventResolver,
 	`^/api/v2.0/system/purgeaudit/schedule$`:         purgeAuditResolver,
-	`^/api/v2.0/robots$`:                             robotResolver,
-	`^/api/v2.0/robots/\d+$`:                         robotResolver,
 }
 
 
@@ -237,7 +236,7 @@ func (c *Metadata) Resolve(event *event.Event) error {
 }
 
 ```
-For each basic event type, we can create a resolver to resolve the common event to the specific event type, such as userResolver, projectResolver, robotResolver, etc.
+For each basic event type, we can create a resolver to resolve the common event to the specific event type, such as userResolver, projectResolver etc.
 For other event type, which can not be resolved by the current resolver, we can add a new resolver to resolve the common event to the specific event type. such as the projectMemberResolver, loginEventResolver, purgeAuditResolver, etc. these resolver also implements the Resolver interface. the following chart shows the relationship between the Resolver and the specific event type resolver.
 
 ```mermaid
@@ -253,7 +252,6 @@ Resolver <|-- ImmutableResolver : implement
 Resolver : Reslove()
 
 BasicResolver <|-- UserEventResolver : instance
-BasicResolver <|-- RobotEventResolver : instance
 BasicResolver <|-- ProjectEventResolver : instance
 BasicResolver <|-- TagRetentionEventResolver : instance
 
@@ -346,7 +344,7 @@ With this feature, the previous configure option `pull_audit_log_disable` can be
 ## Purge Audit Log
 
 Because purge audit log will delete the audit log periodically,  and it allow user to select the event to purge, the new type of event should be added to the selection, such as user login/logout, user create/delete, project member add/remove, configuration change, project policy change. it involves too many event type, so we can categorize the event type to the following:
-common api event type by the resource name, such as user, project, robot, tag retention, immutable tag rule, purge audit, etc. previous event type is removed from option, and just add new resource types to the selection.
+common api event type by the resource name, such as user, project, tag retention, immutable tag rule, purge audit, etc. previous event type is removed from option, and just add new resource types to the selection.
 
 ## API change
 
