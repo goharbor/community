@@ -462,7 +462,7 @@ Under each project's audit log page, the UI should be updated to display the aud
 
 ### Cleanup Audit Log
 
-In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. Provide an `All` option to select all resources to clean up.  The cleanup operation will also apply to the legacy audit log table.
+In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. Provide an `All` option to select all resources to clean up. The cleanup operation will also apply to the legacy audit log table.
 
 
 ![Cleanup Audit Log Event Type](../images/enhance_auditlog/cleanup_audit_log.png)
