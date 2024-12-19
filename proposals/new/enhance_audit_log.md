@@ -520,7 +520,9 @@ In previous implementation, the audit log is visible to all users, because there
 ## Compatibility
 
 The new audit log event type is compatible with the previous audit log event type, the previous audit log event type is still supported, all audit log event will be logged in the audit log v2 table.
-After enable Audit Log Forward Syslog Endpoint option, it can be forward to the log process endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc.
+After enabling Audit Log Forward Syslog Endpoint option, it can be forwarded to the log processing endpoints such as LogInsight, ELK(Elastic Logstash Kibana) etc. and user can
+enable `Skip Audit Log Database` option to skip to write audit log in the database. when it is forward to external log processing system, the user should query the logs in the external system.
+see document: https://goharbor.io/docs/2.12.0/administration/log-rotation/
 
 
 ## Failure Cases
@@ -536,6 +538,8 @@ The audit log is only visible to the project admin role and system admin role. f
 1. The current audit log is based on the http middleware, it means it can only capture the event has http request and http response, and it is initiated by the user, usually it is a user action. for system level background job, such as the job service, the event is not captured by the audit log. it is out of the scope of this proposal.
 
 1. User login event only includes logins through browser, it does not include basic authentication by Docker CLI such as `docker login`, nor does it include basic authentication when calling  RESTful APIs. 
+
+1. Tracking the client IP address: usually `x-forwarded-for` contains the IP address of the client, in cloud native applications, the ingress, or loadbalancer will set  this field to the IP of its pod, and result in the information inaccurate. maybe in future we could have a better solution to solve this problem, just keep the reserved column empty.
 
 ## Terms
 
