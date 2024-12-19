@@ -323,7 +323,7 @@ func (h *Handler) Handle(ctx context.Context, value interface{}) error {
 ```
 With this feature, the previous configure option `pull_audit_log_disable` can be deprecated. Just use `audit_log_disable` to disable the unwanted event type.
 
-## Purge Audit Log
+## Cleanup Audit Log
 
 Because purge audit log will delete the audit log periodically,  and it allow user to select the event to purge, the new type of event should be added to the selection, such as user login/logout, user create/delete, project member add/remove, configuration change, project policy change. it involves too many event type, so we can categorize the event type to the following:
 common api event type by the resource name, such as user, project, tag retention, immutable tag rule, purge audit, etc. previous event type is removed from option, and just add new resource types to the selection.
@@ -462,7 +462,7 @@ Under each project's audit log page, the UI should be updated to display the aud
 
 ### Cleanup Audit Log
 
-In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. The cleanup operation will also apply to the legacy audit log table.
+In the previous implementation, only image related event types could be selected to purging, such as create/delete/pull. we need to add more options to select new event types. Because there are too many event types to display in the UI, just provide the resource type to clean up the audit log. Provide an `All` option to select all resources to clean up.  The cleanup operation will also apply to the legacy audit log table.
 
 
 ![Cleanup Audit Log Event Type](../images/enhance_auditlog/cleanup_audit_log.png)
