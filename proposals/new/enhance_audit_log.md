@@ -148,22 +148,9 @@ func Middleware() func(http.Handler) http.Handler {
 		enableAudit := false
 		urlStr := r.URL.String()
 		username := "unknown"
-		re := regexp.MustCompile("^/c/log_out$")
-		var requestContent string
-		if r.Method == http.MethodPost || r.Method == http.MethodPut || r.Method == http.MethodDelete || (r.Method == http.MethodGet && re.MatchString(urlStr)) {
-			enableAudit = true
-			lib.NopCloseRequest(r)
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Failed to read request body", http.StatusInternalServerError)
-				return
-			}
-			requestContent = string(body)
-			if secCtx, ok := security.FromContext(r.Context()); ok {
-				username = secCtx.GetUsername()
-			}
-		}
-        // use a wrapper to get the response code and response header
+    // check the current request should be captured by http method and URL
+    ...
+    // use a wrapper to get the response code and response header
 		rw := &ResponseWriter{
 			ResponseWriter: w,
 			statusCode:     http.StatusOK,
@@ -182,6 +169,9 @@ func Middleware() func(http.Handler) http.Handler {
 				ResponseCode:     rw.statusCode,
 				ResponseLocation: rw.header.Get("Location"),
 			}
+      // check if current event should be captured and send to the event queue via PreCheck, if not, skip to AddEvent.
+      ...
+
 			notification.AddEvent(ctx, event, true)
 		}
 }
