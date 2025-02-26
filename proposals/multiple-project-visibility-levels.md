@@ -67,7 +67,14 @@ For example, If the maximum visibility level for new projects is set to "private
 A system admin can change the visibility level for projects regardless of the system-level setting.
 
 ### Internal Project
-Internal projects are a bit special in terms of internal visibility accessibility.
+
+Internal projects are a bit special in terms of visibility,
+accessibility and perspective, as they can be both private or public, depending on the context.
+
+The definition of internal can be interpreted as internal users or internal networks. 
+In this context, we refer to internal as in internal networks.
+
+
 On the one hand,
 we want the internal projects
 to be visible and accessible inside the organization, but private to the outside.
@@ -77,7 +84,6 @@ internally without a pull secret and externally just like a private project with
 To handle this the internal use case, we would need
 to have a functionality
 that can distinguish between access from internal or external networks.
-
 
 ### Robot Accounts in Context of Internal Project
 Robot accounts for access to projects inside the organization aren't needed for pulling artifacts.
