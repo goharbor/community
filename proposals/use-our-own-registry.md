@@ -53,15 +53,23 @@ The used AWS account is sponsored by AWS. There is currently no cost limited or 
 
 Better understanding of the end users' experience
 
+## Phase 0
+
+- Deploy Harbor on AWS registry.goharbor.io
+- Mirror all images from Docker Hub to Harbor
+- Use registry to push test artifacts
+- Parallel operation next to Docker Hub.
+
 ## Phase I
 
-- IaC Repo containing the infrastructure
-- Migrate all images from Docker Hub to Harbor.
-- Replace image references in Documentation
-- Replace Image references in Compose
-- Replace image references in Helm
+- Dedicated IaC Repo containing the infrastructure
+- Since all images from Docker Hub are already in Harbor.
+  - Replace image references in Documentation
+  - Replace Image references in Compose
+  - Replace image references in Helm
 - Keep Docker Hub account as a fallback
+  - Replicate images from Harbor to Docker Hub
 
-## Phase II
+## Phase II - Future
 
-- Disable DockerHub Account
+- Potentially we can disable DockerHub Account
