@@ -25,8 +25,9 @@ Here are some related issues from the Harbor Community.
 - https://github.com/goharbor/harbor/issues/10760
 - https://github.com/goharbor/harbor/issues/12306
 - https://github.com/goharbor/harbor/issues/5447
+- https://github.com/goharbor/harbor/issues/12306
 
-Similar Proposal:
+Similar Proposals:
 - https://github.com/goharbor/community/pull/124
 
 
