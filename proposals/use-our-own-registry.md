@@ -13,7 +13,7 @@ Use of our Harbor registry to distribute our own container images. We should be 
 
 # **Background**
 
-Today, Harbor is the most popular and widely recognized full-fledged container registry on the market. Yet, we are not using our own product ourselfs. Hence the [dogfooding](https://www.projectmanagement.com/articles/217092/eat-your-own-dog-food#_=_) title
+Today, Harbor is the most popular and widely recognized full-fledged container registry on the market. Yet, we are not using our own product ourselfs. Hence the [dogfooding](https://www.projectmanagement.com/articles/217092/eat-your-own-dog-food#_=_) title.
 
 # **Proposal**
 
