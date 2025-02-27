@@ -9,7 +9,7 @@ Last Edited: January 24, 2024 1:52 PM
 
 # **Abstract**
 
-Use of our Harbor registry to distribute our own container images. We should be the first to adopt our own technology. If we are not willing to utilize our  own application for day-to-date use, don't expect others to do so.
+Use of our Harbor registry to distribute our own container images. We should be the first to adopt our own technology. If we are not willing to utilize our own application for day-to-date use, don't expect others to do so.
 
 # **Background**
 
