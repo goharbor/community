@@ -12,7 +12,7 @@ Reduce the volume of HEAD requests by caching proxy cache ManifestExist calls.
 
 ## Background
 
-When pulling many artifacts at the same time on a container proxy-cache, we can still trigger the rate limiting on the upstream registries and get 429 Too Many Requests errors.
+When pulling many artifacts at the same time on a proxy-cache project, we can still trigger the rate limiting on the upstream registries and get 429 Too Many Requests errors.
 
 This is in part caused by HEAD requests being sent for each artifact pull.
 
