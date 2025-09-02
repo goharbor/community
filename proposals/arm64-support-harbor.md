@@ -170,17 +170,16 @@ These tests confirm that Harbor can function fully on Arm64 & amd64, including U
 
 ## RoadMap:
 
-	•	Short term (v1): Enable CI, publish multi-arch images, support both installer types.
-	•	Medium term: Validate Helm charts, refine Dockerfiles, improve cross-arch consistency.
+	•	Short term (v1): Enable CI, publish multi-arch images, support both installer types. Validate Helm charts, refine Dockerfiles, improve cross-arch consistency.
 	•	Long term: Maintain Harbor parity across architectures as a first-class CNCF project.
 
 
 Thanks for reviewing this work! Since I'm the author of this contribution from Arm, I believe this is a high-priority topic within the Harbor community and it could be introduced as a new feature soon. A formal proposal like this document will help align on the design and technical implementation.
 
-I welcome feedback, collaboration, or questions from the Harbor community
+I welcome feedback, collaboration, or questions from the Harbor community.
 
 ## References:
 
-www.arm.com/migrate
-https://learn.arm.com/
-https://hub.docker.com/u/ranichowdary
+- www.arm.com/migrate
+- https://learn.arm.com/
+- https://hub.docker.com/u/ranichowdary
