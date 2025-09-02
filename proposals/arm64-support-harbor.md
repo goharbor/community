@@ -2,7 +2,7 @@
 
 Author: Rani Chowdary Mandepudi, Arm (@ranimandepudi)
 
-Discussion: https://github.com/goharbor/harbor/pull/21825
+Discussion: https://github.com/goharbor/harbor/pull/22229/files
 
 ## Abstract
 
@@ -26,6 +26,10 @@ These changes allow Harbor to be built, packaged, and installed cleanly on Arm64
 
 This proposal introduces native Arm64 builds for Harbor components using `Docker Build` and multi-architecture manifests. Each image is tested and published in a way that maintains compatibility with existing Amd64-based deployments.
 
+This proposal does not alter Harbor’s functionality. It extends the build and release process so every Harbor component is published as a multi-architecture image (amd64 + arm64) under the official goharbor/* namespace.
+
+During development and testing, prototype images were published under ranichowdary/* for validation. For upstream adoption, all images will use the official goharbor/* repositories.
+
 ## Design Goals
 
 Build Harbor component images (core, jobservice, registryctl, etc.) for both Arm64 and Amd64 using native compilation per architecture and multi-arch manifest merging.
@@ -40,7 +44,58 @@ Provide documentation for Arm64 validation, and plan to publish a learning path 
 
 Integrate Arm64 builds into Harbor’s CI and release workflows using GitHub Actions. This will require coordination with Harbor maintainers—I’m happy to assist or contribute directly as needed.
 
+## Development Phases
+
+To reduce risk and ensure stability, we propose a phased approach:
+
+Phase 1 – Code Implementation & CI Enablement
+	•	Add ARCH support to Makefiles, builder scripts, and Dockerfiles.
+	•	Enable GitHub Actions matrix to build/test on both amd64 and arm64 runners.
+	•	Validate that unit tests, API tests, and UI tests pass consistently on both platforms.
+	•	Deliverable: CI green for both architectures; no user-facing image changes yet.
+
+Phase 2 – Image Publishing & Installers
+	•	Publish official Harbor component images to Docker Hub under goharbor/* with multi-arch manifests.
+    - Offline installers may be published either per-arch bundles or a single combined bundle depending on community size and storage considerations
+	•	Ensure the unified tag (e.g. goharbor/harbor-core:vX.Y.Z) automatically resolves to the correct variant.
+	•	Update online installer (docker-compose) and offline installer packages to use these multi-arch tags.
+	•	Deliverable: Users can docker pull goharbor/harbor-core:vX.Y.Z on amd64 or arm64 and get a native image.
+
+Phase 3 – Helm Chart Validation
+	•	Validate Harbor Helm chart installs and upgrades correctly on both amd64 and arm64 Kubernetes clusters.
+	•	Confirm that all hooks, jobs, and init containers reference multi-arch images.
+	•	Publish chart updates if needed.
+	•	Deliverable: helm install harbor works seamlessly across architectures.
+
+## Architecture Parameter:
+
+![Harbor Multi-Arch Design](images/arm64/harbor-multiarch-arm64-amd64.png)
+
+For Go components (core,jobservice, registryctl): ARCH - GOARCH - compile - image build.
+For binary-only components(Trivy, Trivy Adapter): ARCH - Dockerfile.binary - fetch correct binary
+
+ARCH(amd64| arm64) >> make build -e ARCH = arm64/amd64 >> _build_trivy >> builder.sh(receives ARCH >> docker build (ARG TARGETARCH=arm64 >> Dockerfile.binary (downloads the correct binary)))
+
+This ensures a unified codebase, with arch-specific logic only where strictly required.
+
+## Binary Dependencies:
+As part of this work, we identified Harbor’s external binary dependencies and confirmed Arm64 support:
+	•	Trivy: arm64 releases available upstream.
+	•	Trivy Adapter: requires both Trivy (downloaded upstream) and the adapter binary (built from source with GOARCH).
+	•	Helm (migrate-chart tool): must dynamically fetch the correct arch binary (current Dockerfile hardcodes linux-amd64).
+	•	Spectral: already provides amd64/arm64 binaries.
+	•	Node.js, Python deps: validated during e2e runs; no arch-specific blockers found.
+
+This inventory ensures all required binaries are reproducible on both architectures.
+
 ## CI changes: 
+
+	•	CI matrix: Every PR runs unit, API, and UI tests on both amd64 and arm64 runners.
+	•	Build pipeline:
+	•	Per-arch images pushed as goharbor/<component>:<tag>-amd64 / -arm64.
+	•	Final multi-arch tag created only after both builds succeed (docker buildx or docker manifest create).
+	•	Installers: Online/offline installers reference unified tags (:<tag>), so users don’t need to specify an arch suffix.
+	•	Release sequencing: CI ensures manifests are published only once both builds complete (job dependencies).
 
 Multi Arch CI integration on Harbor:
 
@@ -48,7 +103,7 @@ Objective:
 To ensure Harbor's CI system validates code changes across both amd64 and arm64 architectures for pull requests. This enhancement guarantees feature compatibility and stability on both platforms.
 
 Changes: 
-* CI.yml
+* CI.yml (example)
 
 This file defines main test matrix for harbor on pull requests and pushes. Ensure that Harbor's CI pipeline executed on both arm64 and amd64 architectures for every PR or push
   * Enabled Matrix strategy for Architecture: Before jobs like UTTEST, APITEST_DB ran only on `ubuntu-latest` (default amd64). With this each job uses:
@@ -64,107 +119,14 @@ This file defines main test matrix for harbor on pull requests and pushes. Ensur
 Job names updated for architecture clarity.
 Unit, API, and UI test logic unchanged, but now dynamically detects platform via `uname -m`.
 
-* build_package.yml: 
-    * Added matrix to support parallel builds on amd64 and arm64
-    * Artifacts now uploaded to `gs://harbor-build/amd64/..` and `gs://harbor-builds/arm64/..`
-    * Docker images pushed as `docker push ranichowdary/core-harbor:<tag>-arm64` and `docker push ranichowdary/core-harbor:<tag>-amd64`
-    * Multi-arch manifest created on amd64 runner.
-
-* publish-release.yml: Matrix used to ensure images pushed for both architectures. Preserved existing functionality. 
-* conformance_test.yml: Added Matrix strategy for architecture. Architecture specific report upload(report-amd64.html, report-arm64.html)
-* docker-compose.yml: Changed images names to multi-arch images
-
-## Architecture Overview:
-
-## Image Structure:
-
-Image tags follow the pattern: goharbor/<component>:<version>
-During development and testing, images are published under the ranichowdary/* namespace on Docker Hub (e.g., ranichowdary/core-harbor, ranichowdary/jobservice-harbor).
-Finalized multi-arch images will match upstream Harbor naming conventions.
-
-Images:
-MultiArch Images links:
-
-Nginx:
-ranichowdary/nginx-harbor
-ranichowdary/nginx-base-harbor
-Db:
-ranichowdary/db-harbor
-ranichowdary/db-base-harbor
-Redis:
-ranichowdary/redis-harbor
-ranichowdary/redis-base-harbor 
-Log:
-ranichowdary/log-harbor
-ranichowdary/log-base-harbor
-Core:
-ranichowdary/core-harbor
-ranichowdary/core-base-harbor
-Exporter:
-ranichowdary/exporter-base-harbor 
-Jobservice
-ranichowdary/jobservice-harbor
-ranichowdary/jobservice-base-harbor
-Registry:
-ranichowdary/registry-harbor
-ranichowdary/registry-base-harbor
-Registryctl:
-ranichowdary/registryctl-harbor
-ranichowdary/registryctl-base-harbor 
-Portal:
-ranichowdary/portal-harbor
-ranichowdary/portal-base-harbor
-Trivy:
-ranichowdary/trivy-adapter-harbor
-ranichowdary/trivy-base-harbor
-
-
-## Build and Push Workflow (Per Architecture)
-
-Each image is built and pushed in the following steps:
-On Amd64 Host:
-- Generated amd64 binary.
-- Build image: docker build -t ranichowdary/core-harbor:amd64 .
-- Push the docker push ranichowdary/core-harbor:amd64
-On Arm64 Host:
-- Run make build-core on Arm64 instance to generate native binary.
--  Build image: docker build -t ranichowdary/core-harbor:arm64 .
-- Push the docker push ranichowdary/core-harbor:arm64
-
-Created manifest to ensure final image : `latest` tag resolves to the correct architecture during image pull based on the target environment.
-
-Process Overview:
-- Generated amd64-native binary for the components and build the docker image as 
-`docker build -t ranichowdary/<component>-harbor:amd64 . `
-- Push the image
-`docker push ranichowdary/<component>-harbor:amd64`
-
-- Generated arm64-native binary for the components and build the docker image as 
-`make build-<component>`
-`docker build -t ranichowdary/<component>-harbor:arm64 . `
-- Push the image 
-`docker push ranichowdary/<component>-harbor:arm64`
-
-Finally on amd64 Host (Create and push manifest)
-
-`docker manifest create ranichowdary/db-harbor:latest ranichowdary/db-harbor:amd64 ranichowdary/db-harbor:arm64`
-
-`docker manifest push ranichowdary/db-harbor:latest`
-
-Result: 
-
-This creates a multi-architecture manifest under the tag `latest` that points to the appropriate architecture-specific image. When a user pull the image:
-
-`docker pull ranichowdary/db-harbor:latest`
-Docker will automatically fetch either the amd64 or arm64 version, depending on the user's platform. 
-
-## Architecture Diagram
-
-The following diagram illustrates the high-level design for Harbor's multi-architecture support across Arm64 and Amd64 platforms:
-
-![Harbor Multi-Arch Design](images/arm64/harbor-multiarch-arm64-amd64.png)
 
 ## Testing 
+
+Validation performed across amd64 and arm64 hosts:
+	•	UI: Harbor portal accessible, login and navigation functional.
+	•	API: /api/v2.0/ping, /projects, /repositories verified.
+	•	Registry: Image push/pull works; multi-arch manifests resolve correctly per host.
+	•	Services: All containers (core, jobservice, registry, portal, etc.) start healthy with the right linux/amd64 or linux/arm64 images.
 
 To validate that our custom-built Harbor instance with Arm64 support works correctly across components and architectures, I performed the following levels of testing:
 
@@ -186,7 +148,7 @@ Container Health Validation:
 - Ensuring auxiliary tools handled for both `amd64` and `arm64` architectures when building Harbor via the Makefile:
 
 - Verified all Harbor services (core, registry, jobservice, portal, proxy, etc.) were up and marked as healthy via docker ps.
-- Ensured correct images (ranichowdary/*-harbor) were used with linux/arm64 platform and linux/amd64.
+- Ensured correct images were used with linux/arm64 platform and linux/amd64.
 
 Web UI Access:
 
@@ -204,7 +166,14 @@ API-Level Testing:
 - Image Push and Pull Tests (Registry Validation)
 - Multi-Architecture Image Validation
 
-These tests confirm that Harbor can function fully on Arm64 & Amd64, including UI, API, registry, and multi-architecture artifact handling. The environment is now ready for use in cloud-native, edge, or hybrid deployments.
+These tests confirm that Harbor can function fully on Arm64 & amd64, including UI, API, registry, and multi-architecture artifact handling. The environment is now ready for use in cloud-native, edge, or hybrid deployments.
+
+## RoadMap:
+
+	•	Short term (v1): Enable CI, publish multi-arch images, support both installer types.
+	•	Medium term: Validate Helm charts, refine Dockerfiles, improve cross-arch consistency.
+	•	Long term: Maintain Harbor parity across architectures as a first-class CNCF project.
+
 
 Thanks for reviewing this work! Since I'm the author of this contribution from Arm, I believe this is a high-priority topic within the Harbor community and it could be introduced as a new feature soon. A formal proposal like this document will help align on the design and technical implementation.
 
