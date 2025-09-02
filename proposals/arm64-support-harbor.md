@@ -16,7 +16,7 @@ Currently, deploying Harbor on Arm64 requires emulation or custom builds, reduci
 
 ## Proposal
 
-Note: No changes have been made to functionality—this update ensures that the current architecture remains unaffected.
+Note: This proposal introduces no changes to Harbor’s core functionality. It adds support for additional architectures while keeping existing behavior unchanged.
 
 All Harbor component images have been built and tagged for the Arm64 architecture. These images have been pushed to my DockerHub repository under the namespace ranichowdary/ (replacing the original goharbor/ namespace) for testing and validation purposes. Once the review is complete, the image names can be reverted to the original naming convention.
 
@@ -51,9 +51,9 @@ Changes:
 * CI.yml
 
 This file defines main test matrix for harbor on pull requests and pushes. Ensure that Harbor's CI pipeline executed on both arm64 and amd64 architectures for every PR or push
-  * Enabled Matrix strategy for Architecture: Before jobs like UTTEST, APITEST_DB ran only on `ubuntu-latest` (defauld amd64). With this each job uses:
+  * Enabled Matrix strategy for Architecture: Before jobs like UTTEST, APITEST_DB ran only on `ubuntu-latest` (default amd64). With this each job uses:
   
-  stratergy:
+  strategy:
     matrix:
         include:
         - arch:amd64
@@ -139,7 +139,7 @@ Process Overview:
 - Push the image
 `docker push ranichowdary/<component>-harbor:amd64`
 
-- Genarated arm64-native binary for the components and build the docker image as 
+- Generated arm64-native binary for the components and build the docker image as 
 `make build-<component>`
 `docker build -t ranichowdary/<component>-harbor:arm64 . `
 - Push the image 
@@ -158,6 +158,11 @@ This creates a multi-architecture manifest under the tag `latest` that points to
 `docker pull ranichowdary/db-harbor:latest`
 Docker will automatically fetch either the amd64 or arm64 version, depending on the user's platform. 
 
+## Architecture Diagram
+
+The following diagram illustrates the high-level design for Harbor's multi-architecture support across Arm64 and Amd64 platforms:
+
+![Harbor Multi-Arch Design](images/arm64/harbor-multiarch-arm64-amd64.png)
 
 ## Testing 
 
@@ -178,7 +183,7 @@ I can work on this but this need maintainers to work as we need to deal with few
 
 Container Health Validation:
 
-- Ensuring auxilary tools handled for both `amd64` and `arm64` architectures when building Harbor via the Makefile:
+- Ensuring auxiliary tools handled for both `amd64` and `arm64` architectures when building Harbor via the Makefile:
 
 - Verified all Harbor services (core, registry, jobservice, portal, proxy, etc.) were up and marked as healthy via docker ps.
 - Ensured correct images (ranichowdary/*-harbor) were used with linux/arm64 platform and linux/amd64.
