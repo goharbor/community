@@ -40,6 +40,40 @@ Provide documentation for Arm64 validation, and plan to publish a learning path 
 
 Integrate Arm64 builds into Harbor’s CI and release workflows using GitHub Actions. This will require coordination with Harbor maintainers—I’m happy to assist or contribute directly as needed.
 
+## CI changes: 
+
+Multi Arch CI integration on Harbor:
+
+Objective: 
+To ensure Harbor's CI system validates code changes across both amd64 and arm64 architectures for pull requests. This enhancement guarantees feature compatibility and stability on both platforms.
+
+Changes: 
+* CI.yml
+
+This file defines main test matrix for harbor on pull requests and pushes. Ensure that Harbor's CI pipeline executed on both arm64 and amd64 architectures for every PR or push
+  * Enabled Matrix strategy for Architecture: Before jobs like UTTEST, APITEST_DB ran only on `ubuntu-latest` (defauld amd64). With this each job uses:
+  
+  stratergy:
+    matrix:
+        include:
+        - arch:amd64
+          runner: ubuntu-22.04
+        - arch:arm64
+          runner: ubuntu-24.04-arm
+
+Job names updated for architecture clarity.
+Unit, API, and UI test logic unchanged, but now dynamically detects platform via `uname -m`.
+
+* build_package.yml: 
+    * Added matrix to support parallel builds on amd64 and arm64
+    * Artifacts now uploaded to `gs://harbor-build/amd64/..` and `gs://harbor-builds/arm64/..`
+    * Docker images pushed as `docker push ranichowdary/core-harbor:<tag>-arm64` and `docker push ranichowdary/core-harbor:<tag>-amd64`
+    * Multi-arch manifest created on amd64 runner.
+
+* publish-release.yml: Matrix used to ensure images pushed for both architectures. Preserved existing functionality. 
+* conformance_test.yml: Added Matrix strategy for architecture. Architecture specific report upload(report-amd64.html, report-arm64.html)
+* docker-compose.yml: Changed images names to multi-arch images
+
 ## Architecture Overview:
 
 ## Image Structure:
@@ -99,11 +133,52 @@ On Arm64 Host:
 
 Created manifest to ensure final image : `latest` tag resolves to the correct architecture during image pull based on the target environment.
 
+Process Overview:
+- Generated amd64-native binary for the components and build the docker image as 
+`docker build -t ranichowdary/<component>-harbor:amd64 . `
+- Push the image
+`docker push ranichowdary/<component>-harbor:amd64`
+
+- Genarated arm64-native binary for the components and build the docker image as 
+`make build-<component>`
+`docker build -t ranichowdary/<component>-harbor:arm64 . `
+- Push the image 
+`docker push ranichowdary/<component>-harbor:arm64`
+
+Finally on amd64 Host (Create and push manifest)
+
+`docker manifest create ranichowdary/db-harbor:latest ranichowdary/db-harbor:amd64 ranichowdary/db-harbor:arm64`
+
+`docker manifest push ranichowdary/db-harbor:latest`
+
+Result: 
+
+This creates a multi-architecture manifest under the tag `latest` that points to the appropriate architecture-specific image. When a user pull the image:
+
+`docker pull ranichowdary/db-harbor:latest`
+Docker will automatically fetch either the amd64 or arm64 version, depending on the user's platform. 
+
+
 ## Testing 
 
-To validate that our custom-built Harbor instance with ARM64 support works correctly across components and architectures, I performed the following levels of testing:
+To validate that our custom-built Harbor instance with Arm64 support works correctly across components and architectures, I performed the following levels of testing:
+
+- tools/spectral/Dockerfile - Uses arch-specific spectral binary; dynamically selects amd64/arm64
+
+- tools/migrate_chart/migrate_chart.sh- this script is architecture-neutral and works on both amd64 and arm64 as long as a compatible `helm` binary is available.
+
+- tools/migrate_chart/Dockerfile - It currently hardcodes the Helm binary for `linux-amd64` so it is not architecture-neutral and must be updated to support Arm64 by dynamically resolving the appropriate Helm binary for the target architecture.
+Made this docker image multi-architecture (`docker pull ranichowdary/migrate-chart:latest`)
+
+tools/notary-migration-fix.sh - No changes
+tools/swagger/Dockerfile - No changes
+
+- tools/release/release_utils.sh: In getAssets() function adding `arch` parameter because builds are now organized under subfolder like `amd64/` and `arm64/`. Updated GCS `gsutil cp` paths to ensure it looks under the correct architecture folder. Used `mkdir -p` to prevent errors if assetsPath already exists. Also updated `publish_release.yml` where it calls `getAssets`.
+I can work on this but this need maintainers to work as we need to deal with few enhancements.
 
 Container Health Validation:
+
+- Ensuring auxilary tools handled for both `amd64` and `arm64` architectures when building Harbor via the Makefile:
 
 - Verified all Harbor services (core, registry, jobservice, portal, proxy, etc.) were up and marked as healthy via docker ps.
 - Ensured correct images (ranichowdary/*-harbor) were used with linux/arm64 platform and linux/amd64.
