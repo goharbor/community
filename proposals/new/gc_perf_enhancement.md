@@ -16,36 +16,31 @@ During garbage collection, each tag link must be removed explicitly via a Distri
 
 ## Solution
 
-This proposal presents three options for improving GC performance, with Option 3 as the preferred and proposed solution.
+This proposal introduces a solution to improve GC performance by eliminating backend tag file overhead, simplifying GC logic, and delivering performance gains.
 
-### Option 1: Skip Tag Deletion
+### Background
 
-    Introduce a user-configurable option to skip tag deletion in the backend when removing manifests. This would eliminate the API call that slows down GC but leaves orphaned tag files in the backend.
+Since harbor v2.0, harbor no longer leverages tags in the back-end storage. Tags are stored both in the storage and database, and harbor core interacts with the storage using digests.This means users can still pull-by-tag, but on the harbor core side the tag is translated into the corresponding digest, and the request is proxied as a pull-by-digest.
+In short, Harbor stores the tag information but doesn’t actually use it when interacting with storage — which is why we eventually need to clean it up.
 
-#### Pros: Simple to implement, immediate performance gain.
-#### Cons: Leaves tag files behind, may cause confusion or inconsistencies for users browsing storage directly.
+A concrete scenario:
 
-### Option 2: Batch Tag Deletion via Upstream Patch
+    Push harbor-instance/library/hello-world:latest into Harbor.
+    Remove the latest tag from the UI.
+    Attempt to pull harbor-instance/library/hello-world:latest — the client will report not found.
+    However, the tag file still exists in the backend storage at this point because Harbor does not sync it, nor is there a need to.
 
-    Backport the upstream change from Distribution to support batch deletion of tags (introduced in later versions of the registry). This allows multiple tag links to be deleted in one API call.
 
-#### Pros: Compatible with current Distribution behavior, improves performance.
-#### Cons: Limited gain, still depends on Distribution API and backend performance.
-
-### Option 3: Do Not Land Tag Files in Backend (Proposed)
-
-    Modify Harbor's proxy logic to avoid writing tag link files to the backend. When a manifest with a tag is pushed:
-       
-        Harbor Core will extract the tag and persist it in its own database.
-        The proxy request to the backend registry is rewritten to use the manifest's digest instead of the tag (PUT /v2/<repo>/manifests/<digest>).
-
-#### Pros: Eliminates backend tag file overhead completely, simplifies GC logic, significant performance gain.
-#### Cons: Existing tag files will not be deleted unless explicitly handled.
-
-## Data Flow Diagrams
+### Tag Landing
 
 Push with Tag (current behavior):
+
 ![Data Flow Diagram with Tag](../images/gc-perf/push_with_tag_flow.png)
+
+Modify Harbor's proxy logic to avoid writing tag link files to the backend. When a manifest with a tag is pushed:
+
+1. Harbor Core will extract the tag and persist it in its own database. 
+2. The proxy request to the backend registry is rewritten to use the manifest's digest instead of the tag (PUT /v2/<repo>/manifests/<digest>).
 
 Push with Digest (Proposed Behavior):
 
@@ -53,29 +48,31 @@ Push with Digest (Proposed Behavior):
 
 We would see the Tag is not landed in the background storage.
 
-## Main Points
+### Tag Deletion
 
-    Tags are persisted only in Harbor’s database, not in backend storage.
+As mentioned earlier, Harbor will no longer create tag files in the backend storage. As a result, tag deletion will not be necessary for the garbage collection process for newly pushed artifacts. The remaining question is how to handle existing tag files during garbage collection.
 
-    On artifact pull/push, Harbor proxies the request with digest instead of tag.
+This proposal introduces a checkbox in the garbage collection configuration to control this behavior:
 
-    No more tag deletion API calls to backend are needed during GC, the tag deletion becomes instant (DB-level operation only).
+![Data Flow Diagram with Tag](../images/gc-perf/gc_tag_del_checkbox.png)
 
-    GC becomes faster, especially in object storage.
+1. Checked – Garbage collection will follow the current behavior and delete tag files.
+2. Unchecked – Garbage collection will skip tag file deletion, improving performance.
+
+This option is intended as a temporary measure and will be removed in a future release. By then, most artifacts in Harbor will be tagless, eliminating the need for explicit user configuration.
 
 ## Non Goals
 
-    This proposal does not attempt to clean up previously written tag link files.
+    This proposal does not address the distribution v3 upgrade. We are aware that upstream distribution v3 introduces several improvements, particularly around tag lookup and deletion. 
+    However, this proposal specifically focuses on removing tag deletion from garbage collection.
 
 ## Compatibility and Consistency
 
-    No breaking changes; tag permissions are enforced at the API level.
+1. No breaking changes; tag permissions are enforced at the API level.
+2. Harbor will ensure consistency between tags and digests at the DB level.
+3. Harbor CLI, APIs, and UI will continue to function as expected.
 
-    Harbor will ensure consistency between tags and digests at the DB level.
-
-    Harbor CLI, APIs, and UI will continue to function as expected.
-
-## Oci Object Background
+## OCI Object Background
 
 I will take the hello-world:latest as an example to demonstrate the issue and solution. 
 
@@ -125,14 +122,10 @@ GC logs (Without the call of distribution API to delete tags):
 
 ## Side Effects
 
-    Tags already persisted in backend storage before enabling this feature will remain. These can be considered orphaned tag links.
-
-    The existence of such orphaned tag files in the backend is harmless but may lead to minor disk clutter.
+For existing tag files, if the tag deletion option is disabled, any tags already persisted in the backend before enabling this feature will remain. These can be treated as orphaned tag links. While their presence in the backend is harmless, they may cause minor disk clutter.
 
 ## Future Work
 
-    Code impletation bases on the proposed mentioned above.
-
-    Add a cleanup tool to remove orphaned tag link files (optional).
-
-    Benchmark GC performance in a real S3 environment before and after the change.
+1. Code impletation bases on the proposed mentioned above.
+2. Add a cleanup tool to remove orphaned tag link files (optional).
+3. Benchmark GC performance in a real S3 environment before and after the change.
