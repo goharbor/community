@@ -40,7 +40,7 @@ Push with Tag (current behavior):
 Modify Harbor's proxy logic to avoid writing tag link files to the backend. When a manifest with a tag is pushed:
 
 1. Harbor Core will extract the tag and persist it in its own database. 
-2. The proxy request to the backend registry is rewritten to use the manifest's digest instead of the tag (PUT /v2/<repo>/manifests/<digest>).
+2. The proxy request to the backend registry is rewritten to use the manifest's digest instead of the tag (PUT /v2/[repo]/manifests/[digest]).
 
 Push with Digest (Proposed Behavior):
 
@@ -58,8 +58,6 @@ This proposal introduces a checkbox in the garbage collection configuration to c
 
 1. Checked – Garbage collection will follow the current behavior and delete tag files.
 2. Unchecked – Garbage collection will skip tag file deletion, improving performance.
-
-This option is intended as a temporary measure and will be removed in a future release. By then, most artifacts in Harbor will be tagless, eliminating the need for explicit user configuration.
 
 ## Non Goals
 
@@ -129,3 +127,4 @@ For existing tag files, if the tag deletion option is disabled, any tags already
 1. Code impletation bases on the proposed mentioned above.
 2. Add a cleanup tool to remove orphaned tag link files (optional).
 3. Benchmark GC performance in a real S3 environment before and after the change.
+4. This tag deletion is intended as a temporary measure and can be removed in a future release. By then, most artifacts in Harbor will be tagless, eliminating the need for explicit user configuration.
