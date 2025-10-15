@@ -23,11 +23,12 @@ maintained under the `goharbor` namespace.
 
 * **Users:** Members that engage with the Harbor community via any medium (Slack, WeChat, GitHub, mailing lists, etc.).
 * **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). 
-* **Maintainers**: The Harbor project leaders. They are responsible for the overall health and direction of the project; final reviewers of PRs and responsible for releases. Some Maintainers are responsible for one or more components within a project, acting as technical leads for that component. Maintainers are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for these components.
+* **Subproject maintainers:** Contributors who drive certain subprojects within Harbor. They are responsible for the direction and work done within that subproject, providing enhancements and support for the Harbor project as a whole. Subproject maintainers are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for the subprojects they are responsible for.
+* **Maintainers:** The Harbor project leaders. They are responsible for the overall health and direction of the project; final reviewers of PRs and responsible for releases. Some Maintainers are responsible for one or more components within a project, acting as technical leads for that component. Maintainers are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for these components.
 
 ### Maintainers
 
-New maintainers must be nominated by an existing maintainer(via [PR](https://github.com/goharbor/community/pulls?q=is%3Apr+is%3Aclosed+nomination+label%3Aarea%2Fmaintainer-nomination)) and must be elected by a supermajority of existing maintainers. Likewise, maintainers can be removed by a supermajority of the existing maintainers or can resign by notifying one of the maintainers.
+New maintainers and subproject maintainers must be nominated by an existing maintainer and must be elected by a supermajority of existing maintainers. Likewise, maintainers can be removed by a supermajority of the existing maintainers or can resign by notifying one of the maintainers.
 
 ### Supermajority
 
