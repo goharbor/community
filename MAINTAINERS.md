@@ -8,11 +8,10 @@ describes governance guidelines and maintainer responsibilities.
 | Maintainer | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
+| Steven Ren | [renmaosheng](https://github.com/renmaosheng) | [VMware](https://www.github.com/vmware/) |
 | Yan Wang | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
-| Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
-| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 
 ## SIG Community
@@ -20,7 +19,7 @@ describes governance guidelines and maintainer responsibilities.
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SUSE](https://github.com/suse) |
-| Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [VMware](https://www.github.com/vmware/) |
+
 
 ## SIG Docs
 
@@ -65,5 +64,5 @@ describes governance guidelines and maintainer responsibilities.
 * Daniel Pacak, [danielpacak](https://github.com/danielpacak)
 * Fanjian Kong, [kofj](https://github.com/kofj)
 * Mingming Pei, [mmpei](https://github.com/mmpei)
-* Steven Ren, [renmaosheng](https://github.com/renmaosheng)
-
+* Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon)
+* Pierre PÉRONNET | [holyhope](https://github.com/holyhope)
