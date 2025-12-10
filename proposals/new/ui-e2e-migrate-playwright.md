@@ -30,14 +30,125 @@ Migrate Harbor’s UI end-to-end (E2E) tests from Robot Framework + Selenium to 
 - A single container image can include Playwright browsers + required CLIs (docker, helm, cosign, notation, oras, curl, jq).
 - Running via `docker run …` already works today similar to Robot.
 - No Selenium server or additional runtime dependency is required.
-- It Supports sequential runs.
+- It supports sequential runs.
 - Secrets are handled through environment variables.
-- It supports 
 - It supports fixtures and helper modules. https://playwright.dev/docs/test-fixtures
 - Skipping, tagging, grouping, and environment-driven execution are built-in https://playwright.dev/docs/test-annotations
 - Playwright can run CLI operations via Node's `child_process` reliably (docker, helm, oras, cosign, notation).
 - Reports, videos, traces, retries, and serial execution already meet & exceed current quality standards.
 - The proposed setup preserves existing capabilities while modernizing UI testing, improving speed, maintainability, and debugging.
+
+#### Dockerfile for Playwright E2E Engine
+
+Reference: [POC Dockerfile](https://github.com/bupd/harbor/blob/87b9f97/src/portal/e2e/Dockerfile) | Existing Robot UI Engine: [Dockerfile.ui_test](https://github.com/goharbor/harbor/blob/main/tests/test-engine-image/Dockerfile.ui_test)
+
+```dockerfile
+FROM node:20-bookworm
+
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release \
+    sudo
+
+# Add Docker's GPG key
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+RUN echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+RUN apt-get update && apt-get install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm install @playwright/test
+RUN npx playwright install --with-deps
+
+COPY . .
+
+# Command to run the tests
+CMD ["npx", "playwright", "test", "--reporter=html"]
+```
+
+#### Running Tests in Docker
+
+```bash
+E2E_IMAGE=goharbor/harbor-e2e-engine:playwright-ui
+
+# Run all tests
+docker run -i \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd)/test-results:/app/test-results \
+  -e HARBOR_URL=https://harbor.example.com \
+  -e HARBOR_ADMIN_PASSWORD=Harbor12345 \
+  -w /app \
+  $E2E_IMAGE npx playwright test
+
+# Run tests with HTML report
+docker run -i \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd)/test-results:/app/test-results \
+  -w /app \
+  $E2E_IMAGE npx playwright test --reporter=html
+```
+
+#### Keyword-Driven Execution
+
+Playwright supports keyword-driven execution similar to Robot Framework. See the [official documentation](https://playwright.dev/docs/running-tests#run-specific-tests) for details.
+
+```bash
+E2E_IMAGE=goharbor/harbor-e2e-engine:playwright-ui
+
+# Run tests by title/keyword (using -g flag for grep)
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test -g "create new project"
+
+# Run tests matching multiple keywords
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test -g "login|logout"
+
+# Run tests by file name pattern
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test project
+
+# Run a specific test file
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test tests/project.spec.ts
+
+# Run tests with specific tag (using grep)
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test -g "@smoke"
+
+# Run tests in headed mode (for debugging, requires X11 forwarding)
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
+  $E2E_IMAGE npx playwright test -g "create new project" --headed
+```
+
+#### Common Playwright CLI Options
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-g, --grep <pattern>` | Run tests matching title pattern | `npx playwright test -g "login"` |
+| `--grep-invert <pattern>` | Run tests NOT matching pattern | `npx playwright test --grep-invert "slow"` |
+| `--project <name>` | Run tests in specific project/browser | `npx playwright test --project=chromium` |
+| `--headed` | Run in headed browser mode | `npx playwright test --headed` |
+| `--debug` | Run with Playwright Inspector | `npx playwright test --debug` |
+| `--trace on` | Record trace for each test | `npx playwright test --trace on` |
+| `--reporter <type>` | Specify reporter (list, html, json) | `npx playwright test --reporter=html` |
+| `--workers <n>` | Set number of parallel workers | `npx playwright test --workers=4` |
+| `--retries <n>` | Set retry count for failed tests | `npx playwright test --retries=2` |
 
 ## Screenshots
 - Live Browser State Visualization
