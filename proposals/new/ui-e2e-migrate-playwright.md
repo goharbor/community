@@ -259,6 +259,15 @@ Reference implementations:
 - Shell Command & Script Execution (Node child-process)
 <img width="1321" height="1032" alt="Screenshot_2025-11-26_18-20-11" src="https://github.com/user-attachments/assets/8042fef4-2adf-42cd-95b4-67f2ce92a96f" />
 
+- HTML Test Report - All Tests Passing
+<img width="1014" height="690" alt="image" src="https://github.com/user-attachments/assets/fc87ad01-5350-467a-88f6-51734b83212e" />
+
+- Video Recording in Test Reports
+<img width="1395" height="770" alt="image" src="https://github.com/user-attachments/assets/9d3386ea-4487-4840-908e-abadf7b66cf2" />
+
+- Interactive Debug Mode - Running Tests with Inspector
+<img width="1183" height="770" alt="image" src="https://github.com/user-attachments/assets/709cc2bd-9507-468c-865e-1120e6107dd9" />
+
 ## Technical Considerations
 
 ### Process Orchestration & Parallelism
