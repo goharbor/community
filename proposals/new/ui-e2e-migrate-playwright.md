@@ -43,41 +43,78 @@ Migrate Harbor’s UI end-to-end (E2E) tests from Robot Framework + Selenium to 
 Reference: [POC Dockerfile](https://github.com/bupd/harbor/blob/87b9f97/src/portal/e2e/Dockerfile) | Existing Robot UI Engine: [Dockerfile.ui_test](https://github.com/goharbor/harbor/blob/main/tests/test-engine-image/Dockerfile.ui_test)
 
 ```dockerfile
-FROM node:20-bookworm
+FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install -y \
+ENV TZ=Asia/Shanghai \
+    DEBIAN_FRONTEND=noninteractive
+ENV LANG C.UTF-8
+ENV HELM_EXPERIMENTAL_OCI=1
+ENV COSIGN_PASSWORD=Harbor12345
+ENV COSIGN_EXPERIMENTAL=1
+ENV COSIGN_OCI_EXPERIMENTAL=1
+ENV NOTATION_EXPERIMENTAL=1
+
+# Install basic dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    curl \
+    gnupg2 \
     apt-transport-https \
     ca-certificates \
-    curl \
-    gnupg \
     lsb-release \
+    libseccomp2 \
+    git \
+    iproute2 \
+    iptables \
+    build-essential \
+    sed \
+    libssl-dev \
+    tar \
+    unzip \
+    gzip \
+    jq \
+    libnss3-tools \
     sudo
 
-# Add Docker's GPG key
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# Install Google Chrome
+RUN wget --no-check-certificate -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends google-chrome-stable
 
-# Add Docker repository
-RUN echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Install Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest
 
 # Install Docker Engine
-RUN apt-get update && apt-get install -y \
-    docker-ce \
-    docker-ce-cli \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-compose-plugin
+RUN DOCKER_VERSION=27.1.1 && \
+    wget https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz && \
+    tar --strip-components=1 -xvzf docker-$DOCKER_VERSION.tgz -C /usr/bin && \
+    rm docker-$DOCKER_VERSION.tgz
+
+# Copy Harbor test tools if needed
+# COPY --from=tool_builder /tool/tools.tar.gz /usr/local/bin
 
 WORKDIR /app
 
+# Install Playwright and dependencies
 COPY package.json package-lock.json ./
-RUN npm install @playwright/test
-RUN npx playwright install --with-deps
+RUN npm ci && \
+    npx playwright install --with-deps && \
+    apt-get clean all
 
 COPY . .
 
-# Command to run the tests
+# Setup NSS database for certificates
+RUN mkdir -p $HOME/.pki/nssdb && \
+    echo Harbor12345 > password.ca && \
+    certutil -d sql:$HOME/.pki/nssdb -N -f password.ca
+
+# Docker volume for Docker-in-Docker
+VOLUME /var/lib/docker
+
+# Default command to run tests
 CMD ["npx", "playwright", "test", "--reporter=html"]
 ```
 
@@ -103,38 +140,94 @@ docker run -i \
   $E2E_IMAGE npx playwright test --reporter=html
 ```
 
-#### Keyword-Driven Execution
+## Running Commands & Keyword-Driven Execution
 
-Playwright supports keyword-driven execution similar to Robot Framework. See the [official documentation](https://playwright.dev/docs/running-tests#run-specific-tests) for details.
+### Q1: How does the running command look like?
 
+Using Docker (production/CI):
 ```bash
 E2E_IMAGE=goharbor/harbor-e2e-engine:playwright-ui
 
-# Run tests by title/keyword (using -g flag for grep)
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  $E2E_IMAGE npx playwright test -g "create new project"
+# Basic run - all tests
+docker run -i \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd)/test-results:/app/test-results \
+  -e BASE_URL=https://harbor.example.com \
+  -e IP=harbor.example.com \
+  -e HARBOR_PASSWORD=Harbor12345 \
+  -w /app \
+  $E2E_IMAGE npx playwright test
 
-# Run tests matching multiple keywords
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  $E2E_IMAGE npx playwright test -g "login|logout"
-
-# Run tests by file name pattern
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  $E2E_IMAGE npx playwright test project
-
-# Run a specific test file
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  $E2E_IMAGE npx playwright test tests/project.spec.ts
-
-# Run tests with specific tag (using grep)
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  $E2E_IMAGE npx playwright test -g "@smoke"
-
-# Run tests in headed mode (for debugging, requires X11 forwarding)
-docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
-  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
-  $E2E_IMAGE npx playwright test -g "create new project" --headed
+# With HTML report
+docker run -i \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $(pwd)/playwright-report:/app/playwright-report \
+  -e BASE_URL=https://harbor.example.com \
+  -e IP=harbor.example.com \
+  -w /app \
+  $E2E_IMAGE npx playwright test --reporter=html
 ```
+
+Direct execution (development):
+```bash
+cd src/portal
+export BASE_URL=https://harbor.example.com
+export IP=harbor.example.com
+npx playwright test
+```
+
+Real examples from Harbor CI ([see workflow](https://github.com/bupd/harbor/blob/87b9f97/.github/workflows/playwright.yml)):
+```bash
+cd src/portal
+npm ci
+npx playwright install --with-deps
+npx playwright test
+```
+
+### Q2: Does Playwright support keyword-driven execution?
+
+Yes. Playwright supports keyword-driven execution through test filtering and grep patterns, similar to Robot Framework's tag-based execution.
+
+Run tests by keyword/title:
+```bash
+# Single keyword
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test -g "trivy"
+
+# Multiple keywords (OR)
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test -g "trivy|webhook"
+
+# Exclude keywords
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test --grep-invert "slow"
+```
+
+Run specific test files:
+```bash
+# Single file
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test trivy.spec.ts
+
+# Multiple files
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test trivy.spec.ts webhook.spec.ts
+```
+
+Control parallelism and retries:
+```bash
+# Sequential execution (like Robot)
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test --workers=1
+
+# With retries
+docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
+  $E2E_IMAGE npx playwright test --retries=2
+```
+
+Reference implementations:
+- Initial setup: https://github.com/goharbor/harbor/pull/22462
+- Dockerized tests: https://github.com/goharbor/harbor/pull/22591
 
 #### Common Playwright CLI Options
 
