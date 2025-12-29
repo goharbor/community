@@ -166,6 +166,59 @@ docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
 - Shell Command & Script Execution (Node child-process)
 <img width="1321" height="1032" alt="Screenshot_2025-11-26_18-20-11" src="https://github.com/user-attachments/assets/8042fef4-2adf-42cd-95b4-67f2ce92a96f" />
 
+## Technical Considerations
+
+### Process Orchestration & Parallelism
+
+Configuration: Tests run sequentially in CI (--workers=1) to avoid docker daemon conflicts, port collisions, and resource contention - identical to current Robot Framework behavior.
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  workers: process.env.CI ? 1 : undefined,  // Sequential in CI, parallel in dev
+  fullyParallel: false,
+  retries: process.env.CI ? 2 : 0,
+});
+```
+
+Resource Management: Playwright fixtures provide setup/teardown guarantees equivalent to Robot's suite setup/teardown, ensuring clean state and proper resource cleanup between tests.
+
+### Credential Safety
+
+Credentials are handled through environment variables and never hardcoded. GitHub Actions automatically masks secrets in logs. Playwright traces are configured to capture only on first retry, with screenshots and videos only on failure. Test helper functions never log credentials directly - they use data attributes and environment variables for sensitive inputs.
+
+```typescript
+export default defineConfig({
+  use: {
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+});
+```
+
+### SSH Operations (when needed)
+
+UI tests rarely require SSH. When infrastructure setup needs remote operations, Node.js libraries like `ssh2` provide equivalent functionality to Robot's SSHLibrary.
+
+### Reporting Comparison: Robot vs Playwright
+
+| Capability | Robot Framework | Playwright |
+|------------|----------------|------------|
+| HTML Reports | ✅ Keyword-level logs | ✅ Test-level reports |
+| Screenshots | ✅ On failure only | ✅ Configurable (failure/always/never) |
+| Videos | ❌ Not supported | ✅ Full test recordings |
+| Network Traces | ❌ Not supported | ✅ Complete request/response logs |
+| Interactive Trace Viewer | ❌ Not supported | ✅ Step-through with DOM snapshots |
+| Retry Tracking | ⚠️ Basic | ✅ Separate reports per retry |
+| CI Integration | ⚠️ Basic | ✅ GitHub Actions annotations + summaries |
+| Debugging Experience | ⚠️ Limited | ✅ Inspector, codegen, trace viewer |
+
+Playwright's reporting capabilities significantly exceed Robot Framework's, particularly for debugging UI flakiness.
+
+## Scope
+
+This proposal focuses exclusively on UI E2E tests - the XPath-heavy, fragile tests that hinder contribution and maintenance. Infrastructure orchestration tests (those using SSHLibrary, Process, heavy CLI orchestration) are out of scope and will remain in Robot Framework where it excels.
 
 ## Goals
 - Replace UI/XPath-based Robot tests with Playwright.
@@ -173,14 +226,15 @@ docker run -i -v $(pwd)/test-results:/app/test-results -w /app \
 - Migrate testcases incrementally by multiple PRs in a non-blocking manner.
 - Maintain coverage during migration.
 - Improve contributor experience and onboarding.
-- Retire Robot tests after achieving 1:1 coverage.
+- Retire Robot UI tests after achieving 1:1 coverage.
 
 ## Non-goals
+- Replacing Robot Framework for infrastructure/orchestration tests.
 - Immediate deletion of Robot tests.
 - Creating a single PR including all changes.
 - No drop in test quality or coverage during migration.
 
-> Note: Robot tests will eventually be deleted, but this will occur in a later phase, not during Phase 1.
+> Note: Robot UI tests will be retired in Phase 2, after Playwright achieves 1:1 parity. Infrastructure tests remain in Robot Framework.
 
 ## Proposal
 
