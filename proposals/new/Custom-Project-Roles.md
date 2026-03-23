@@ -82,7 +82,7 @@ Extend Harbor's existing RBAC infrastructure to support custom roles by linking 
 │         │ users/groups    │                                  │
 │         └────────┬────────┘                                  │
 │                  │                                           │
-│                  ↓                                           │
+│                  ↑                                           │
 │         ┌─────────────────┐        ┌─────────────────┐       │
 │         │ project_member  │───────→│  role (table)   │       │
 │         └─────────────────┘        └────────┬────────┘       │
