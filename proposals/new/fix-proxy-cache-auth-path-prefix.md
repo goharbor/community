@@ -27,6 +27,9 @@ JFrog Artifactory is a widely deployed enterprise registry that supports a [Repo
 
 Harbor users wanting to set up a proxy cache for such Artifactory instances can create the registry endpoint and the proxy project today, but pulls fail authentication.
 
+Example from Artifactory [API documentation](https://{artifactory_host}/artifactory/api/docker/{repo-key}/v2/{imageName}/tags/list), for registries using the Repository Path method, the V2 API is exposed under a specific sub-path rather than the root:
+https://{artifactory_host}/artifactory/api/docker/{repo-key}/v2/{imageName}/tags/list
+
 ### Evidence from NGINX logs
 
 Harbor correctly targets the path prefix but fails the auth challenge:
