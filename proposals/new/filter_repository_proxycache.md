@@ -117,7 +117,7 @@ Request example:
 	"project_name": "dockerhub-proxy",
 	"registry_id": 1,
 	"metadata": {
-		"repository_filter": "{"filter":"library/**","kind":"doublestar"}"
+		"repository_filter": "{\"filter\":\"library/**\",\"kind\":\"doublestar\"}"
 	}
 }
 ```
