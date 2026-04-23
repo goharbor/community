@@ -8,15 +8,10 @@ describes governance guidelines and maintainer responsibilities.
 | Maintainer | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | Daniel Jiang | [reasonerjt](https://github.com/reasonerjt) | [VMware](https://www.github.com/vmware/) |
-| Fanjian Kong | [kofj](https://github.com/kofj) | [Tencent](https://github.com/Tencent) |
-| Mingming Pei | [mmpei](https://github.com/mmpei) | [Netease](https://github.com/netease) |
 | Steven Ren | [renmaosheng](https://github.com/renmaosheng) | [VMware](https://www.github.com/vmware/) |
 | Yan Wang | [wy65701436](https://github.com/wy65701436) | [VMware](https://www.github.com/vmware/) |
 | Wenkai Yin | [ywk253100](https://github.com/ywk253100) | [VMware](https://www.github.com/vmware/) |
-| Henry Zhang | [hainingzhang](https://github.com/hainingzhang)| [GRG Banking](https://global.grgbanking.com/en/) | 
 | Steven Zou | [steven-zou](https://github.com/steven-zou) | [VMware](https://www.github.com/vmware/) |
-| Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
-| Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 
 ## SIG Community
@@ -24,7 +19,7 @@ describes governance guidelines and maintainer responsibilities.
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
 | Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SUSE](https://github.com/suse) |
-| Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [GRG Banking](https://global.grgbanking.com/en/)|
+
 
 ## SIG Docs
 
@@ -55,6 +50,11 @@ describes governance guidelines and maintainer responsibilities.
 | QA, Test Automation | Danfeng Liu (danfengliu) |
 | Community Management | Orlin Vasilev (OrlinVasilev), Henry Zhang (hainingzhang) |
 
+
+## Emeritus Founder
+
+* Henry Zhang, [hainingzhang](https://github.com/hainingzhang)
+
 ## Emeritus Maintainers
 
 * Michael Michael, [michmike](https://github.com/michmike)
@@ -62,4 +62,7 @@ describes governance guidelines and maintainer responsibilities.
 * Alex Xu, [xaleeks](https://github.com/xaleeks)
 * Tianon Gravi, [tianon](https://github.com/tianon)
 * Daniel Pacak, [danielpacak](https://github.com/danielpacak)
-
+* Fanjian Kong, [kofj](https://github.com/kofj)
+* Mingming Pei, [mmpei](https://github.com/mmpei)
+* Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon)
+* Pierre PÉRONNET | [holyhope](https://github.com/holyhope)
