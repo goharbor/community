@@ -1,6 +1,7 @@
 # Proposal: Image Optimization & Recommendation Engine
 
 Author: [`Hanna Czifrus`](https://github.com/czifrushanna)
+Discussion: None
 
 ## Abstract
 
