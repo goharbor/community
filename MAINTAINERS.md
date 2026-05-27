@@ -23,7 +23,7 @@ describes governance guidelines and maintainer responsibilities.
 
 | Owner | GitHub ID | Affiliation |
 | --------------- | --------- | ----------- |
-| Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SUSE](https://github.com/suse) |
+| Orlin Vasilev | [OrlinVasilev](https://github.com/OrlinVasilev) | [SAP](https://github.com/sap) |
 | Henry Zhang | [hainingzhang](https://github.com/hainingzhang) | [GRG Banking](https://global.grgbanking.com/en/)|
 
 ## SIG Docs
