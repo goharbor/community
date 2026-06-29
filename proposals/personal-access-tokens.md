@@ -2,105 +2,60 @@
 
 Author: Ross Golder
 
-**Status**: IN REVIEW
-**Implementation PR**: https://github.com/goharbor/harbor/pull/23370 (Open)
+Discussion: [goharbor/harbor#23370](https://github.com/goharbor/harbor/pull/23370)
 
 ## Abstract
 
-Personal Access Tokens (PAT) provide a modern, scoped authentication mechanism for Harbor that enables secure CI/CD integration, programmatic access, and improved secret management. PATs represent a modernization of Harbor's existing CLI token system with enhanced lifecycle management, self-service capabilities, and comprehensive audit trails.
+Introduce Personal Access Tokens (PAT) as a modern, self-service authentication mechanism for Harbor. PATs provide named, time-limited credentials with audit trails, replacing the legacy OIDC CLI secret system. Tokens are scoped to projects and authenticate via HTTP Basic Auth (username + token).
 
 ## Background
 
-Harbor previously supported:
-1. **User credentials** (username/password) for both UI and registry access
-2. **Legacy CLI tokens** - proprietary tokens for programmatic access, created by admins
-3. **Robot accounts** with project-level scope (admin-managed)
+Harbor's authentication for programmatic access currently relies on:
 
-Limitations of the legacy CLI token system:
-- No expiration dates or time-based lifecycle management
-- Limited self-service capabilities (admins controlled creation)
-- No usage tracking or audit trails
-- Inconsistent authentication mechanisms across registry and API
-- No fine-grained access control beyond username level
+1. **User credentials** (username/password) - work everywhere but difficult to rotate
+2. **Legacy CLI tokens** - created by admins, no expiration, no usage tracking
+3. **Robot accounts** - project-level scope but admin-managed only
 
-PATs modernize this approach by providing:
-- Self-service token management for individual users
-- Time-limited credentials with configurable expiration
-- Usage tracking through `last_used_at` timestamps
-- Consistent authentication across registry and API
-- Automatic migration of legacy CLI tokens with backward compatibility
-- Clear token prefix (`hbr_pat_`) for identification in logs and audit trails
+Users need a self-service way to create, rotate, and revoke authentication credentials without admin intervention. Credentials should be:
+- **Revocable** without changing passwords
+- **Time-limited** to reduce blast radius of leaks
+- **Auditable** to track usage and enable cleanup of stale tokens
+- **Scoped** to limit permissions per credential
 
 ## Proposal
 
-### Core Features (COMPLETED)
+### Core Features
 
-#### 1. PAT Lifecycle Management ✅
-Users can create, manage, and revoke their own PATs with:
-- **Name**: User-defined identifier for the token
-- **Description**: Optional documentation field
-- **Expiration**: Configurable number of days (or -1 for never expire)
-- **Creation Time**: Automatic timestamp
-- **Update Time**: Automatic timestamp
-- **Last Used At**: Tracks most recent authentication attempt
-- **Disabled**: Flag to revoke access without deletion
-- **Is Legacy**: Flag tracking tokens migrated from CLI secrets
+**1. PAT Lifecycle Management**
+- Users create, list, update, and delete their own PATs via API (`/api/v2.0/users/{user_id}/personal_access_tokens`)
+- PAT properties: name, description, expiration (days or -1 for never), creation/update timestamps
+- `last_used_at` timestamp tracks most recent authentication
+- `disabled` flag allows revocation without deletion
+- Automatic migration of legacy OIDC CLI secrets with `is_legacy` flag
 
-#### 2. Token Prefix System ✅
-- New PATs use prefix: `hbr_pat_` followed by 32-character random secret
-- Example: `hbr_pat_rKgjKEMpMEK23zqejkWn5GIVvgJps1vKACTa`
-- Distinguishes from robot accounts (prefixed with `robot$`)
-- Enables easy identification in logs and audit trails
-- Legacy OIDC CLI secrets automatically migrated with `is_legacy` flag for backward compatibility
+**2. Token Format & Security**
+- Format: `hbr_pat_` prefix + 32-character random secret
+- Secrets hashed using PBKDF2-SHA256 with per-token salt
+- Secrets never stored in plaintext; returned only on creation
+- Disabled and expired tokens are rejected during authentication
 
-#### 3. Authentication Flow ✅
-PATs authenticate via HTTP Basic Auth (username + PAT secret):
-- Registry authentication for Docker login and push/pull
-- API endpoint access for programmatic operations
-- Security middleware (`src/server/middleware/security/pat.go`):
-  1. Checks for `hbr_pat_` prefix in credentials
-  2. Looks up user by username
-  3. Queries all active, non-legacy PATs for the user
-  4. Validates expiration (token with future/unlimited expiration accepted)
-  5. Verifies secret hash using PBKDF2-SHA256 with per-token salt
-  6. Updates `last_used_at` timestamp on successful match
-  7. Returns security context with token scope
+**3. Authentication**
+- PATs authenticate via HTTP Basic Auth (username + PAT secret)
+- Works for Docker login and push/pull operations
+- Works for API endpoint access
+- Security middleware checks `hbr_pat_` prefix in credentials
 
-#### 4. Scope Enforcement ✅
-- PATs include a scope field containing project-level permissions
-- Scope structure: JSON with resource names and allowed actions
-- Scope validation enforced through existing authorization layer (RAM)
-- Restricts token access to permitted projects only
+**4. Authorization & Scope**
+- PATs support project-level scope enforcement via JSON scope field
+- Scope validated through existing Harbor authorization layer (RAM)
+- Token access restricted to permitted projects only
 
-#### 5. REST API Endpoints ✅
-```
-POST   /api/v2.0/users/{user_id}/personal_access_tokens
-GET    /api/v2.0/users/{user_id}/personal_access_tokens
-GET    /api/v2.0/users/{user_id}/personal_access_tokens/{token_id}
-PATCH  /api/v2.0/users/{user_id}/personal_access_tokens/{token_id}
-DELETE /api/v2.0/users/{user_id}/personal_access_tokens/{token_id}
-POST   /api/v2.0/users/{user_id}/personal_access_tokens/{token_id}/refresh
-```
+**5. Audit Trail**
+- All PAT operations logged: create, read, update, delete, usage
+- `last_used_at` provides audit trail of token usage
+- Compatible with Harbor's audit log system
 
-#### 6. Security Properties ✅
-- Secrets hashed using PBKDF2-SHA256 with individual per-token salt values
-- Token secrets never stored in plaintext in database
-- Token secret returned only on creation (cannot be retrieved later)
-- Disabled tokens rejected during authentication
-- Expired tokens rejected during authentication  
-- Token scope validated during authorization checks
-
-#### 7. Audit Trail Integration ✅
-All PAT operations logged to Harbor's audit system:
-- **Create**: User ID, token name, description, expiration date
-- **Read**: User ID, token access queries
-- **Update**: User ID, token modifications (enable/disable, refresh)
-- **Delete**: User ID, token deletion
-- **Usage**: Authentication attempts (success/failure) tracked via `last_used_at`
-- Audit logs queryable via `/api/v2.0/audit-logs` with resource type filtering
-- Compliance-ready: Includes user context, timestamps, and operation details
-
-### Database Schema (COMPLETED)
+### Database Schema
 
 ```sql
 CREATE TABLE personal_access_token (
@@ -127,169 +82,68 @@ CREATE INDEX idx_pat_expires_at ON personal_access_token(expires_at);
 
 ## Non-Goals
 
-- LDAP/OIDC provider-specific token generation (OIDC CLI secrets auto-migrate to PATs on startup)
-- PAT login to Harbor UI (tokens are API-only, UI uses session auth)
+- OIDC/LDAP provider-specific integration (handled via separate auth systems)
+- PAT login to Harbor UI (tokens are API-only; UI uses session auth)
 - Hierarchical scopes beyond project level (future enhancement)
-- Automatic expiration notifications or reminders (operational concern)
-- Built-in rate limiting per PAT (can use reverse proxy)
-- Token versioning or rotation strategies beyond manual refresh
-
-## Implementation (IN REVIEW)
-
-### Components Implemented
-
-1. **Data Models** ✅
-   - `/src/common/models/personal_access_token.go` - swagger-generated model
-   - `/src/server/v2.0/models/personal_access_token*.go` - API models
-
-2. **Database Layer** ✅
-   - `/src/pkg/pat/dao/` - CRUD operations for token lifecycle
-   - `/src/pkg/pat/model/` - PAT model with hashing and validation
-
-3. **Service Layer** ✅
-   - `/src/core/service/token/token.go` - Core token service
-   - `/src/core/service/token/token_test.go` - Unit tests
-
-4. **API Handlers** ✅
-   - `/src/server/v2.0/handlers/userdata.go` - REST endpoint handlers
-   - Integrates with user controller for token CRUD
-
-5. **Security Middleware** ✅
-   - `/src/server/middleware/security/pat.go` - PAT authentication handler
-   - `/src/server/middleware/security/pat_test.go` - Authentication tests
-   - Plugs into security context chain
-
-6. **Controller Layer** ✅
-   - `/src/controller/pat/` - PAT business logic controller
-   - Handles token creation, validation, refresh
-
-7. **API Models** ✅
-   - `PersonalAccessToken` - token representation
-   - `PersonalAccessTokenCreateRequest` - creation payload
-   - `PersonalAccessTokenCreatedResponse` - response with secret
-   - `PersonalAccessTokenRefreshRequest` - refresh payload
-   - `PersonalAccessTokenUpdateRequest` - patch operations
-
-### Test Coverage
-
-#### Unit Tests
-- `/src/core/service/token/token_test.go` - Token service logic
-- `/src/server/middleware/security/pat_test.go` - Authentication middleware
-- `/src/pkg/pat/dao/` - Database layer operations
-- Secret hashing and verification with salt
-- Expiration validation logic
-- Scope parsing and enforcement
-
-#### Integration Tests
-- API endpoint CRUD operations
-- Database persistence and transactions
-- User lookup and token association
-- Authentication middleware chain integration
-
-#### E2E Tests (Robot Framework) ✅
-Located in `/tests/robot-cases/Group1-Nightly/PAT.robot`:
-
-| Test Case | Status |
-|-----------|--------|
-| Admin creates PAT with expiry | ✅ PASSED |
-| PAT list shows creation/expiration dates | ✅ PASSED |
-| Refresh PAT secret | ✅ PASSED |
-| Enable and disable PAT | ✅ PASSED |
-| Delete PAT | ✅ PASSED |
-| Non-admin user creates own PAT | ✅ PASSED |
-| PAT with never-expire setting | ✅ PASSED |
-| Docker login and push with PAT | ✅ PASSED |
-| Expired PAT rejected for authentication | ✅ PASSED |
-| Disabled PAT rejected for authentication | ✅ PASSED |
-| PAT scope enforcement (project access) | ✅ PASSED |
-| OIDC auto-onboarding with email lookup | ✅ DOCUMENTED |
-
-### Release Notes
-
-**Release**: v2.16.0+
-**Feature**: Personal Access Tokens (PAT)
-
-#### User-Facing Changes
-- Users can now create and manage personal access tokens via API (`/api/v2.0/users/{user_id}/personal_access_tokens`)
-- Tokens support configurable expiration dates
-- Tokens can be disabled/enabled without deletion
-- Tokens track creation, update, and last-used timestamps
-- Existing OIDC CLI secrets automatically migrated to legacy PATs on startup with `is_legacy` flag for backward compatibility
-- Docker login now supports PAT credentials using `hbr_pat_` prefix
-
-#### Operator Changes
-- New database table: `personal_access_token`
-- Database migrations auto-apply on startup
-- No configuration changes required
-- Existing authentication methods continue to work
-
-#### Breaking Changes
-- None - fully backward compatible with existing credentials and robot accounts
+- Automatic expiration notifications (operational responsibility)
+- Built-in rate limiting per PAT (use reverse proxy)
+- Automatic token rotation (users manage via refresh endpoint)
 
 ## Rationale
 
-### Design Choices
+**Why self-service?** Unlike legacy CLI tokens (admin-created), PATs empower developers to manage their own authentication without operational overhead.
 
-**Prefix System (`hbr_pat_`)**: Simplifies middleware identification and prevents conflicts with robot accounts. Makes security logs and audit trails more readable at a glance.
+**Why time-limited?** Expiring credentials reduce blast radius if a token is leaked. Default never-expire (-1) preserves backward compatibility while enabling policies.
 
-**User Self-Service**: Unlike legacy CLI tokens (admin-managed) and robot accounts (project-admin-managed), PATs enable individual developers to control their own authentication without intermediaries. This improves developer experience and reduces operational overhead.
+**Why track last_used_at?** Enables security teams to audit token usage, identify stale tokens for cleanup, and detect unusual access patterns.
 
-**Expiration Support**: Time-bound credentials reduce blast radius of token leaks. Default of never-expire (-1) maintains backward compatibility while allowing operators to enforce policies.
+**Why per-token salt in hashing?** Each token is hashed independently, preventing credential reuse if the database is compromised.
 
-**Scope in JSON**: Flexible structure supports future expansion of access control granularity (per-repository, per-action, etc.) without database schema changes.
-
-**Legacy Token Support**: Migrating existing CLI secrets to PATs with `is_legacy` flag preserves existing automation while enabling path to modern controls.
-
-**Last Used Tracking**: Enables security audits, cleanup of unused tokens, and compliance reporting without requiring external logging infrastructure.
-
-### Alternate Approaches Considered
-
-1. **OAuth 2.0 Token Endpoint**: More complex; PAT approach simpler for internal Harbor-only use
-2. **Per-Project Token Limits**: Can be enforced through policy/operators, not required in core
-3. **Automatic Token Rotation**: Manual refresh endpoint provides operator control; automatic rotation adds unnecessary complexity
-4. **Unified Token Type**: Keeping legacy CLI tokens separate allows gradual migration without forcing all users to rotate credentials immediately
+**Alternate approaches considered:**
+- OAuth 2.0 token endpoint - more complex; PAT approach simpler for Harbor-only use
+- Per-project token limits - can be enforced via policy; not needed in core
+- Automatic token rotation - manual refresh provides operator control
 
 ## Compatibility
 
-### Backward Compatibility ✅
+**Backward compatible:**
 - Existing user credentials (username/password) continue to work
 - Existing robot accounts continue to work
-- Existing legacy CLI tokens continue to work (marked with `is_legacy=true`)
-- No changes required to client code
-- Additive API endpoints only
+- Existing OIDC CLI secrets migrated to legacy PATs on startup
+- No configuration changes required
+- Additive API endpoints only; no breaking changes
 
-### Authentication Middleware Stack (Updated Order)
-1. Secret/JWT token handler (Harbor internal)
-2. **PAT handler** (new - checks for `hbr_pat_` prefix)
-3. Robot handler (existing - checks for `robot$` prefix)
-4. Basic Auth handler (existing - username/password)
-5. Session handler (existing - cookie-based)
-6. Unauthorized handler (fallback)
+**Authentication middleware dispatch order** (ensures compatibility):
+1. Secret/JWT handler (Harbor internal)
+2. PAT handler (checks for `hbr_pat_` prefix)
+3. Robot handler (checks for `robot$` prefix)
+4. Basic Auth handler (username/password)
+5. Session handler (cookie-based)
+6. Unauthorized fallback
 
-Order ensures modern tokens checked first, legacy mechanisms still supported.
+## Implementation
 
-### API Versioning
-- Uses existing `/api/v2.0` endpoint versioning
-- All endpoints are additive, no breaking changes
-- Existing endpoints unaffected
+### Components
 
-### Storage Considerations
-- Single new table: `personal_access_token`
-- No migration of existing user data required
-- Indexes on: `user_id`, `disabled`, `expires_at`
-- No impact on existing database size or performance
+- **Data Model**: `/src/common/models/personal_access_token.go`, `/src/server/v2.0/models/`
+- **Database Layer**: `/src/pkg/pat/dao/` (CRUD operations), `/src/pkg/pat/model/` (hashing/validation)
+- **Service Layer**: `/src/core/service/token/token.go` (core token service)
+- **API Handlers**: `/src/server/v2.0/handlers/userdata.go` (REST endpoints)
+- **Security Middleware**: `/src/server/middleware/security/pat.go` (PAT authentication)
+- **Controller**: `/src/controller/pat/` (business logic)
+- **UI**: Harbor portal account settings - PAT management tab with create/list/delete/enable/disable/refresh operations
 
-## Testing Results
+### Testing
 
-### Test Execution Summary
-- **Unit Tests**: All passing (token service, middleware, DAO)
-- **Integration Tests**: All passing (API endpoints, database layer)
-- **E2E Tests**: 12/12 test cases passing
-- **Code Quality**: 0 lint issues
+- **Unit tests**: Token service, authentication middleware, DAO layer
+- **Integration tests**: API endpoints, database persistence, user lookup, middleware chain
+- **E2E tests**: Docker login with PAT, expired/disabled token rejection, scope enforcement
 
 ### Test Coverage
+
+All passing:
 - ✅ Token creation with various expiration configurations
-- ✅ Secret hashing and verification with salt
+- ✅ Secret hashing/verification with salt
 - ✅ Expiration validation (expired tokens rejected)
 - ✅ Disabled tokens rejected during authentication
 - ✅ Scope parsing and enforcement
@@ -299,44 +153,46 @@ Order ensures modern tokens checked first, legacy mechanisms still supported.
 - ✅ Last-used timestamp tracking
 - ✅ Error handling for invalid inputs
 
-## Harbor UI Dashboard
+### Release Notes
 
-PAT management is fully integrated into the Harbor UI account settings:
-- **PAT Management Tab** in account settings modal
-- **Datagrid listing** showing name, creation date, expiration date, and status (enabled/disabled)
-- **Create PAT modal** with fields: name, description, expiration (days or never)
-- **Token secret display** in readonly field with copy-to-clipboard button (shown only on creation)
-- **Manage operations**: enable/disable toggle per token, refresh secret, delete with confirmation
-- **Auto-migration**: Existing CLI secrets automatically converted to PAT format on first load
-- **i18n support**: All UI strings localized for multiple languages
-- **Error handling**: Friendly 409 error message for duplicate token names
+**Release**: v2.16.0+
+
+**User-Facing**:
+- Users can create/manage personal access tokens via API
+- Tokens support configurable expiration
+- Tokens can be disabled/enabled without deletion
+- Tokens track creation, update, last-used timestamps
+- Legacy OIDC CLI secrets auto-flagged as `is_legacy`
+- Docker login now supports PAT credentials
+
+**Operator**:
+- New database table: `personal_access_token`
+- Database migrations auto-apply on startup
+- No configuration changes required
+- Existing authentication methods continue working
+
+**Breaking Changes**: None - fully backward compatible
 
 ## Known Limitations
 
-- **Project-Level Scope**: Tokens have project-level access control; per-repository or per-action granularity (pull vs push) would require schema expansion
-- **No Secret Retrieval**: Token secrets cannot be retrieved after creation—users must use the refresh endpoint if the secret is lost
-- **No Expiration Notifications**: Expired tokens are silently rejected; automatic expiration warnings are not implemented
-- **Legacy Token Migration**: Existing CLI tokens are auto-migrated on first UI load but can be manually managed; no background rotation
+- **Project-Level Scope**: Per-repository or per-action granularity (pull vs push) requires future schema expansion
+- **No Secret Retrieval**: Secrets cannot be retrieved after creation; users must refresh if lost
+- **No Expiration Notifications**: Expired tokens silently rejected; no automatic warnings
+- **In-Memory Migration**: Legacy CLI tokens auto-migrated on first UI load; no background rotation
 
 ## Potential Future Enhancements
 
-- **Token Expiration Warnings**: Notify users when PATs are approaching expiration
-- **Finer-Grained Scopes**: Expand scope support to per-repository level and per-action permissions (e.g., `pull` vs `push` vs `delete`)
-- **Rate Limiting Configuration**: Operator-configurable rate limits specific to PAT requests
-- **Default Expiration Policies**: System-wide or role-based policies enforcing token expiration requirements
-- **Automatic Token Rotation**: Scheduled rotation strategies with optional notifications
-- **Token Usage Analytics**: Dashboard showing token usage patterns, inactive tokens, and security insights
-- **Revocation Callbacks**: Integration with CI/CD systems for automatic token invalidation on deployment events
-- **OAuth 2.0 Support**: Native OAuth 2.0 token endpoint for standardized integration
+- Token expiration warning notifications
+- Finer-grained scopes (per-repository, per-action)
+- Rate limiting configuration per PAT
+- Default expiration policies (system-wide or role-based)
+- Automatic token rotation strategies
+- Token usage analytics dashboard
+- Revocation callbacks for CI/CD integration
+- OAuth 2.0 token endpoint support
 
 ## References
 
-- **PR**: https://github.com/goharbor/harbor/pull/23370
-- **Code**: `/src/server/middleware/security/pat.go`, `/src/core/service/token/`, `/src/pkg/pat/`
-- **Tests**: `/tests/robot-cases/Group1-Nightly/PAT.robot`
-- Related Work:
-  - Docker Registry V2 Token Authentication
-  - GitHub Personal Access Tokens
-  - GitLab Personal Access Tokens
-  - Harbor Robot Account Implementation (`/src/pkg/robot/`)
-  - Harbor OIDC Authentication (linked feature for auto-onboarding)
+- **Implementation**: [goharbor/harbor#23370](https://github.com/goharbor/harbor/pull/23370)
+- **Code locations**: `src/core/service/token/`, `src/pkg/pat/`, `src/server/middleware/security/pat.go`
+- **Related implementations**: Docker Registry V2 token auth, GitHub/GitLab PAT, Harbor Robot Accounts
