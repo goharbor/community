@@ -2,8 +2,8 @@
 
 Author: Ross Golder
 
-**Status**: COMPLETED
-**Implementation PR**: https://github.com/goharbor/harbor/pull/23370
+**Status**: IN REVIEW
+**Implementation PR**: https://github.com/goharbor/harbor/pull/23370 (Open)
 
 ## Abstract
 
@@ -47,11 +47,11 @@ Users can create, manage, and revoke their own PATs with:
 - **Is Legacy**: Flag tracking tokens migrated from CLI secrets
 
 #### 2. Token Prefix System ✅
-- New PATs use prefix: `hbr_pat_` followed by the token secret
-- Example: `hbr_pat_rKgjKEMpMEK23zqejkWn5GIVvgJps1vKACTa6tnGXXyOlOTsXFESccDvgaJx047q`
+- New PATs use prefix: `hbr_pat_` followed by 32-character random secret
+- Example: `hbr_pat_rKgjKEMpMEK23zqejkWn5GIVvgJps1vKACTa`
 - Distinguishes from robot accounts (prefixed with `robot$`)
 - Enables easy identification in logs and audit trails
-- Legacy CLI tokens retain `is_legacy` flag for backward compatibility
+- Legacy OIDC CLI secrets automatically migrated with `is_legacy` flag for backward compatibility
 
 #### 3. Authentication Flow ✅
 PATs authenticate via HTTP Basic Auth (username + PAT secret):
@@ -62,7 +62,7 @@ PATs authenticate via HTTP Basic Auth (username + PAT secret):
   2. Looks up user by username
   3. Queries all active, non-legacy PATs for the user
   4. Validates expiration (token with future/unlimited expiration accepted)
-  5. Verifies secret hash using SHA256 with per-token salt
+  5. Verifies secret hash using PBKDF2-SHA256 with per-token salt
   6. Updates `last_used_at` timestamp on successful match
   7. Returns security context with token scope
 
@@ -83,7 +83,7 @@ POST   /api/v2.0/users/{user_id}/personal_access_tokens/{token_id}/refresh
 ```
 
 #### 6. Security Properties ✅
-- Secrets hashed using SHA256 with individual per-token salt values
+- Secrets hashed using PBKDF2-SHA256 with individual per-token salt values
 - Token secrets never stored in plaintext in database
 - Token secret returned only on creation (cannot be retrieved later)
 - Disabled tokens rejected during authentication
@@ -108,7 +108,7 @@ CREATE TABLE personal_access_token (
     user_id INT NOT NULL REFERENCES harbor_user(user_id),
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    secret VARCHAR(7168) NOT NULL,  -- SHA256 hash with salt
+    secret VARCHAR(7168) NOT NULL,  -- PBKDF2-SHA256 hash with salt
     salt VARCHAR(255) NOT NULL,
     expires_at BIGINT DEFAULT -1,   -- Unix timestamp, -1 = never expire
     creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -127,14 +127,14 @@ CREATE INDEX idx_pat_expires_at ON personal_access_token(expires_at);
 
 ## Non-Goals
 
-- LDAP/OIDC provider-specific integration (handled separately)
+- LDAP/OIDC provider-specific token generation (OIDC CLI secrets auto-migrate to PATs on startup)
 - PAT login to Harbor UI (tokens are API-only, UI uses session auth)
 - Hierarchical scopes beyond project level (future enhancement)
 - Automatic expiration notifications or reminders (operational concern)
 - Built-in rate limiting per PAT (can use reverse proxy)
 - Token versioning or rotation strategies beyond manual refresh
 
-## Implementation (COMPLETED) ✅
+## Implementation (IN REVIEW)
 
 ### Components Implemented
 
@@ -170,7 +170,7 @@ CREATE INDEX idx_pat_expires_at ON personal_access_token(expires_at);
    - `PersonalAccessTokenRefreshRequest` - refresh payload
    - `PersonalAccessTokenUpdateRequest` - patch operations
 
-### Test Coverage (COMPLETED) ✅
+### Test Coverage
 
 #### Unit Tests
 - `/src/core/service/token/token_test.go` - Token service logic
@@ -214,7 +214,7 @@ Located in `/tests/robot-cases/Group1-Nightly/PAT.robot`:
 - Tokens support configurable expiration dates
 - Tokens can be disabled/enabled without deletion
 - Tokens track creation, update, and last-used timestamps
-- Legacy CLI tokens automatically flagged as `is_legacy` for backward compatibility
+- Existing OIDC CLI secrets automatically migrated to legacy PATs on startup with `is_legacy` flag for backward compatibility
 - Docker login now supports PAT credentials using `hbr_pat_` prefix
 
 #### Operator Changes
@@ -299,7 +299,7 @@ Order ensures modern tokens checked first, legacy mechanisms still supported.
 - ✅ Last-used timestamp tracking
 - ✅ Error handling for invalid inputs
 
-## Harbor UI Dashboard ✅
+## Harbor UI Dashboard
 
 PAT management is fully integrated into the Harbor UI account settings:
 - **PAT Management Tab** in account settings modal
