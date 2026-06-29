@@ -200,9 +200,9 @@ If 200 (no auth required):
 - Locked user rejected from all paths
 - HTTP Auth Proxy external endpoint integration
 
-### Commits
+### Implementation PR Organization
 
-PR organized into 16 commits across 3 logical units:
+The Harbor implementation PR [#23458](https://github.com/goharbor/harbor/pull/23458) is organized into 16 commits across 3 logical units:
 
 **Unit 1 — Security fixes** (4 commits)
 - Locked user returns `ErrAuth` instead of nil
@@ -219,6 +219,8 @@ PR organized into 16 commits across 3 logical units:
 - Remove global auth_mode switch
 - Portal UI updates
 - Config cleanup
+
+These can be reviewed separately if preferred; Unit 2 (registry proxy) is independent of Unit 3.
 
 ## Known Limitations
 
