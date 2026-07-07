@@ -48,20 +48,13 @@ Subproject maintainers and reviewers should be listed alphabetically by name.
 Recognized Harbor subproject maintainer groups should be mirrored in the CNCF
 `project-maintainers.csv` record using names such as `Harbor: <Subproject>`.
 
-### Harbor CLI
-
-Scope: Official Harbor CLI, [goharbor/harbor-cli](https://github.com/goharbor/harbor-cli)
-
-Status: active
-
-Maintainers:
-
-* Lakshit Singh ([NucleoFusion](https://github.com/NucleoFusion))
-* Patrick Eschenbach ([qcserestipy](https://github.com/qcserestipy))
-* Prasanth Baskar ([bupd](https://github.com/bupd))
-* Vadim Bauer ([Vad1mo](https://github.com/Vad1mo))
-
-Reviewers: -
+| Subproject | Scope | Status | Maintainers | Reviewers |
+| ---------- | ----- | ------ | ----------- | --------- |
+| Harbor CLI | Official Harbor CLI: [goharbor/harbor-cli](https://github.com/goharbor/harbor-cli) | active | - | - |
+|  |  |  | Lakshit Singh ([NucleoFusion](https://github.com/NucleoFusion)) |  |
+|  |  |  | Patrick Eschenbach ([qcserestipy](https://github.com/qcserestipy)) |  |
+|  |  |  | Prasanth Baskar ([bupd](https://github.com/bupd)) |  |
+|  |  |  | Vadim Bauer ([Vad1mo](https://github.com/Vad1mo)) |  |
 
 ## Harbor Core Contributors & Stakeholders
 
