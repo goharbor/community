@@ -19,10 +19,14 @@ maintained under the `goharbor` namespace.
 * **[harbor-helm](https://github.com/goharbor/harbor-helm):** Helm chart for easy deployment of Harbor
 * **[community](https://github.com/goharbor/community):** Used to store community-related material–e.g., proposals, presentation slides, governance documents, community meeting minutes, etc.
 
+Long-lived repository or component ownership is documented through
+[subproject governance](SUBPROJECT_GOVERNANCE.md).
+
 ## Community Roles
 
 * **Users:** Members that engage with the Harbor community via any medium (Slack, WeChat, GitHub, mailing lists, etc.).
 * **Contributors:** Regular contributions to projects (documentation, code reviews, responding to issues, participation in proposal discussions, contributing code, etc.). 
+* **Subproject Reviewers and Maintainers:** Contributors with scoped responsibilities for a Harbor subproject, as defined in [SUBPROJECT_GOVERNANCE.md](SUBPROJECT_GOVERNANCE.md).
 * **Maintainers**: The Harbor project leaders. They are responsible for the overall health and direction of the project; final reviewers of PRs and responsible for releases. Some Maintainers are responsible for one or more components within a project, acting as technical leads for that component. Maintainers are expected to contribute code and documentation, review PRs including ensuring quality of code, triage issues, proactively fix bugs, and perform maintenance tasks for these components.
 
 ### Maintainers
