@@ -1,7 +1,7 @@
 # Harbor Subproject Governance
 
-This document defines lightweight governance for Harbor subprojects, reviewers,
-and subproject maintainers. Harbor keeps this model intentionally small.
+This document defines governance for Harbor subprojects, reviewers,
+and subproject maintainers.
 
 ## Roles
 
@@ -32,13 +32,6 @@ Responsibilities:
 Subproject maintainership is scoped. It does not automatically grant Harbor
 Maintainer status or project-wide decision authority.
 
-### Harbor Maintainer
-
-Harbor Maintainers are the project-wide maintainers defined in `GOVERNANCE.md`.
-They are listed in `MAINTAINERS.md` and the CNCF `project-maintainers.csv`
-record for Harbor. New Harbor Maintainers must still be nominated and elected
-through the existing Harbor maintainer process.
-
 ## Subprojects
 
 A Harbor subproject is a long-lived area of responsibility under the Harbor
@@ -59,9 +52,6 @@ Each subproject entry in `MAINTAINERS.md` should include:
 
 Subproject maintainers and reviewers should be listed alphabetically by name.
 
-Workgroups remain useful for temporary or cross-cutting initiatives. A
-workgroup does not automatically own code, releases, or maintainer permissions.
-
 ## Role Changes
 
 Reviewer:
@@ -80,21 +70,13 @@ Subproject maintainer:
 * Approval requires consensus from active subproject maintainers, or Harbor
   Maintainer approval when bootstrapping or resolving a deadlock.
 
-Harbor Maintainer:
-
-* Uses the existing process in `GOVERNANCE.md`: nomination by an existing Harbor
-  Maintainer and supermajority election by existing Harbor Maintainers.
-
 ## Inactivity
 
-Anyone may step down from a reviewer, subproject maintainer, or Harbor
-Maintainer role.
+Anyone may step down from a reviewer or subproject maintainer role.
 
 Inactive reviewers and subproject maintainers may be moved to emeritus status
 by PR after reasonable contact attempts. The purpose is to keep ownership
 accurate and make room for active contributors.
-
-Harbor Maintainer removal remains governed by `GOVERNANCE.md`.
 
 ## Records
 
