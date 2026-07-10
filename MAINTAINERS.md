@@ -54,6 +54,7 @@ Recognized Harbor subproject maintainer groups should be mirrored in the CNCF
 |  |  |  | Patrick Eschenbach ([qcserestipy](https://github.com/qcserestipy)) |  |
 |  |  |  | Prasanth Baskar ([bupd](https://github.com/bupd)) |  |
 |  |  |  | Vadim Bauer ([Vad1mo](https://github.com/Vad1mo)) |  |
+| Terraform/Opentofu Provider | Official Terraform/Opentofu provider : [goharbor/terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor) | active | Florian Blampey ([flbla](https://github.com/flbla)) | - |
 
 ## Harbor Core Contributors & Stakeholders
 
