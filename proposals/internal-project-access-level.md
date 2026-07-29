@@ -41,6 +41,7 @@ Introduce a new value for the project `public` metadata field: `auth_only`. The 
 - Anonymous requests against an `auth_only` project get no implicit policies (same as private today) — they must still fall back to explicit membership, which by definition an anonymous request never has.
 - Explicit project roles (Guest, Developer, Maintainer, Project Admin) work exactly as they do today and layer on top — e.g. a `Developer` member of an `auth_only` project can still push, while a non-member authenticated user can only pull.
 - System admins retain full access, unaffected by this change.
+- Robot accounts count as `isAuthenticated` too, since the robot policy builder (`NewBuilderForPolicies`) sets that flag unconditionally. As a result, **any** robot account — even one whose permissions were scoped to a completely different project — automatically gets the same read-only pull access to `auth_only` projects, with no explicit grant required. This mirrors the existing behavior for `public` projects (also readable by any robot regardless of scope) and does not affect plain `private` projects, which remain scoped strictly to the robot's explicit grants.
 
 ### Listing, searching, and filtering projects
 
