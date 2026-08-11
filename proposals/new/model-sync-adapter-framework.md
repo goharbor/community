@@ -233,6 +233,7 @@ The mockups below illustrate the three primary views.
 ## Security Considerations
 
 - Access tokens live in registry management, encrypted at rest by the existing mechanism, and are never returned by any API.
+- Gated models that require hub-side agreements (for example EULA or license acceptance on Hugging Face) are supported through the same token mechanism: the user completes the acceptance on the hub with their own account beforehand, and the access token configured in Harbor carries that entitlement. Harbor performs generic token authentication only and implements no hub-specific consent flow.
 - Outbound traffic to model hubs originates only from JobService.
 - Imported artifacts are ordinary project artifacts: project quota, RBAC, retention, GC, and audit logging all apply unchanged.
 
