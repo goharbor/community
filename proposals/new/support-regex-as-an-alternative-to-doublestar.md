@@ -150,6 +150,8 @@ Portal changes:
 
 Invalid regexes are rejected with `400` when the policy is created or updated: `Filter.Validate()` for replication, `ValidateRetentionPolicy` and the immutability controller (which performs no pattern validation today) for the selector surfaces. Runtime evaluation can then assume compiled patterns. This is deliberately the opposite of the existing OIDC group-filter precedent, which compiles at evaluation time and fails open — acceptable for one admin setting, not for rules that delete or replicate images.
 
+For immutability, save-time validation is a **safety requirement**, not hygiene: every runtime layer above the matcher swallows errors by design (`populateImmutableStatus` returns early, the push middleware treats the zero value as "mutable"), so a rule that errors at match time silently disables immutability for the whole project instead of failing the request. Save-time rejection is the only layer that can catch a bad pattern; in addition, the error swallowing itself should be fixed so match errors fail closed (part of phase 1).
+
 ## Phased rollout
 
 | Phase | Surface | Why this order |
@@ -183,7 +185,7 @@ The decisive alternative analysis already happened in community#221 (five approa
 
 - **Upgrade:** absent `kind` means `doublestar` on every surface; existing rules are byte-identical and behave identically. No database migration anywhere (all affected storage is JSON text columns).
 - **API clients:** `kind` is additive and optional; generated models for retention/immutability need no change at all.
-- **Downgrade caveat:** on an older core, a retention/immutability rule with `kind: "regex"` fails loudly (`selector regex is not registered`) — no silent misinterpretation. A replication filter with an unknown `kind` field on an old version would be *dropped by JSON unmarshalling* and the pattern read as doublestar; release notes must call this out.
+- **Downgrade caveat — the two selector surfaces differ.** On an older core, a *retention* rule with `kind: "regex"` fails closed and loudly: the execution errors with `selector regex is not registered` and nothing is deleted. An *immutability* rule with an unknown kind, however, currently fails **open and silently**: `populateImmutableStatus` (`src/controller/tag/controller.go:266`) swallows the matcher error, every tag reports `Immutable=false`, and the push middleware allows the overwrite — verified by measurement, a supposedly immutable tag can be re-pushed with no error surfacing anywhere. Rolling back a core therefore silently voids immutability enforcement for regex-kind rules; release notes must call this out. A replication filter with an unknown `kind` field on an old version would be *dropped by JSON unmarshalling* and the pattern read as doublestar; same release-note treatment.
 - The dead beego validation tags `valid:"Match(doublestar)"` on the selector models (not enforced on the v2 API path today) are relaxed to the supported kind set as part of phase 1.
 
 ## Implementation
