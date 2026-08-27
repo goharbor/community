@@ -34,12 +34,12 @@ Harbor 1.9's UI even *advertised* regex support; the claim was removed ([#9206](
 
 ## Proposal
 
-### 1. One shared engine: a `regexp` selector kind
+### 1. One shared engine: a `regex` selector kind
 
 Implement the engine once as a sibling of the doublestar selector:
 
 ```
-src/lib/selector/selectors/regexp/selector.go        Kind = "regexp"
+src/lib/selector/selectors/regexp/selector.go        Kind = "regex"
 src/lib/selector/selectors/regexp/selector_test.go
 ```
 
@@ -140,11 +140,11 @@ Portal changes:
 
 ### 4. API
 
-- `RetentionSelector.kind` / `ImmutableSelector.kind` are already free-form strings in swagger and persisted inside JSON blobs — `"regexp"` becomes a second accepted value. **No schema or generated-client change.**
+- `RetentionSelector.kind` / `ImmutableSelector.kind` are already free-form strings in swagger and persisted inside JSON blobs — `"regex"` becomes a second accepted value. **No schema or generated-client change.**
 - `GET /retentions/metadatas` currently returns a hardcoded selector list; it is rewired to the selector registry (`index.Index()`, which exists for exactly this purpose and is currently unused), so the new kind — and any future one — is advertised to the UI automatically.
 - `ReplicationFilter` gains an optional `kind` field (`doublestar` when absent), marked `x-isnullable` per the existing backward-compat convention in swagger.
 - Preheat policy filters (an opaque JSON string today) gain an optional per-filter `kind` with the same default.
-- The `kind` literal should be harmonized with community#280 before either merges, so Harbor ends up with one discriminator vocabulary (`doublestar` | `regexp`), not two.
+- The `kind` literal is **`regex`**, matching the discriminator community#280 already introduces for the proxy-cache filter, so Harbor ends up with one vocabulary (`doublestar` | `regex`).
 
 ### 5. Validation at write time
 
@@ -183,7 +183,7 @@ The decisive alternative analysis already happened in community#221 (five approa
 
 - **Upgrade:** absent `kind` means `doublestar` on every surface; existing rules are byte-identical and behave identically. No database migration anywhere (all affected storage is JSON text columns).
 - **API clients:** `kind` is additive and optional; generated models for retention/immutability need no change at all.
-- **Downgrade caveat:** on an older core, a retention/immutability rule with `kind: "regexp"` fails loudly (`selector regexp is not registered`) — no silent misinterpretation. A replication filter with an unknown `kind` field on an old version would be *dropped by JSON unmarshalling* and the pattern read as doublestar; release notes must call this out.
+- **Downgrade caveat:** on an older core, a retention/immutability rule with `kind: "regex"` fails loudly (`selector regex is not registered`) — no silent misinterpretation. A replication filter with an unknown `kind` field on an old version would be *dropped by JSON unmarshalling* and the pattern read as doublestar; release notes must call this out.
 - The dead beego validation tags `valid:"Match(doublestar)"` on the selector models (not enforced on the v2 API path today) are relaxed to the supported kind set as part of phase 1.
 
 ## Implementation
@@ -213,5 +213,4 @@ Touch points, verified against `main`:
 ## Open issues
 
 - **Replication name-filter performance.** Adapters use `util.IsSpecificPath*` to turn a glob into a list of exact repositories and avoid listing a remote's full catalog. A regex almost never qualifies, forcing a full catalog walk on the remote. Mitigations to evaluate: derive a listing prefix via `regexp.Regexp.LiteralPrefix()`, and/or restrict phase 2's regex support to tag/label filters first, keeping name filters doublestar-only until prefix extraction is in place.
-- **`kind` literal** — `regexp` (this proposal, matching the selector-kind convention) vs `regex` (community#280). One vocabulary should win; needs a maintainer call.
 - Whether the engine selector should also be exposed for label filters, or labels stay exact/doublestar (labels are short exact strings in practice).
