@@ -2,6 +2,8 @@
 
 [GOVERNANCE.md](https://github.com/goharbor/community/blob/master/GOVERNANCE.md)
 describes governance guidelines and maintainer responsibilities.
+[SUBPROJECT_GOVERNANCE.md](SUBPROJECT_GOVERNANCE.md) describes scoped
+subproject reviewers and maintainers.
 
 ## Maintainers
 
@@ -33,6 +35,28 @@ describes governance guidelines and maintainer responsibilities.
 | --------------- | --------- | ----------- |
 | ? | [?](https://github.com/?) | [?](https://www.github.com/?) |
 
+## Subprojects
+
+Subproject maintainers and reviewers are scoped roles. They own review, triage,
+release, and contributor growth responsibilities for the listed subproject, but
+do not automatically become Harbor Maintainers.
+
+When a subproject has its own `MAINTAINERS.md`, that file is the source of truth
+for the scoped subproject roles and this section mirrors it.
+
+Subproject maintainers and reviewers should be listed alphabetically by name.
+
+Recognized Harbor subproject maintainer groups should be mirrored in the CNCF
+`project-maintainers.csv` record using names such as `Harbor: <Subproject>`.
+
+| Subproject | Scope | Status | Maintainers | Reviewers |
+| ---------- | ----- | ------ | ----------- | --------- |
+| Harbor CLI | Official Harbor CLI: [goharbor/harbor-cli](https://github.com/goharbor/harbor-cli) | active | Lakshit Singh ([NucleoFusion](https://github.com/NucleoFusion)) | - |
+|  |  |  | Patrick Eschenbach ([qcserestipy](https://github.com/qcserestipy)) |  |
+|  |  |  | Prasanth Baskar ([bupd](https://github.com/bupd)) |  |
+|  |  |  | Vadim Bauer ([Vad1mo](https://github.com/Vad1mo)) |  |
+| Terraform/Opentofu Provider | Official Terraform/Opentofu provider : [goharbor/terraform-provider-harbor](https://github.com/goharbor/terraform-provider-harbor) | active | Florian Blampey ([flbla](https://github.com/flbla)) | - |
+
 ## Harbor Core Contributors & Stakeholders
 
 | Harbor Feature Area | Lead |
@@ -63,4 +87,3 @@ describes governance guidelines and maintainer responsibilities.
 * Alex Xu, [xaleeks](https://github.com/xaleeks)
 * Tianon Gravi, [tianon](https://github.com/tianon)
 * Daniel Pacak, [danielpacak](https://github.com/danielpacak)
-
