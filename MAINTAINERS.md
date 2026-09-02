@@ -20,6 +20,7 @@ subproject reviewers and maintainers.
 | Jérémie MONSINJON | [Jérémie MONSINJON](https://github.com/jMonsinjon) | [OVH Cloud](https://www.ovh.com/world/) | 
 | Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
+| Prasanth Baskar| [bupd](https://github.com/bupd) | [8gears](https://container-registry.com) |
 
 ## SIG Community
 
