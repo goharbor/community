@@ -19,6 +19,7 @@ describes governance guidelines and maintainer responsibilities.
 | Pierre PÉRONNET | [holyhope](https://github.com/holyhope) | [DataDog](https://www.datadoghq.com) |
 | Vadim Bauer | [Vad1mo](https://github.com/Vad1mo) | [8gears](https://container-registry.com) |
 | Prasanth Baskar| [bupd](https://github.com/bupd) | [8gears](https://container-registry.com) |
+| Chlins Zhang | [chlins](https://github.com/chlins) | [VMWare](https://www.github.com/vmware/) |
 
 ## SIG Community
 
